@@ -1838,6 +1838,109 @@ th.sortable.sort-asc .sort-ic, th.sortable.sort-desc .sort-ic { color: var(--pri
 .btn-sm-add.added { border-color: var(--success); color: var(--success); background: var(--success-light); cursor: default; }
 
 /* =========================================================
+   ADD / UPDATE CALL QUEUE DRAWER
+   ========================================================= */
+.qform-overlay {
+  position: fixed; inset: 0; background: rgba(15, 20, 35, 0.45); z-index: 260;
+  display: none;
+}
+.qform-overlay.open { display: block; }
+.qform-panel {
+  position: fixed; top: 0; right: 0; bottom: 0; width: 60vw; min-width: 640px; max-width: 980px;
+  background: #fff; box-shadow: var(--shadow-xl); z-index: 261;
+  display: flex; flex-direction: column;
+  transform: translateX(100%); transition: transform 0.22s ease;
+}
+.qform-overlay.open .qform-panel { transform: translateX(0); }
+
+.qform-header { display: flex; align-items: center; padding: 18px 24px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.qform-header h3 { margin: 0; font-size: 16px; font-weight: 700; color: var(--navy); flex: 1; }
+
+.qform-tabs { display: flex; gap: 4px; padding: 0 24px; border-bottom: 1px solid var(--border); overflow-x: auto; flex-shrink: 0; }
+.qform-tab {
+  padding: 13px 6px; margin-right: 22px; border: none; background: none; cursor: pointer;
+  font-size: 13.5px; font-weight: 600; color: var(--text-muted); border-bottom: 2px solid transparent; white-space: nowrap;
+}
+.qform-tab:hover { color: var(--text-body); }
+.qform-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+.qform-body { flex: 1; overflow-y: auto; padding: 22px 24px; }
+.qtab-panel[hidden] { display: none; }
+
+.qform-footer { display: flex; align-items: center; gap: 10px; padding: 14px 24px; border-top: 1px solid var(--border); flex-shrink: 0; }
+.qform-footer .spacer { flex: 1; }
+
+.qsection { margin-bottom: 26px; padding-bottom: 22px; border-bottom: 1px solid var(--border-light); }
+.qsection:last-child { border-bottom: none; }
+.qsection-title { font-size: 13.5px; font-weight: 700; color: var(--navy); margin-bottom: 10px; }
+.qsection-title-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.qsection-title-row .qsection-title { margin-bottom: 0; }
+
+.qf-prefix {
+  display: flex; align-items: center; padding: 0 12px; height: 38px; border: 1px solid var(--border);
+  border-right: none; border-radius: var(--radius-s) 0 0 var(--radius-s); background: var(--bg-subtle);
+  color: var(--text-muted); font-size: 13.5px; white-space: nowrap; flex-shrink: 0;
+}
+.qf-prefix + .field-input { border-radius: 0 var(--radius-s) var(--radius-s) 0; }
+
+.qf-empty-note { font-size: 13px; color: var(--text-muted); background: var(--bg-subtle); border-radius: var(--radius-s); padding: 10px 12px; }
+.qf-warning { font-size: 12.5px; color: var(--warning); background: var(--warning-light); border: 1px solid #fde3ad; border-radius: var(--radius-s); padding: 10px 12px; margin: 10px 0; line-height: 1.5; }
+
+.coming-soon-banner {
+  display: flex; gap: 8px; align-items: flex-start; font-size: 12.5px; line-height: 1.55; color: #92720f;
+  background: var(--warning-light); border: 1px solid #fde3ad; border-radius: var(--radius-s); padding: 12px 14px; margin-bottom: 22px;
+}
+.coming-soon-banner svg { width: 16px; height: 16px; flex-shrink: 0; margin-top: 1px; }
+
+.oc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.oc-col { border: 1px solid var(--border); border-radius: var(--radius-m); padding: 14px; }
+.oc-col-head { font-size: 12.5px; color: var(--text-muted); margin-bottom: 12px; }
+
+.seg-toggle { display: inline-flex; border: 1px solid var(--border); border-radius: 999px; overflow: hidden; }
+.seg-btn { padding: 6px 14px; border: none; background: #fff; color: var(--text-muted); font-size: 12.5px; font-weight: 600; cursor: pointer; }
+.seg-btn.active { background: var(--primary); color: #fff; }
+
+.qf-chip {
+  display: inline-flex; align-items: center; padding: 5px 11px; border-radius: 999px;
+  background: var(--primary-light); color: var(--primary-hover); font-size: 12.5px; font-weight: 600;
+}
+
+.qf-sim-row { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-body); margin-bottom: 8px; }
+.qf-sim-row select { padding: 6px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; }
+.qf-sim-result { font-size: 13px; color: var(--text-muted); background: var(--bg-subtle); border-radius: var(--radius-s); padding: 10px 12px; }
+.qf-sim-timeline { display: flex; flex-direction: column; gap: 8px; font-size: 13px; color: var(--text-body); background: var(--bg-subtle); border-radius: var(--radius-s); padding: 12px 14px; }
+.qf-sim-timeline b { color: var(--navy); }
+
+.qf-disp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 20px; }
+.qf-disp-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 9px 12px; border: 1px solid var(--border); border-radius: var(--radius-s); font-size: 13.5px; color: var(--text-body); }
+
+.icon-add-btn {
+  width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--border); background: #fff;
+  color: var(--text-body); font-size: 16px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center;
+}
+.icon-add-btn:hover { background: var(--bg-subtle); }
+
+.qf-members-strip { border: 1px solid var(--border); border-radius: var(--radius-m); padding: 12px 14px; }
+.qf-manager-row { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-muted); margin-top: 10px; text-transform: uppercase; letter-spacing: 0.03em; }
+.qf-manager-name { color: var(--navy); font-weight: 700; text-transform: none; letter-spacing: normal; font-size: 13px; }
+.qf-member-chip {
+  display: inline-flex; align-items: center; gap: 8px; padding: 5px 6px 5px 11px; border-radius: 999px;
+  background: var(--bg-subtle); border: 1px solid var(--border); font-size: 12.5px; margin: 4px 6px 0 0;
+}
+.qf-member-chip .qf-runs-it { font-size: 10px; font-weight: 700; color: var(--primary); letter-spacing: 0.03em; }
+.qf-member-chip button { border: none; background: none; color: var(--text-faint); cursor: pointer; display: flex; width: 16px; height: 16px; align-items: center; justify-content: center; }
+
+.qf-media-row { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid var(--border-light); }
+.qf-media-row:last-child { border-bottom: none; }
+.qf-media-row-label { font-size: 13.5px; color: var(--text-body); font-weight: 500; }
+.qf-media-picker { display: none; align-items: center; gap: 10px; margin-top: 12px; }
+.qf-media-picker.show { display: flex; }
+.qf-media-chip { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 999px; background: var(--bg-subtle); border: 1px solid var(--border); font-size: 13px; color: var(--text-body); }
+.qf-media-chip button { border: none; background: none; color: var(--text-faint); cursor: pointer; }
+.qf-play-btn { width: 30px; height: 30px; border-radius: 50%; border: none; background: var(--primary); color: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
+.qf-play-btn svg { width: 13px; height: 13px; margin-left: 1px; }
+
+/* =========================================================
    DARK MODE
    ========================================================= */
 body.dark {
@@ -1941,6 +2044,23 @@ body.dark .flow-diagram-wrap { background: var(--bg-subtle); }
 body.dark .sla-bar-track { background: var(--border); }
 body.dark .toggle-slider { background: var(--border); }
 body.dark .unsaved-bar { background: #0a0d14; }
+
+body.dark .qform-panel,
+body.dark .qf-prefix,
+body.dark .qf-empty-note,
+body.dark .oc-col,
+body.dark .seg-btn,
+body.dark .qf-sim-result,
+body.dark .qf-sim-timeline,
+body.dark .qf-disp-row,
+body.dark .icon-add-btn,
+body.dark .qf-members-strip,
+body.dark .qf-member-chip,
+body.dark .qf-media-chip {
+  background: var(--bg-page);
+  border-color: var(--border);
+  color: var(--text-body);
+}
 </style>
 </head>
 <body>
@@ -2173,13 +2293,13 @@ body.dark .unsaved-bar { background: #0a0d14; }
 
   <div class="page-head">
     <div>
-      <div class="eyebrow">Phone System / Contact Centres</div>
-      <h1>Contact Centres</h1>
-      <p class="page-desc">Where incoming calls wait and which agents answer them. Queues can be company-wide<br>or per site.</p>
+      <div class="eyebrow">Phone System</div>
+      <h1>Call queues</h1>
+      <p class="page-desc">Where incoming calls wait, and which people answer them. Queues can be company-wide<br>or tied to one location.</p>
     </div>
     <button class="btn-primary" id="new-queue-btn">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
-      New Queue
+      New queue
     </button>
   </div>
 
@@ -2205,55 +2325,20 @@ body.dark .unsaved-bar { background: #0a0d14; }
   <div class="filter-row">
     <div class="table-search">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-      <input type="text" id="table-search" placeholder="Search queues…">
+      <input type="text" id="table-search" placeholder="Search queues">
     </div>
-    <div class="select-wrap" style="width:170px">
+    <div class="select-wrap">
       <select id="site-select">
-        <option value="">All Sites</option>
+        <option value="">Select</option>
+        <option>new location</option>
         <option>Unified Testing Team</option>
-        <option>Company</option>
       </select>
       <svg class="select-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-    </div>
-    <div class="select-wrap" style="width:200px">
-      <select id="routing-select">
-        <option value="">All Routing Methods</option>
-        <option value="ringall">Ring All</option>
-        <option value="roundrobin">Round Robin</option>
-        <option value="topdown">Top Down</option>
-        <option value="longestidle">Longest Idle</option>
-        <option value="fewestcalls">Fewest Calls</option>
-        <option value="leasttalk">Least Talk Time</option>
-        <option value="skills">Skills-Based</option>
-      </select>
-      <svg class="select-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-    </div>
-    <div class="select-wrap" style="width:170px">
-      <select id="hours-select">
-        <option value="">All Hours</option>
-        <option value="open24">Open 24 hours</option>
-        <option value="weekday">Set per weekday</option>
-      </select>
-      <svg class="select-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-    </div>
-    <button class="btn-columns" id="columns-btn">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16M15 4v16"/></svg>
-      Columns
-    </button>
-    <div class="dropdown-menu" id="columns-menu" style="right:0; left:auto;">
-      <label class="dropdown-item" style="cursor:pointer"><input type="checkbox" class="qt-checkbox col-toggle" data-col="site" checked style="margin-right:6px"> Site</label>
-      <label class="dropdown-item" style="cursor:pointer"><input type="checkbox" class="qt-checkbox col-toggle" data-col="ext" checked style="margin-right:6px"> Extension</label>
-      <label class="dropdown-item" style="cursor:pointer"><input type="checkbox" class="qt-checkbox col-toggle" data-col="members" checked style="margin-right:6px"> Members</label>
-      <label class="dropdown-item" style="cursor:pointer"><input type="checkbox" class="qt-checkbox col-toggle" data-col="sla" checked style="margin-right:6px"> SLA</label>
     </div>
   </div>
 
-  <div class="bulk-bar" id="bulk-bar">
-    <span id="bulk-count">0 selected</span>
-    <div class="spacer"></div>
-    <button class="bulk-btn" id="bulk-deactivate">Deactivate</button>
-    <button class="bulk-btn danger" id="bulk-delete">Delete</button>
-    <button class="bulk-btn" id="bulk-cancel">Cancel</button>
+  <div class="info-banner">
+    Set up call queues at the Company level or for Individual Site locations. This allows you to organize incoming traffic for specific branches, ensuring callers are held professionally until a user from that site is ready to answer.
   </div>
 
   <div class="table-shell">
@@ -2261,17 +2346,15 @@ body.dark .unsaved-bar { background: #0a0d14; }
       <table id="queues-table">
         <thead>
           <tr>
-            <th class="col-check"><input type="checkbox" class="qt-checkbox" id="select-all-chk"></th>
-            <th class="sortable" data-sort="name">Name <span class="sort-ic">↕</span></th>
-            <th data-col="site">Site</th>
-            <th data-col="ext">Extension</th>
-            <th>Phone Number</th>
-            <th class="sortable" data-sort="routingLabel">Routing Method <span class="sort-ic">↕</span></th>
-            <th>Hours</th>
-            <th data-col="members">Members</th>
-            <th class="sortable" data-sort="sla" data-col="sla">SLA <span class="sort-ic">↕</span></th>
-            <th class="sortable" data-sort="status">Status <span class="sort-ic">↕</span></th>
-            <th>Actions</th>
+            <th class="col-name">Name</th>
+            <th class="col-site">Site</th>
+            <th class="col-ext">Extension</th>
+            <th class="col-num">Numbers</th>
+            <th class="col-shared">How calls are shared</th>
+            <th class="col-hours">Hours</th>
+            <th class="col-members">Members</th>
+            <th class="col-created">Created</th>
+            <th class="col-actions">Actions</th>
           </tr>
         </thead>
         <tbody id="table-body">
@@ -2284,7 +2367,7 @@ body.dark .unsaved-bar { background: #0a0d14; }
         <p>Try adjusting your filters or create a new queue.</p>
         <button class="btn-primary" id="empty-new-queue-btn">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
-          New Queue
+          New queue
         </button>
       </div>
     </div>
@@ -2294,15 +2377,19 @@ body.dark .unsaved-bar { background: #0a0d14; }
     <div class="pagination-left">
       <div class="select-wrap small">
         <select id="per-page-select">
-          <option value="10">10</option>
-          <option value="20" selected>20</option>
+          <option value="25" selected>25</option>
           <option value="50">50</option>
+          <option value="100">100</option>
+          <option value="200">200</option>
         </select>
         <svg class="select-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
       </div>
-      <span class="per-page-label">rows per page</span>
+      <span class="per-page-label">per page</span>
       <span class="vdiv"></span>
-      <span id="record-count">Showing 1–18 of 18 queues</span>
+      <span id="record-count">18 record(s)</span>
+      <button class="refresh-btn" id="refresh-btn" title="Refresh">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11A8 8 0 0 0 5.5 6.5L3 9"/><path d="M3 4v5h5"/><path d="M4 13a8 8 0 0 0 14.5 4.5L21 15"/><path d="M21 20v-5h-5"/></svg>
+      </button>
     </div>
     <div class="pagination-right" id="pagination-controls">
       <!-- buttons injected by script -->
@@ -2311,269 +2398,383 @@ body.dark .unsaved-bar { background: #0a0d14; }
 
 </div>
 
-<!-- ===================== NEW QUEUE WIZARD ===================== -->
-<div class="view" id="view-queue-wizard" hidden>
-  <a href="#" class="back-link" id="wizard-back-link">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-    Back to Contact Centres
-  </a>
-  <h1 class="wizard-title">New Queue</h1>
-
-  <div class="wizard-progress" id="wizard-progress">
-    <div class="wp-step active" data-step="1"><div class="wp-connector"></div><div class="wp-circle">1</div><div class="wp-label">Basic Info</div></div>
-    <div class="wp-step" data-step="2"><div class="wp-connector"></div><div class="wp-circle">2</div><div class="wp-label">Agents</div></div>
-    <div class="wp-step" data-step="3"><div class="wp-connector"></div><div class="wp-circle">3</div><div class="wp-label">Routing</div></div>
-    <div class="wp-step" data-step="4"><div class="wp-connector"></div><div class="wp-circle">4</div><div class="wp-label">Business Hours</div></div>
-    <div class="wp-step" data-step="5"><div class="wp-circle">5</div><div class="wp-label">Review</div></div>
-  </div>
-  <div class="wizard-step-count" id="wizard-step-count">Step 1 of 5</div>
-
-  <div class="wizard-body">
-
-    <!-- STEP 1: BASIC INFO -->
-    <div class="wizard-step" id="wizard-step-1">
-      <div class="field">
-        <label class="field-label">Queue Name <span class="req">*</span></label>
-        <div class="field-input-wrap">
-          <input type="text" class="field-input" id="w-name" placeholder="e.g. Sales Support">
-          <svg class="field-check-ic" id="w-name-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-11"/></svg>
-        </div>
-        <div class="field-error" id="w-name-error">Name is required</div>
-      </div>
-      <div class="field">
-        <label class="field-label">Site <span class="req">*</span></label>
-        <select id="w-site">
-          <option value="Company">Company</option>
-          <option value="Unified Testing Team" selected>Unified Testing Team</option>
-          <option value="__add">+ Add site…</option>
-        </select>
-      </div>
-      <div class="field">
-        <label class="field-label">Phone Number</label>
-        <select id="w-phone">
-          <option value="">No number for now</option>
-          <option value="+1 646 934 8292">🇺🇸 +1 646 934 8292</option>
-          <option value="+1 415 555 0100">🇺🇸 +1 415 555 0100</option>
-        </select>
-      </div>
-      <div class="field">
-        <label class="field-label">Extension</label>
-        <div class="field-row">
-          <input type="text" class="field-input field-readonly" id="w-ext" readonly>
-          <span class="field-inline-link" id="w-ext-regen">Regenerate</span>
-        </div>
-      </div>
-      <div class="field">
-        <label class="field-label">Routing Type <span class="req">*</span></label>
-        <div class="routing-grid">
-          <div class="routing-card selected" data-type="voice" id="w-type-voice">
-            <span class="rc-icon">📞</span>
-            <div class="rc-title">Voice</div>
-            <div class="rc-desc">Calls, SMS, call recording</div>
-            <div class="rc-radio"></div>
-          </div>
-          <div class="routing-card" data-type="digital" id="w-type-digital">
-            <span class="rc-icon">💬</span>
-            <div class="rc-title">Digital</div>
-            <div class="rc-desc">Web chat, social messaging channels</div>
-            <div class="rc-radio"></div>
-          </div>
-        </div>
-        <div class="info-note">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg>
-          Routing type cannot be changed after creating the queue.
-        </div>
-      </div>
-      <div class="field">
-        <label class="field-label">Description</label>
-        <textarea id="w-desc" rows="3" maxlength="200" placeholder="What is this queue for?"></textarea>
-        <div class="textarea-counter"><span id="w-desc-count">0</span>/200</div>
-      </div>
-      <div class="field">
-        <label class="field-label">Copy settings from</label>
-        <select id="w-copyfrom">
-          <option value="">None (start fresh)</option>
-        </select>
-      </div>
+<!-- ===================== ADD / UPDATE CALL QUEUE DRAWER ===================== -->
+<div class="qform-overlay" id="qform-overlay">
+  <div class="qform-panel">
+    <div class="qform-header">
+      <h3 id="qform-title">Add Call Queue</h3>
+      <button class="drawer-close" id="qform-close-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
     </div>
 
-    <!-- STEP 2: AGENTS -->
-    <div class="wizard-step" id="wizard-step-2" hidden>
-      <div class="agents-picker">
-        <div class="agents-panel">
-          <div class="agents-panel-title">Add Agents</div>
-          <div class="agent-tabs">
-            <button class="agent-tab-btn active" data-agent-tab="agents">Agents</button>
-            <button class="agent-tab-btn" data-agent-tab="groups">Groups</button>
+    <div class="qform-tabs" id="qform-tabs">
+      <button class="qform-tab active" data-qtab="1">Basic Information</button>
+      <button class="qform-tab" data-qtab="2">Settings &amp; Permissions</button>
+      <button class="qform-tab" data-qtab="3">Queue Settings</button>
+      <button class="qform-tab" data-qtab="4">Add Member</button>
+      <button class="qform-tab" data-qtab="5">Ring Strategy</button>
+      <button class="qform-tab" data-qtab="6">Media</button>
+    </div>
+
+    <div class="qform-body">
+
+      <!-- TAB 1: BASIC INFORMATION -->
+      <div class="qtab-panel" id="qtab-1">
+        <div class="qsection">
+          <div class="qsection-title">What this contact centre is</div>
+          <div class="field">
+            <label class="field-label">Name <span class="req">*</span></label>
+            <div class="field-hint" style="margin:-2px 0 6px;">Shown wherever this contact centre appears — reports, transfer lists, the contact centre list.</div>
+            <div class="field-row">
+              <span class="qf-prefix">Inbound -</span>
+              <input type="text" class="field-input" id="qf-name" placeholder="e.g. topdown2">
+            </div>
+            <div class="field-error" id="qf-name-error">Name is required</div>
+            <div class="field-hint" id="qf-name-preview">Saved and reported as Inbound - </div>
           </div>
-          <div class="table-search" style="margin-bottom:10px;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-            <input type="text" id="w-agent-search" placeholder="Search agents or groups…">
+          <div class="field">
+            <label class="field-label">Description</label>
+            <div class="field-hint" style="margin:-2px 0 6px;">For your own team. Callers never see it.</div>
+            <input type="text" class="field-input" id="qf-desc" placeholder="Enter description">
           </div>
-          <div class="agent-list" id="w-agent-list"></div>
+          <div class="field">
+            <label class="field-label">Location <span class="req">*</span></label>
+            <div class="field-hint" style="margin:-2px 0 6px;">Sets the clock this contact centre works to, and the hours it follows.</div>
+            <select id="qf-location">
+              <option value="">Select</option>
+              <option>new location</option>
+              <option selected>Unified Testing Team</option>
+            </select>
+          </div>
         </div>
-        <div class="agents-panel">
-          <div class="agents-panel-title" id="w-selected-title">Selected Agents (0)</div>
-          <div id="w-selected-list"></div>
-          <div class="empty-mini" id="w-selected-empty">No agents added yet. Search and add agents from the left.</div>
-          <div class="info-box" id="w-skill-note" hidden>
+
+        <div class="qsection">
+          <div class="qsection-title-row">
+            <div class="qsection-title">Numbers that ring this contact centre <span class="badge-type inbound" style="margin-left:6px;">ACTIVE</span></div>
+            <button class="btn-outline" id="qf-add-number-btn">Add numbers</button>
+          </div>
+          <div class="field-hint" style="margin-bottom:10px;">Callers reach this contact centre on these numbers. Add as many as you need — one per city, a toll-free number, one per advert.</div>
+          <div class="qf-empty-note" id="qf-numbers-empty">No number rings this queue yet, so no outside caller can reach it. Add one to put the queue live.</div>
+        </div>
+
+        <div class="qsection">
+          <div class="qsection-title">Internal extension</div>
+          <div class="field">
+            <label class="field-label">Extension <span class="req">*</span></label>
+            <div class="field-hint" style="margin:-2px 0 6px;">Not a number a customer can call. Fixed once the queue exists, because other screens point at it.</div>
+            <input type="text" class="field-input" id="qf-ext" placeholder="Enter extension">
+          </div>
+        </div>
+
+        <div class="qsection">
+          <div class="qsection-title">How long a caller waits</div>
+          <div class="field-hint" style="margin-bottom:10px;">The limits that decide when this contact centre stops holding somebody and hands them on.</div>
+          <div class="field">
+            <label class="field-label">Most callers allowed to wait</label>
+            <div class="field-hint" style="margin:-2px 0 6px;">Past this, new callers go to the failover instead of joining the line. Up to 500.</div>
+            <input type="number" class="field-input" id="qf-max-wait-count" value="5" style="max-width:160px;">
+          </div>
+          <div class="field">
+            <label class="field-label">Longest anyone waits (seconds)</label>
+            <div class="field-hint" style="margin:-2px 0 6px;">When this is up the caller is sent to the failover, rather than left holding.</div>
+            <input type="number" class="field-input" id="qf-max-wait-secs" value="60" style="max-width:160px;">
+          </div>
+          <div class="field">
+            <label class="field-label">Hold callers when no one is on duty</label>
+            <div class="field-hint" style="margin:-2px 0 6px;">On, callers wait until somebody comes on duty, or until the timeout above sends them to the failover. Off, they go to the failover as soon as the last agent leaves.</div>
+            <label class="toggle-switch"><input type="checkbox" id="qf-hold-no-duty"><span class="toggle-slider"></span></label>
+          </div>
+          <div class="field">
+            <label class="field-label">Failover Forward Type</label>
+            <select id="qf-failover-type">
+              <option>Send to Voicemail</option>
+              <option>Play an Announcement</option>
+              <option>Forward to Extension</option>
+              <option>Forward to External Number</option>
+              <option>Forward to IVR</option>
+              <option>Forward to Group</option>
+            </select>
+          </div>
+          <div class="field" id="qf-failover-value-voicemail">
+            <label class="field-label">Failover Forward Value</label>
+            <div class="radio-option-group" style="flex-direction:row; gap:20px;">
+              <label class="radio-option"><input type="radio" name="qf-vm-target" checked> My Voicemail</label>
+              <label class="radio-option"><input type="radio" name="qf-vm-target"> Another Voicemail</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: SETTINGS & PERMISSIONS -->
+      <div class="qtab-panel" id="qtab-2" hidden>
+        <div class="qsection">
+          <div class="qsection-title-row"><div class="qsection-title">Regional Settings</div><button class="btn-outline" data-select-btn="region">Select</button></div>
+          <div class="field-hint" id="qf-region-value">Asia/Kolkata, India</div>
+        </div>
+        <div class="qsection">
+          <div class="qsection-title-row"><div class="qsection-title">Business Hours</div><button class="btn-outline" data-select-btn="hours">Select</button></div>
+          <div class="field-hint" id="qf-hours-value">24 Hours, all times</div>
+        </div>
+        <div class="qsection">
+          <div class="qsection-title-row"><div class="qsection-title">Automatic &amp; On Demand Call Recording</div><button class="btn-outline" data-select-btn="recording">Select</button></div>
+          <div class="field-hint" id="qf-recording-value">Automatic &amp; on demand call recording is disabled.</div>
+        </div>
+
+        <div class="coming-soon-banner">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg>
+          Available after the next release. Open and Closed routing is not switched on yet. This is a preview: nothing here is saved, and closed-hours calls follow the "when we are closed" setting in the opening-hours dialog. It becomes editable once the release that reads it is installed.
+        </div>
+
+        <div class="qsection">
+          <div class="qsection-title">What happens when we are closed</div>
+          <div class="field-hint" style="margin-bottom:10px;">Nothing is set for closed hours, so callers are treated exactly as they are now.</div>
+          <div class="oc-grid">
+            <div class="oc-col">
+              <div class="oc-col-head">Inside the opening hours above.</div>
+              <div class="field"><label class="field-label">First, the caller</label>
+                <div class="seg-toggle"><button class="seg-btn active" data-seg="open-first">rings the operators</button><button class="seg-btn" data-seg="open-first">hears a menu</button></div>
+              </div>
+              <div class="field"><label class="field-label">Who rings</label><div class="qf-chip">hanuman bishnoi (1000)</div></div>
+              <div class="field"><label class="field-label">In what order</label>
+                <div class="radio-option-group">
+                  <label class="radio-option"><input type="radio" name="oc-order-open" checked> Ring everyone at once</label>
+                  <label class="radio-option"><input type="radio" name="oc-order-open"> One after another, in order</label>
+                  <label class="radio-option"><input type="radio" name="oc-order-open"> Take turns</label>
+                  <label class="radio-option"><input type="radio" name="oc-order-open"> Whoever has waited longest</label>
+                </div>
+              </div>
+              <div class="field"><label class="field-label">If nobody answers</label>
+                <select><option>Nothing set</option><option>hanuman bishnoi</option><option>testing_IVR_menu_1</option><option>New_IVR</option><option>calling IVR</option><option>This queue's voicemail</option><option>Hang up</option></select>
+              </div>
+            </div>
+            <div class="oc-col">
+              <div class="oc-col-head">Outside them, and on every holiday.</div>
+              <div class="field"><label class="field-label">First, the caller</label>
+                <div class="seg-toggle"><button class="seg-btn active" data-seg="closed-first">rings the operators</button><button class="seg-btn" data-seg="closed-first">hears a menu</button></div>
+              </div>
+              <div class="field"><label class="field-label">Who rings</label><div class="qf-chip">hanuman bishnoi (1000)</div></div>
+              <div class="field"><label class="field-label">In what order</label>
+                <div class="radio-option-group">
+                  <label class="radio-option"><input type="radio" name="oc-order-closed" checked> Ring everyone at once</label>
+                  <label class="radio-option"><input type="radio" name="oc-order-closed"> One after another, in order</label>
+                  <label class="radio-option"><input type="radio" name="oc-order-closed"> Take turns</label>
+                  <label class="radio-option"><input type="radio" name="oc-order-closed"> Whoever has waited longest</label>
+                </div>
+              </div>
+              <div class="field"><label class="field-label">If nobody answers</label>
+                <select><option>Nothing set</option><option>hanuman bishnoi</option><option>testing_IVR_menu_1</option><option>New_IVR</option><option>calling IVR</option><option>This queue's voicemail</option><option>Hang up</option></select>
+              </div>
+            </div>
+          </div>
+          <label class="radio-option" style="margin-top:14px;"><input type="checkbox" id="qf-holiday-override"> On a holiday, keep the open configuration instead of the closed one.</label>
+        </div>
+
+        <div class="qsection">
+          <div class="qf-sim-row">
+            <span>Test as if it were</span>
+            <select id="qf-sim-time"><option>Now</option><option>9:00 AM</option><option>11:00 PM</option></select>
+            <span>— Asia/Kolkata time</span>
+          </div>
+          <div class="qf-sim-result" id="qf-sim-result">Open (hours) — nothing is configured for this state, so the call is handled exactly as it is today</div>
+        </div>
+      </div>
+
+      <!-- TAB 3: QUEUE SETTINGS -->
+      <div class="qtab-panel" id="qtab-3" hidden>
+        <div class="qsection">
+          <div class="qsection-title">After a call ends</div>
+          <div class="field-hint" style="margin-bottom:10px;">The pause an agent gets before this contact centre sends them the next caller.</div>
+          <div class="field">
+            <label class="field-label">Wrap-up time</label>
+            <div class="field-hint" style="margin:-2px 0 6px;">Seconds an agent is held back after hanging up, to finish their notes.</div>
+            <select id="qf-wrapup-time"><option>30</option><option>35</option><option>40</option><option>45</option><option>50</option><option>55</option><option>60</option></select>
+          </div>
+          <div class="field">
+            <label class="field-label">Wrap-up rule <span class="badge-type inbound">IN THIS APP ONLY</span></label>
+            <div class="field-hint" style="margin:-2px 0 6px;">Whether an agent may skip their wrap-up, or has to finish it.</div>
+            <select id="qf-wrapup-rule">
+              <option>Required, then moves on when time runs out</option>
+              <option>Required — no time limit</option>
+              <option>Only when the agent asks</option>
+            </select>
+            <div class="field-hint" style="margin-top:6px;">Required — no time limit is obeyed: the agent is held until they label the call, with a 20-minute safety ceiling. The two timed options both behave as the plain timer, and "only when the agent asks" gives no wrap-up at all — each says so in its own label.</div>
+          </div>
+          <div class="field">
+            <label class="field-label">Agent screen capture <span class="badge-type inbound">ACTIVE</span></label>
+            <div class="field-hint" style="margin:-2px 0 6px;">Record what is on the agent's screen during this contact centre's calls, alongside the audio.</div>
+            <div class="toggle-row"><label class="toggle-switch"><input type="checkbox" id="qf-screen-capture"><span class="toggle-slider"></span></label><span class="toggle-row-label" id="qf-screen-capture-label">Off — audio only, as before.</span></div>
+            <div class="field-hint" style="margin-top:6px;">Lives in the app: the agent is asked to share their screen for the shift, and each call in this contact centre is recorded from answer to hang-up. Supervisors open it from the call record. Kept as long as call recordings are.</div>
+          </div>
+          <div class="field">
+            <label class="field-label">What the agent reads on the call <span class="badge-type inbound">IN THIS APP ONLY</span></label>
+            <div class="field-hint" style="margin:-2px 0 6px;">A script shown in the agent's call panel while they are talking to this contact centre's callers.</div>
+            <div class="toggle-row"><label class="toggle-switch"><input type="checkbox" id="qf-call-script"><span class="toggle-slider"></span></label><span class="toggle-row-label">Call script — turn on to show one of your saved scripts to whoever answers.</span></div>
+            <div class="field-hint" style="margin-top:6px;">A script is something an agent reads. Nothing outside this app acts on it, and a caller never sees it.</div>
+          </div>
+        </div>
+
+        <div class="qsection">
+          <div class="qsection-title-row"><div class="qsection-title">How agents label a call <span class="badge-type inbound">ACTIVE</span></div><button class="icon-add-btn" id="qf-add-disposition">+</button></div>
+          <div class="field-hint" style="margin-bottom:8px;">When a call ends, the agent picks one of these to say how it went. It is saved with the call and counted in reports.</div>
+          <div class="field-error show" id="qf-disposition-error">Agent disposition is required</div>
+          <div class="qf-disp-grid" id="qf-disp-grid"></div>
+          <div class="field-hint" id="qf-disp-count" style="margin-top:8px;">0 of 7 offered on this queue. Switch on only the ones that make sense here - a shorter list gets picked more honestly.</div>
+        </div>
+
+        <div class="qsection">
+          <div class="qsection-title">What a supervisor may do here <span class="badge-type" style="background:var(--bg-subtle); color:var(--text-muted);">COMING SOON</span></div>
+          <div class="field-hint" style="margin-bottom:8px;">A supervisor of this contact centre watches and helps: they listen in, see the reports, and configure nothing. Whether they may also set somebody available is answered per contact centre, and it starts off.</div>
+          <div class="toggle-row"><label class="toggle-switch"><input type="checkbox" disabled><span class="toggle-slider"></span></label><span class="toggle-row-label">Supervisors may set people available or unavailable in this contact centre</span></div>
+          <div class="field-hint" style="margin-top:6px;">Off, which is how it starts. A supervisor here can watch and help, and cannot change anybody's duty. Admins are not affected either way. Saved with the contact centre. Enforced after deploy — today the server lets a supervisor change duty for anybody in the company, so this switch does not hold anyone back yet.</div>
+          <div class="coming-soon-banner" style="margin-top:10px;">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg>
-            Skill ratings will be configurable after selecting a routing method in Step 3.
+            Available after the next release. The live server's duty check does not look at this switch, or at which contact centre a supervisor belongs to, so today a supervisor can change duty for anybody in the company however this is set. Leaving it off changes nothing until that ships; turning it on would change nothing either, which is why it cannot be turned on here yet.
           </div>
         </div>
       </div>
+
+      <!-- TAB 4: ADD MEMBER -->
+      <div class="qtab-panel" id="qtab-4" hidden>
+        <div class="qsection-title">Who this contact centre rings</div>
+        <div class="field-hint" style="margin-bottom:6px;">Tick somebody to put them in this contact centre, untick to take them out. The change is kept when you press Submit on the last step; closing this drawer discards it. Only people at the location chosen on Basic info are listed.</div>
+        <div class="field-hint" style="margin-bottom:6px;">A licence follows the person, not the membership: somebody who is in three contact centres still uses one licence.</div>
+        <div class="qf-warning">Room phones cannot be added here. A place on this list needs a person with a sign-in and an e-mail address behind it, and a room phone has neither, so the server turns it away. Put a room phone in a department instead.</div>
+
+        <div class="qf-members-strip">
+          <span class="badge-type inbound" id="qf-member-count-badge">0 people are in this contact centre</span>
+          <div id="qf-member-chips"></div>
+          <div class="qf-manager-row"><span>MANAGER</span><span class="qf-manager-name" id="qf-manager-name">—</span><span class="field-inline-link">click to change</span></div>
+        </div>
+
+        <div class="agent-tabs" style="margin-top:16px;">
+          <button class="agent-tab-btn active" data-agent-tab="people">People</button>
+          <button class="agent-tab-btn" data-agent-tab="departments">Departments</button>
+        </div>
+
+        <div class="table-shell" style="margin-top:12px;">
+          <div class="table-scroll" style="max-height:none;">
+            <table>
+              <thead><tr><th class="col-check"></th><th>Name</th><th>Role in this contact centre</th><th>Skills</th></tr></thead>
+              <tbody id="qf-member-body"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="field-hint" style="margin-top:10px;">Whoever runs the contact centre is chosen for you as soon as somebody eligible joins. Click a different Manager circle to change it.</div>
+      </div>
+
+      <!-- TAB 5: RING STRATEGY -->
+      <div class="qtab-panel" id="qtab-5" hidden>
+        <div class="field-hint" style="margin-bottom:12px;">Set how you'd like to answer calls when conditions are met.</div>
+
+        <div class="routing-grid six" id="qf-routing-cards">
+          <div class="routing-card" data-routing="ringall"><span class="rc-icon">🔔</span><div class="rc-title">Ring All</div><div class="rc-desc">Ring everyone at once.</div><div class="rc-radio"></div></div>
+          <div class="routing-card" data-routing="roundrobin"><span class="rc-icon">🔄</span><div class="rc-title">Round Robin</div><div class="rc-desc">Take turns.</div><div class="rc-radio"></div></div>
+          <div class="routing-card selected" data-routing="topdown"><span class="rc-icon">📋</span><div class="rc-title">Top Down</div><div class="rc-desc">Always starts at the top of the list. Your most experienced people take most of the calls, and the rest only hear the busy ones.</div><div class="rc-radio"></div></div>
+          <div class="routing-card" data-routing="longestidle"><span class="rc-icon">⏱</span><div class="rc-title">Longest Idle Agent</div><div class="rc-desc">Whoever has waited longest.</div><div class="rc-radio"></div></div>
+          <div class="routing-card" data-routing="fewestcalls"><span class="rc-icon">📊</span><div class="rc-title">Agent With Fewest Calls</div><div class="rc-desc">Fewest calls handled today.</div><div class="rc-radio"></div></div>
+          <div class="routing-card" data-routing="leasttalk"><span class="rc-icon">🕑</span><div class="rc-title">Agent With Least Talk Time</div><div class="rc-desc">Least talk time today.</div><div class="rc-radio"></div></div>
+        </div>
+
+        <div class="qsection">
+          <div class="qsection-title">Skills this queue needs</div>
+          <div class="field-hint" style="margin-bottom:8px;">One row per category. A person must meet every row; inside a row, any one skill will do. Read each row as a sentence.</div>
+          <div class="toggle-row"><label class="toggle-switch"><input type="checkbox" id="qf-skills-requirement"><span class="toggle-slider"></span></label><span class="toggle-row-label">Requirement</span></div>
+          <div class="qf-empty-note" id="qf-skills-empty">Leave empty and everybody on the queue rings, as before.</div>
+          <span class="add-rule-link" id="qf-add-category"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Add a category</span>
+        </div>
+
+        <div class="qsection">
+          <div class="qsection-title">Priority between queues</div>
+          <div class="field-hint" style="margin-bottom:8px;">When the same people answer for several queues, whose caller gets a free person first.</div>
+          <div class="toggle-row"><label class="toggle-switch"><input type="checkbox" id="qf-queue-priority"><span class="toggle-slider"></span></label><span class="toggle-row-label">This queue's priority</span></div>
+          <div class="qf-empty-note" id="qf-priority-empty">First come, first served across queues.</div>
+          <select id="qf-priority-value" hidden style="margin-top:8px; max-width:160px;"><option>Normal</option><option>High</option><option>Low</option></select>
+        </div>
+
+        <div class="qsection">
+          <div class="qsection-title">Widening the ring</div>
+          <div class="field-hint" style="margin-bottom:8px;">What happens when the first group of people does not pick up.</div>
+          <div class="toggle-row"><label class="toggle-switch"><input type="checkbox" id="qf-widen-ring"><span class="toggle-slider"></span></label><span class="toggle-row-label">Widen the ring if nobody answers</span></div>
+          <div class="field-hint" style="margin-top:6px;">Start with tier 1, then bring in the next tier. People are added, never swapped out, so the first group keeps ringing.</div>
+        </div>
+
+        <div class="qsection">
+          <div class="qsection-title">What a caller would experience</div>
+          <div class="field-hint" style="margin-bottom:8px;">Your settings, walked through second by second. It assumes everybody is free — this answers whether the rules are sensible, not what is happening right now.</div>
+          <div class="qf-sim-timeline" id="qf-sim-timeline">
+            <div><b>at once</b> — Ringing 1 person: hanuman bishnoi.</div>
+            <div><b>60s</b> — The caller has waited 60s, which is the longest this queue holds anybody. They should go to the failover rather than keep ringing.</div>
+          </div>
+        </div>
+
+        <div class="qsection">
+          <div class="qsection-title">Who to prefer</div>
+          <div class="toggle-row"><label class="toggle-switch"><input type="checkbox" id="qf-sticky-agent"><span class="toggle-slider"></span></label><span class="toggle-row-label">Send them back to the person they spoke to last</span></div>
+          <div class="field-hint" style="margin-top:6px;">Familiar voice, no repeating themselves. If that person is busy or signed out the call routes normally - nobody waits for one agent unless you ask for it.</div>
+          <div class="field-hint" style="margin-top:4px;">Off</div>
+        </div>
+
+        <div class="qsection">
+          <div class="qsection-title">Answering target</div>
+          <div class="toggle-row"><label class="toggle-switch"><input type="checkbox" id="qf-answer-target"><span class="toggle-slider"></span></label><span class="toggle-row-label">Set a target for answering</span></div>
+          <div class="field-hint" style="margin-top:6px;">Reports show the service level against your goal instead of a bare average, so a supervisor sees a number and whether it is good enough.</div>
+          <div class="field" style="margin-top:10px;">
+            <label class="field-label">Ignore hang-ups faster than (seconds) <span class="badge-type inbound">IN THIS APP ONLY</span></label>
+            <div class="field-hint" style="margin:-2px 0 6px;">A caller who rings off this quickly dialled the wrong number or changed their mind. Those calls are left out of the abandon rate and the service level, so a run of instant failures does not read as customers losing patience. Zero counts every hang-up.</div>
+            <input type="number" class="field-input" value="0" style="max-width:120px;">
+          </div>
+          <div class="field-hint" style="margin-top:6px;">The Queue report and Performance both measure this queue against these seconds. Without a target of your own, the platform's 80% in 20 seconds stands in.</div>
+        </div>
+
+        <div class="qsection">
+          <div class="qsection-title">While the caller waits</div>
+          <div class="toggle-row"><label class="toggle-switch"><input type="checkbox" id="qf-tell-position"><span class="toggle-slider"></span></label><span class="toggle-row-label">Tell them where they are in the line</span></div>
+          <div class="field-hint" style="margin:4px 0 12px;">Callers who know they are third wait more willingly than callers who know nothing. The switch reads this and says the position while they wait.</div>
+          <div class="toggle-row"><label class="toggle-switch"><input type="checkbox" id="qf-tell-wait"><span class="toggle-slider"></span></label><span class="toggle-row-label">Tell them roughly how long</span></div>
+          <div class="field-hint" style="margin:4px 0 12px;">The queue works it out from the people on duty and how long its own calls take, and says it every minute or so. Nothing is said while it cannot be worked out honestly.</div>
+          <div class="toggle-row"><label class="toggle-switch"><input type="checkbox" id="qf-offer-callback"><span class="toggle-slider"></span></label><span class="toggle-row-label">Offer to call them back</span></div>
+          <div class="field-hint" style="margin-top:4px;">Instead of holding, a caller can press a key, confirm their number and hang up. They keep their place in the line; when their turn comes the queue rings them, and once they accept, an agent.</div>
+        </div>
+
+        <div class="qsection">
+          <div class="qsection-title">Call Queue Members</div>
+          <div class="table-shell">
+            <div class="table-scroll" style="max-height:none;">
+              <table><thead><tr><th>Name</th><th>Ring For</th></tr></thead><tbody id="qf-ring-members-body"></tbody></table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 6: MEDIA -->
+      <div class="qtab-panel" id="qtab-6" hidden>
+        <div id="qf-media-slots"></div>
+      </div>
+
     </div>
 
-    <!-- STEP 3: ROUTING -->
-    <div class="wizard-step" id="wizard-step-3" hidden>
-      <div class="field">
-        <label class="field-label">How should calls be distributed?</label>
-        <div class="routing-grid six" id="w-routing-cards">
-          <div class="routing-card selected" data-routing="roundrobin"><span class="rc-icon">🔄</span><div class="rc-title">Round Robin</div><div class="rc-desc">Agents take turns in rotation</div><div class="rc-best">Best for: equal distribution</div><div class="rc-radio"></div></div>
-          <div class="routing-card" data-routing="longestidle"><span class="rc-icon">⏱</span><div class="rc-title">Longest Idle</div><div class="rc-desc">Agent idle longest gets next call</div><div class="rc-best">Best for: fair load balancing</div><div class="rc-radio"></div></div>
-          <div class="routing-card" data-routing="topdown"><span class="rc-icon">📋</span><div class="rc-title">Top Down</div><div class="rc-desc">Always tries #1 agent first</div><div class="rc-best">Best for: priority agent routing</div><div class="rc-radio"></div></div>
-          <div class="routing-card" data-routing="fewestcalls"><span class="rc-icon">📊</span><div class="rc-title">Fewest Calls</div><div class="rc-desc">Agent with lowest call count today</div><div class="rc-best">Best for: balanced workload today</div><div class="rc-radio"></div></div>
-          <div class="routing-card" data-routing="ringall"><span class="rc-icon">🔔</span><div class="rc-title">Ring All</div><div class="rc-desc">All agents ring simultaneously</div><div class="rc-best">Best for: speed</div><div class="rc-radio"></div></div>
-          <div class="routing-card" data-routing="skills"><span class="rc-icon">⭐</span><div class="rc-title">Skills-Based</div><div class="rc-desc">Match caller to most skilled agent</div><div class="rc-best">Best for: expert matching</div><div class="rc-radio"></div></div>
-        </div>
-      </div>
-
-      <div class="field" id="w-skills-section" hidden>
-        <label class="field-label">Required Skills for This Queue</label>
-        <select id="w-skill-select">
-          <option value="">Select a skill to add…</option>
-          <option>Spanish</option><option>English</option><option>Technical Support</option>
-          <option>Billing</option><option>Enterprise</option><option>Sales</option>
-        </select>
-        <div class="skill-chip-row" id="w-skill-chips"></div>
-        <label class="field-label" style="margin-top:14px;">Skill Evaluation</label>
-        <div class="radio-option-group">
-          <label class="radio-option"><input type="radio" name="w-skill-eval" checked> Best Available (highest proficiency, idle breaks ties)</label>
-          <label class="radio-option"><input type="radio" name="w-skill-eval"> All Required (must have ALL skills)</label>
-          <label class="radio-option"><input type="radio" name="w-skill-eval"> Disregard Skills (next available agent)</label>
-        </div>
-      </div>
-
-      <div class="field">
-        <label class="field-label">After Call Work (ACW)</label>
-        <select id="w-acw">
-          <option value="optional">Optional</option>
-          <option value="mandatory">Mandatory Discretionary</option>
-          <option value="timeboxed">Mandatory Time-boxed</option>
-          <option value="noexit">No Early Exit</option>
-          <option value="requested">Agent Requested</option>
-        </select>
-        <div class="field-row" id="w-acw-timeout-row" hidden style="margin-top:10px;">
-          <input type="number" class="field-input" id="w-acw-seconds" value="60" min="10" max="3600" style="width:100px;">
-          <span class="field-hint">seconds</span>
-        </div>
-        <div class="info-box" id="w-acw-info" hidden>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg>
-          <span>With Mandatory Time-boxed, agents are automatically set to Available after <b id="w-acw-info-val">60</b> seconds.</span>
-        </div>
-      </div>
-
-      <div class="field">
-        <label class="field-label">Priority</label>
-        <div class="priority-row">
-          <input type="number" class="field-input" id="w-priority" value="500" min="1" max="1000">
-          <span class="field-hint">Starting Priority (1–1000)</span>
-        </div>
-        <div class="toggle-row">
-          <label class="toggle-switch"><input type="checkbox" id="w-escalation"><span class="toggle-slider"></span></label>
-          <span class="toggle-row-label">Increase priority while waiting</span>
-        </div>
-        <div class="escalation-fields" id="w-escalation-fields">
-          Increase by <input type="number" class="mini-input" id="w-esc-increase" value="10"> every <input type="number" class="mini-input" id="w-esc-every" value="5"> minutes, max <input type="number" class="mini-input" id="w-esc-max" value="1000">
-        </div>
-      </div>
+    <div class="qform-footer">
+      <button class="btn-ghost" id="qf-cancel-btn">Cancel</button>
+      <div class="spacer"></div>
+      <button class="btn-ghost" id="qf-prev-btn" disabled>Prev</button>
+      <button class="btn-primary-lg" id="qf-next-btn">Next</button>
     </div>
-
-    <!-- STEP 4: BUSINESS HOURS -->
-    <div class="wizard-step" id="wizard-step-4" hidden>
-      <div class="section-block">
-        <div class="section-block-title">Business Hours</div>
-        <div class="field" style="max-width:280px;">
-          <label class="field-label">Timezone</label>
-          <select id="w-timezone">
-            <option selected>America/New_York</option>
-            <option>America/Los_Angeles</option>
-            <option>America/Chicago</option>
-            <option>Asia/Kolkata</option>
-            <option>Europe/London</option>
-          </select>
-        </div>
-        <div class="preset-btns">
-          <button class="preset-btn" id="w-preset-247">24/7</button>
-          <button class="preset-btn active" id="w-preset-weekdays">Weekdays 9–5</button>
-          <button class="preset-btn" id="w-preset-custom">Custom</button>
-        </div>
-        <table class="hours-table">
-          <thead><tr><th>Day</th><th>Open</th><th>From</th><th>To</th><th>Copy</th></tr></thead>
-          <tbody id="w-hours-body"></tbody>
-        </table>
-      </div>
-
-      <div class="section-block">
-        <div class="section-block-title">Closed Hours Handling</div>
-        <div class="field">
-          <label class="field-label">When the queue is closed, route calls to:</label>
-          <select id="w-closed-handling">
-            <option value="voicemail">Voicemail</option>
-            <option value="queue">Another queue</option>
-            <option value="external">External number</option>
-            <option value="message">Play message and disconnect</option>
-          </select>
-        </div>
-        <div class="field" id="w-closed-queue-row" hidden>
-          <label class="field-label">Target queue</label>
-          <select id="w-closed-queue"></select>
-        </div>
-      </div>
-
-      <div class="section-block">
-        <div class="section-block-title">Overflow Rules</div>
-        <div class="toggle-row" style="margin-bottom:12px;">
-          <label class="toggle-switch"><input type="checkbox" id="w-overflow-enable" checked><span class="toggle-slider"></span></label>
-          <span class="toggle-row-label">Enable overflow rules</span>
-        </div>
-        <div id="w-overflow-rules"></div>
-        <span class="add-rule-link" id="w-add-rule">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
-          Add rule
-        </span>
-      </div>
-    </div>
-
-    <!-- STEP 5: REVIEW -->
-    <div class="wizard-step" id="wizard-step-5" hidden>
-      <div class="completeness-row" id="w-completeness"></div>
-      <div class="review-card">
-        <div class="review-card-head">Basic Information <a href="#" data-goto-step="1">Edit</a></div>
-        <div class="review-card-body" id="review-basic"></div>
-      </div>
-      <div class="review-card">
-        <div class="review-card-head">Agents <a href="#" data-goto-step="2">Edit</a></div>
-        <div class="review-card-body" id="review-agents"></div>
-      </div>
-      <div class="review-card">
-        <div class="review-card-head">Routing <a href="#" data-goto-step="3">Edit</a></div>
-        <div class="review-card-body" id="review-routing"></div>
-      </div>
-      <div class="review-card">
-        <div class="review-card-head">Business Hours &amp; Overflow <a href="#" data-goto-step="4">Edit</a></div>
-        <div class="review-card-body" id="review-hours"></div>
-      </div>
-    </div>
-
   </div>
+</div>
 
-  <div class="wizard-footer">
-    <button class="btn-ghost" id="wiz-cancel-btn">Cancel</button>
-    <button class="btn-ghost" id="wiz-back-btn" hidden>← Back</button>
-    <button class="btn-ghost" id="wiz-skip-btn" hidden>Skip for now</button>
-    <div class="spacer"></div>
-    <button class="btn-primary-lg" id="wiz-next-btn">Next: Add Agents →</button>
+<!-- ===================== DISCARD CONFIRMATION ===================== -->
+<div class="modal-overlay" id="discard-modal">
+  <div class="modal-box" style="width:420px;">
+    <div style="display:flex; align-items:flex-start; justify-content:space-between;">
+      <h3 style="border:none; margin:0;">Discard this call queue?</h3>
+      <button class="drawer-close" id="discard-modal-x"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    </div>
+    <p>What you've entered for this queue hasn't been saved.</p>
+    <div class="modal-actions">
+      <button class="btn-ghost" id="discard-keep-btn">Keep editing</button>
+      <button class="btn-primary-lg" id="discard-confirm-btn">Discard</button>
+    </div>
   </div>
 </div>
 
@@ -2591,6 +2792,7 @@ body.dark .unsaved-bar { background: #0a0d14; }
       <input type="text" class="detail-name-input" id="detail-name-input" hidden>
       <span class="status-pill" id="detail-status">Active</span>
       <div class="spacer"></div>
+      <button class="btn-outline" id="detail-edit-queue-btn" style="height:32px; padding:0 14px; font-size:12.5px;">Edit Queue</button>
       <span class="detail-edit-link" id="detail-edit-name-link">Edit Name</span>
       <div class="row-menu-wrap">
         <button class="kebab-btn" id="detail-kebab-btn">
@@ -3017,13 +3219,13 @@ body.dark .unsaved-bar { background: #0a0d14; }
    DATA
    ========================================================= */
 const ROUTING_META = {
-  ringall:     { label: "Ring All",         bg: "var(--info-light)",   fg: "var(--info)" },
-  roundrobin:  { label: "Round Robin",      bg: "var(--primary-light)", fg: "var(--primary)" },
-  topdown:     { label: "Top Down",         bg: "var(--warning-light)", fg: "var(--warning)" },
-  longestidle: { label: "Longest Idle",     bg: "var(--teal-light)",    fg: "var(--teal)" },
-  fewestcalls: { label: "Fewest Calls",     bg: "var(--success-light)", fg: "var(--success)" },
-  leasttalk:   { label: "Least Talk Time",  bg: "var(--purple-bg)",     fg: "var(--purple-text)" },
-  skills:      { label: "Skills-Based",     bg: "var(--pink-light)",    fg: "var(--pink)" },
+  ringall:     { label: "Ring All" },
+  roundrobin:  { label: "Round Robin" },
+  topdown:     { label: "Top Down" },
+  longestidle: { label: "Longest Idle Agent" },
+  fewestcalls: { label: "Agent With Fewest Calls" },
+  leasttalk:   { label: "Agent With Least Talk Time" },
+  skills:      { label: "Skills-Based" },
 };
 
 const HOURS_META = {
@@ -3201,6 +3403,7 @@ function ic(name) {
   return icons[name] || "";
 }
 function initials(name) { return name.split(/\s+/).map(w => w[0]).join("").slice(0, 2).toUpperCase(); }
+function slaClass(v) { return v >= 85 ? "" : v >= 75 ? "mid" : "low"; }
 
 /* =========================================================
    TOAST
@@ -3295,88 +3498,49 @@ function starRating(n) { let s = ""; for (let i = 1; i <= 5; i++) s += i <= n ? 
    QUEUE LIST
    ========================================================= */
 const tableBody = document.getElementById("table-body");
-let selectedIds = new Set();
-let sortKey = null, sortDir = 1;
-
-function slaClass(v) { return v >= 85 ? "" : v >= 75 ? "mid" : "low"; }
 
 function queueRowsFiltered() {
   const q = (document.getElementById("table-search").value || "").trim().toLowerCase();
   const site = document.getElementById("site-select").value;
-  const routing = document.getElementById("routing-select").value;
-  const hours = document.getElementById("hours-select").value;
-  let rows = QUEUES.filter(item => {
+  return QUEUES.filter(item => {
     if (q && !item.name.toLowerCase().includes(q)) return false;
     if (site && item.site !== site) return false;
-    if (routing && item.routing !== routing) return false;
-    if (hours && item.hours !== hours) return false;
     return true;
   });
-  if (sortKey) {
-    rows = rows.slice().sort((a, b) => {
-      let av = sortKey === "routingLabel" ? ROUTING_META[a.routing].label : a[sortKey];
-      let bv = sortKey === "routingLabel" ? ROUTING_META[b.routing].label : b[sortKey];
-      if (av == null) av = -1; if (bv == null) bv = -1;
-      if (typeof av === "string") return av.localeCompare(bv) * sortDir;
-      return (av - bv) * sortDir;
-    });
-  }
-  return rows;
 }
 
 function renderQueueRow(q) {
   const tr = document.createElement("tr");
   tr.dataset.id = q.id;
   const rm = ROUTING_META[q.routing], hm = HOURS_META[q.hours];
-  const slaCell = q.sla == null
-    ? '<span class="sla-none">—</span>'
-    : `<div class="sla-wrap"><div class="sla-bar-track"><div class="sla-bar-fill ${slaClass(q.sla)}" style="width:${q.sla}%"></div></div><span class="sla-label">${q.sla}%</span></div>`;
+  const memberLabel = q.campaign ? "U" : "HB";
   const actionsCell = q.campaign
     ? '<span class="managed-text">Managed by its campaign</span>'
-    : `<div class="row-menu-wrap">
-        <button class="kebab-btn" data-menu-trigger>⋯</button>
-        <div class="dropdown-menu">
-          <button class="dropdown-item" data-row-action="edit">${ic("edit")}Edit</button>
-          <button class="dropdown-item" data-row-action="duplicate">${ic("dup")}Duplicate</button>
-          <button class="dropdown-item danger" data-row-action="delete">${ic("trash")}Delete</button>
-        </div>
+    : `<div class="action-icons">
+        <button class="action-btn edit" title="Edit" data-row-action="edit">${ic("edit")}</button>
+        <button class="action-btn delete" title="Delete" data-row-action="delete">${ic("trash")}</button>
       </div>`;
   tr.innerHTML = `
-    <td class="col-check"><input type="checkbox" class="qt-checkbox row-chk"></td>
     <td>
       <div class="name-cell">
-        <div><a href="#" class="name-link">${q.name}</a></div>
-        <span class="badge-type ${q.campaign ? "campaign" : "inbound"}">${q.campaign ? "Campaign" : "Inbound"}</span>
+        <a href="#" class="name-link">${q.name}</a>
+        ${q.campaign ? '<span class="badge-campaign">Campaign</span>' : ""}
       </div>
     </td>
-    <td data-col="site">${q.site || "—"}</td>
-    <td data-col="ext"><span class="chip-mono">${q.ext}</span></td>
+    <td>${q.site || ""}</td>
+    <td>${q.ext}</td>
     <td><span class="${q.numberLink ? "phone-link" : "no-number"}">${q.number}</span></td>
-    <td><span class="badge-routing" style="--badge-bg:${rm.bg};--badge-fg:${rm.fg}">${rm.label}</span></td>
-    <td><span class="pill-hours" style="--pill-bg:${hm.bg};--pill-fg:${hm.fg}">${hm.label}</span></td>
-    <td data-col="members">${q.members == null ? '<span class="managed-text">—</span>' : q.members}</td>
-    <td data-col="sla">${slaCell}</td>
-    <td><span class="status-row ${q.status === "Active" ? "active" : ""}"><span class="dot"></span>${q.status}</span></td>
+    <td>${rm.label}</td>
+    <td>${hm.label}</td>
+    <td><div class="avatar">${memberLabel}</div></td>
+    <td>${q.created || ""}</td>
     <td>${actionsCell}</td>
   `;
   tr.querySelector(".name-link").addEventListener("click", e => { e.preventDefault(); openQueueDetail(q.id); });
-  tr.querySelector(".row-chk").addEventListener("click", e => { e.stopPropagation(); toggleRowSelect(q.id, e.target.checked); });
-  tr.addEventListener("click", e => {
-    if (e.target.closest("a, button, input, .dropdown-menu")) return;
-    openQueueDetail(q.id);
-  });
-  const trigger = tr.querySelector("[data-menu-trigger]");
-  if (trigger) {
-    trigger.addEventListener("click", e => { e.stopPropagation(); toggleDropdown(trigger.nextElementSibling); });
-    tr.querySelectorAll("[data-row-action]").forEach(btn => btn.addEventListener("click", e => {
-      e.stopPropagation();
-      const action = btn.dataset.rowAction;
-      toggleDropdown(btn.closest(".dropdown-menu"));
-      if (action === "edit") openQueueDetail(q.id);
-      else if (action === "duplicate") duplicateQueue(q.id);
-      else if (action === "delete") confirmDeleteQueue(q.id);
-    }));
-  }
+  const editBtn = tr.querySelector('[data-row-action="edit"]');
+  if (editBtn) editBtn.addEventListener("click", e => { e.stopPropagation(); openQueueForm("edit", q); });
+  const delBtn = tr.querySelector('[data-row-action="delete"]');
+  if (delBtn) delBtn.addEventListener("click", e => { e.stopPropagation(); confirmDeleteQueue(q.id); });
   return tr;
 }
 
@@ -3390,50 +3554,10 @@ function renderQueueTable() {
   tableBody.innerHTML = "";
   rows.forEach(q => tableBody.appendChild(renderQueueRow(q)));
   document.getElementById("empty-state").hidden = rows.length !== 0;
-  document.querySelector("#queues-table").parentElement.style.display = rows.length === 0 ? "none" : "";
-  document.getElementById("record-count").textContent = `Showing 1–${rows.length} of ${QUEUES.length} queues`;
+  document.querySelector(".table-scroll").style.display = rows.length === 0 ? "none" : "";
+  document.getElementById("record-count").textContent = `${QUEUES.length} record(s)`;
   updateStats();
-  applyColumnVisibility();
-  document.getElementById("select-all-chk").checked = false;
-  selectedIds.clear();
-  updateBulkBar();
 }
-
-function toggleRowSelect(id, checked) {
-  if (checked) selectedIds.add(id); else selectedIds.delete(id);
-  updateBulkBar();
-}
-function updateBulkBar() {
-  const bar = document.getElementById("bulk-bar");
-  bar.classList.toggle("show", selectedIds.size > 0);
-  document.getElementById("bulk-count").textContent = `${selectedIds.size} selected`;
-}
-document.getElementById("select-all-chk").addEventListener("change", e => {
-  tableBody.querySelectorAll(".row-chk").forEach(chk => {
-    chk.checked = e.target.checked;
-    const id = Number(chk.closest("tr").dataset.id);
-    if (e.target.checked) selectedIds.add(id); else selectedIds.delete(id);
-  });
-  updateBulkBar();
-});
-document.getElementById("bulk-cancel").addEventListener("click", () => {
-  selectedIds.clear();
-  document.getElementById("select-all-chk").checked = false;
-  tableBody.querySelectorAll(".row-chk").forEach(c => c.checked = false);
-  updateBulkBar();
-});
-document.getElementById("bulk-deactivate").addEventListener("click", () => {
-  QUEUES.forEach(q => { if (selectedIds.has(q.id)) q.status = "Inactive"; });
-  showToast("success", `${selectedIds.size} queue(s) deactivated.`);
-  renderQueueTable();
-});
-document.getElementById("bulk-delete").addEventListener("click", () => {
-  openConfirmModal(`Delete ${selectedIds.size} queue(s)?`, "This will permanently delete the selected queues. This cannot be undone.", "Delete Queues", () => {
-    for (let i = QUEUES.length - 1; i >= 0; i--) if (selectedIds.has(QUEUES[i].id)) QUEUES.splice(i, 1);
-    showToast("success", "Selected queues deleted.");
-    renderQueueTable();
-  });
-});
 
 function duplicateQueue(id) {
   const src = QUEUES.find(q => q.id === id);
@@ -3453,352 +3577,304 @@ function confirmDeleteQueue(id) {
   });
 }
 
-function applyColumnVisibility() {
-  document.querySelectorAll(".col-toggle").forEach(chk => {
-    const col = chk.dataset.col;
-    document.querySelectorAll(`[data-col="${col}"]`).forEach(el => el.style.display = chk.checked ? "" : "none");
-  });
-}
-document.querySelectorAll(".col-toggle").forEach(chk => chk.addEventListener("change", applyColumnVisibility));
-document.getElementById("columns-btn").addEventListener("click", e => { e.stopPropagation(); toggleDropdown(document.getElementById("columns-menu")); });
-
-["table-search", "site-select", "routing-select", "hours-select"].forEach(id => {
-  const el = document.getElementById(id);
-  el.addEventListener(id === "table-search" ? "input" : "change", renderQueueTable);
+document.getElementById("table-search").addEventListener("input", renderQueueTable);
+document.getElementById("site-select").addEventListener("change", renderQueueTable);
+document.getElementById("refresh-btn").addEventListener("click", function () {
+  this.classList.add("spinning");
+  document.getElementById("table-search").value = "";
+  document.getElementById("site-select").value = "";
+  renderQueueTable();
+  setTimeout(() => this.classList.remove("spinning"), 600);
 });
 
-document.querySelectorAll("#queues-table th.sortable").forEach(th => {
-  th.addEventListener("click", () => {
-    const key = th.dataset.sort;
-    if (sortKey === key) sortDir *= -1; else { sortKey = key; sortDir = 1; }
-    document.querySelectorAll("#queues-table th.sortable").forEach(t => t.classList.remove("sort-asc", "sort-desc"));
-    th.classList.add(sortDir === 1 ? "sort-asc" : "sort-desc");
-    renderQueueTable();
-  });
-});
-
-document.getElementById("new-queue-btn").addEventListener("click", openWizard);
-document.getElementById("empty-new-queue-btn").addEventListener("click", openWizard);
+document.getElementById("new-queue-btn").addEventListener("click", () => openQueueForm("create"));
+document.getElementById("empty-new-queue-btn").addEventListener("click", () => openQueueForm("create"));
 
 renderQueueTable();
 
 /* =========================================================
-   WIZARD
+   ADD / UPDATE CALL QUEUE DRAWER (mirrors the real MCM flow)
    ========================================================= */
-const DAY_LIST = [["mon","Monday"],["tue","Tuesday"],["wed","Wednesday"],["thu","Thursday"],["fri","Friday"],["sat","Saturday"],["sun","Sunday"]];
+const CC_PEOPLE = [
+  { id: 1, name: "Adarsh Mishra",  role: "AGENT", ext: "9787", email: "adarsh@ucaas.co.in",         color: "#f59e0b" },
+  { id: 2, name: "Shyam Chauhan",  role: "AGENT", ext: "6727", email: "shyam@ucaas.co.in",           color: "#3b82f6" },
+  { id: 3, name: "Kamran Ansari",  role: "AGENT", ext: "6418", email: "kamran@ucaas.co.in",          color: "#8b5cf6" },
+  { id: 4, name: "Hanuman Bishnoi", role: "ADMIN", ext: "1000", email: "hanumanbishnoi@ucaas.co.in", color: "#10b981" },
+];
+const DISPOSITIONS = ["Resolved", "Interested", "Not Interested", "Sale Closed", "Feedback Received", "Happy Client", "Call Back Later"];
+const ROUTING_DESC = {
+  ringall: "All agents ring simultaneously.", roundrobin: "Agents take turns in rotation.",
+  topdown: "Always starts at the top of the list. Your most experienced people take most of the calls, and the rest only hear the busy ones.",
+  longestidle: "Agent idle longest gets the next call.", fewestcalls: "Agent with the lowest call count today.",
+  leasttalk: "Agent with the least talk time today.",
+};
 
-let wizardState = null;
-function freshWizardState() {
-  return {
-    step: 1, name: "", site: "Unified Testing Team", phone: "", ext: String(1000 + Math.floor(Math.random() * 9000)),
-    type: "voice", desc: "", copyFrom: "", agentIds: [],
-    routing: "roundrobin", skills: [], skillEval: "Best Available", acw: "optional", acwSeconds: 60,
-    priority: 500, escalation: false, escIncrease: 10, escEvery: 5, escMax: 1000,
-    timezone: "America/New_York",
-    days: { mon:{open:true,from:"09:00",to:"17:00"}, tue:{open:true,from:"09:00",to:"17:00"}, wed:{open:true,from:"09:00",to:"17:00"},
-            thu:{open:true,from:"09:00",to:"17:00"}, fri:{open:true,from:"09:00",to:"17:00"}, sat:{open:false,from:"09:00",to:"17:00"}, sun:{open:false,from:"09:00",to:"17:00"} },
-    closedHandling: "voicemail", closedQueue: "",
-    overflowEnabled: true,
-    overflowRules: [ { type: "rule-warning", label: "If caller waits more than", value: 30, unit: "minutes", action: "Voicemail" },
-                      { type: "rule-danger",  label: "If queue has more than", value: 50, unit: "callers", action: "Transfer to external number" } ],
-  };
-}
+let qform = { mode: "create", queueId: null, tab: 1, dirty: false, memberIds: [], dispositions: {}, mediaOn: {} };
 
-function openWizard() {
-  wizardState = freshWizardState();
-  document.getElementById("w-copyfrom").innerHTML = '<option value="">None (start fresh)</option>' +
-    QUEUES.filter(q => !q.campaign).map(q => `<option>${q.name}</option>`).join("");
-  document.getElementById("w-closed-queue").innerHTML = QUEUES.filter(q => !q.campaign).map(q => `<option>${q.name}</option>`).join("");
-  document.getElementById("w-name").value = "";
-  document.getElementById("w-desc").value = "";
-  document.getElementById("w-desc-count").textContent = "0";
-  document.getElementById("w-ext").value = wizardState.ext;
-  renderAgentList("w-agent-list", "w-agent-search");
-  renderSelectedAgents();
-  renderWizardHours();
-  renderOverflowRules("w-overflow-rules", wizardState.overflowRules);
-  goToWizardStep(1);
-  showView("view-queue-wizard", "");
-}
+function openQueueForm(mode, queue) {
+  qform = { mode, queueId: queue ? queue.id : null, tab: 1, dirty: false, memberIds: [], dispositions: {}, mediaOn: {} };
+  DISPOSITIONS.forEach(d => qform.dispositions[d] = false);
 
-function goToWizardStep(n) {
-  wizardState.step = n;
-  document.querySelectorAll(".wizard-step").forEach((el, i) => el.hidden = (i + 1) !== n);
-  document.querySelectorAll(".wp-step").forEach(el => {
-    const s = Number(el.dataset.step);
-    el.classList.toggle("active", s === n);
-    el.classList.toggle("done", s < n);
-  });
-  document.getElementById("wizard-step-count").textContent = `Step ${n} of 5`;
-  document.getElementById("wiz-back-btn").hidden = n === 1;
-  document.getElementById("wiz-cancel-btn").hidden = n !== 1;
-  document.getElementById("wiz-skip-btn").hidden = n !== 2;
-  const nextBtn = document.getElementById("wiz-next-btn");
-  const labels = { 1: "Next: Add Agents →", 2: "Next: Routing →", 3: "Next: Business Hours →", 4: "Next: Review →", 5: "✓ Create Queue" };
-  nextBtn.textContent = labels[n];
-  if (n === 5) { populateReview(); }
-}
+  document.getElementById("qform-title").textContent = mode === "edit" ? `Update Call Queue (${queue.name})` : "Add Call Queue";
+  document.getElementById("qf-name").value = mode === "edit" ? queue.name.replace(/^Inbound -\s*/, "") : "";
+  document.getElementById("qf-name-preview").textContent = "Saved and reported as Inbound - " + (mode === "edit" ? queue.name.replace(/^Inbound -\s*/, "") : "");
+  document.getElementById("qf-desc").value = "";
+  document.getElementById("qf-location").value = (mode === "edit" ? queue.site : "Unified Testing Team") || "";
+  document.getElementById("qf-ext").value = mode === "edit" ? queue.ext : String(1000 + Math.floor(Math.random() * 9000));
+  const extInput = document.getElementById("qf-ext");
+  extInput.readOnly = mode === "edit";
+  extInput.classList.toggle("field-readonly", mode === "edit");
 
-document.getElementById("wiz-cancel-btn").addEventListener("click", () => showView("view-contact-centres", ""));
-document.getElementById("wizard-back-link").addEventListener("click", e => { e.preventDefault(); showView("view-contact-centres", ""); });
-document.getElementById("wiz-back-btn").addEventListener("click", () => goToWizardStep(wizardState.step - 1));
-document.getElementById("wiz-skip-btn").addEventListener("click", () => goToWizardStep(3));
-document.getElementById("wiz-next-btn").addEventListener("click", () => {
-  if (wizardState.step === 1 && !validateStep1()) return;
-  if (wizardState.step === 5) { createQueueFromWizard(); return; }
-  goToWizardStep(wizardState.step + 1);
-});
-document.querySelectorAll("[data-goto-step]").forEach(a => a.addEventListener("click", e => { e.preventDefault(); goToWizardStep(Number(a.dataset.gotoStep)); }));
+  document.querySelectorAll("#qf-routing-cards .routing-card").forEach(c => c.classList.remove("selected"));
+  const initialRouting = mode === "edit" ? queue.routing : "roundrobin";
+  const initCard = document.querySelector(`#qf-routing-cards .routing-card[data-routing="${initialRouting}"]`);
+  if (initCard) initCard.classList.add("selected");
 
-function validateStep1() {
-  const nameEl = document.getElementById("w-name");
-  const valid = nameEl.value.trim().length > 0;
-  nameEl.classList.toggle("error", !valid);
-  document.getElementById("w-name-error").classList.toggle("show", !valid);
-  document.getElementById("w-name-check").classList.toggle("show", valid);
-  if (valid) wizardState.name = nameEl.value.trim();
-  return valid;
-}
-document.getElementById("w-name").addEventListener("blur", validateStep1);
-document.getElementById("w-name").addEventListener("input", () => { wizardState.name = document.getElementById("w-name").value; });
-document.getElementById("w-ext-regen").addEventListener("click", () => {
-  wizardState.ext = String(1000 + Math.floor(Math.random() * 9000));
-  document.getElementById("w-ext").value = wizardState.ext;
-});
-document.getElementById("w-desc").addEventListener("input", e => {
-  document.getElementById("w-desc-count").textContent = e.target.value.length;
-});
-
-document.getElementById("w-type-voice").addEventListener("click", () => selectRoutingType("voice"));
-document.getElementById("w-type-digital").addEventListener("click", () => selectRoutingType("digital"));
-function selectRoutingType(type) {
-  wizardState.type = type;
-  document.getElementById("w-type-voice").classList.toggle("selected", type === "voice");
-  document.getElementById("w-type-digital").classList.toggle("selected", type === "digital");
-}
-
-/* --- Agents step --- */
-function renderAgentList(listId, searchId, excludeIds) {
-  excludeIds = excludeIds || [];
-  const list = document.getElementById(listId);
-  const q = (document.getElementById(searchId)?.value || "").trim().toLowerCase();
-  list.innerHTML = "";
-  AGENTS.filter(a => !excludeIds.includes(a.id) && a.name.toLowerCase().includes(q)).forEach(a => {
-    const row = document.createElement("div");
-    row.className = "agent-row";
-    row.innerHTML = `<input type="checkbox" ${wizardState && wizardState.agentIds.includes(a.id) ? "checked" : ""}>
-      <div class="agent-avatar" style="background:${a.color}">${initials(a.name)}</div>
-      <div class="agent-info"><div class="agent-name">${a.name}</div><div class="agent-role">${a.role} · ${a.queues} queue${a.queues === 1 ? "" : "s"}</div></div>`;
-    row.addEventListener("click", e => {
-      if (e.target.tagName !== "INPUT") row.querySelector("input").checked = !row.querySelector("input").checked;
-      const checked = row.querySelector("input").checked;
-      if (checked) { if (!wizardState.agentIds.includes(a.id)) wizardState.agentIds.push(a.id); }
-      else wizardState.agentIds = wizardState.agentIds.filter(id => id !== a.id);
-      renderSelectedAgents();
-    });
-    list.appendChild(row);
-  });
-}
-document.getElementById("w-agent-search").addEventListener("input", () => renderAgentList("w-agent-list", "w-agent-search"));
-document.querySelectorAll(".agent-tab-btn").forEach(btn => btn.addEventListener("click", () => {
-  document.querySelectorAll(".agent-tab-btn").forEach(b => b.classList.remove("active"));
-  btn.classList.add("active");
-}));
-
-function renderSelectedAgents() {
-  const list = document.getElementById("w-selected-list");
-  const agents = wizardState.agentIds.map(id => AGENTS.find(a => a.id === id)).filter(Boolean);
-  document.getElementById("w-selected-title").textContent = `Selected Agents (${agents.length})`;
-  document.getElementById("w-selected-empty").hidden = agents.length > 0;
-  document.getElementById("w-skill-note").hidden = agents.length === 0;
-  list.innerHTML = "";
-  agents.forEach(a => {
-    const row = document.createElement("div");
-    row.className = "selected-agent-row";
-    row.innerHTML = `<div class="agent-avatar" style="background:${a.color}">${initials(a.name)}</div><div class="agent-info"><div class="agent-name">${a.name}</div><div class="agent-role">${a.role}</div></div><button class="selected-agent-remove">${ic("x")}</button>`;
-    row.querySelector("button").addEventListener("click", () => {
-      wizardState.agentIds = wizardState.agentIds.filter(id => id !== a.id);
-      renderSelectedAgents();
-      renderAgentList("w-agent-list", "w-agent-search");
-    });
-    list.appendChild(row);
-  });
-}
-
-/* --- Routing step --- */
-document.querySelectorAll("#w-routing-cards .routing-card").forEach(card => {
-  card.addEventListener("click", () => {
-    document.querySelectorAll("#w-routing-cards .routing-card").forEach(c => c.classList.remove("selected"));
-    card.classList.add("selected");
-    wizardState.routing = card.dataset.routing;
-    document.getElementById("w-skills-section").hidden = wizardState.routing !== "skills";
-  });
-});
-document.getElementById("w-skill-select").addEventListener("change", e => {
-  const val = e.target.value;
-  if (val && !wizardState.skills.includes(val)) {
-    wizardState.skills.push(val);
-    renderSkillChips();
+  if (mode === "edit" && queue.name.includes("topdown2")) {
+    qform.memberIds = [4];
+    qform.mediaOn["Waiting | no agent available | all agent busy message"] = true;
   }
-  e.target.value = "";
-});
-function renderSkillChips() {
-  const wrap = document.getElementById("w-skill-chips");
-  wrap.innerHTML = "";
-  wizardState.skills.forEach(s => {
-    const chip = document.createElement("span");
-    chip.className = "skill-chip";
-    chip.innerHTML = `${s} <button>${ic("x")}</button>`;
-    chip.querySelector("button").addEventListener("click", () => { wizardState.skills = wizardState.skills.filter(x => x !== s); renderSkillChips(); });
-    wrap.appendChild(chip);
+
+  renderQfDispositions();
+  renderQfMembers();
+  renderQfMediaSlots();
+  updateQfMemberStrip();
+
+  document.querySelectorAll(".qform-tab").forEach((t, i) => t.classList.toggle("active", i === 0));
+  document.querySelectorAll(".qtab-panel").forEach((p, i) => p.hidden = i !== 0);
+  document.getElementById("qf-prev-btn").disabled = true;
+  document.getElementById("qf-next-btn").textContent = "Next";
+
+  document.getElementById("qform-overlay").classList.add("open");
+  document.querySelectorAll(".qform-body input, .qform-body select, .qform-body textarea").forEach(el => {
+    el.addEventListener("input", () => qform.dirty = true, { once: false });
   });
 }
-document.getElementById("w-acw").addEventListener("change", e => {
-  const boxed = e.target.value === "timeboxed";
-  document.getElementById("w-acw-timeout-row").hidden = !boxed;
-  document.getElementById("w-acw-info").hidden = !boxed;
-});
-document.getElementById("w-acw-seconds").addEventListener("input", e => { document.getElementById("w-acw-info-val").textContent = e.target.value; });
-document.getElementById("w-escalation").addEventListener("change", e => document.getElementById("w-escalation-fields").classList.toggle("show", e.target.checked));
 
-/* --- Business hours step (shared renderer, reused in Detail too) --- */
-function renderHoursTable(bodyId, days, editable) {
-  const body = document.getElementById(bodyId);
+function goToQfTab(n) {
+  if (qform.mode === "create" && n > qform.tab) {
+    if (qform.tab === 1 && !validateQfBasicInfo()) return;
+    if (qform.tab === 3 && n > 3 && !validateQfDispositions()) return;
+  }
+  qform.tab = n;
+  document.querySelectorAll(".qform-tab").forEach((t, i) => t.classList.toggle("active", i === n - 1));
+  document.querySelectorAll(".qtab-panel").forEach((p, i) => p.hidden = i !== n - 1);
+  document.getElementById("qf-prev-btn").disabled = n === 1;
+  document.getElementById("qf-next-btn").textContent = n === 6 ? "Submit" : "Next";
+}
+
+document.querySelectorAll(".qform-tab").forEach(tab => tab.addEventListener("click", () => goToQfTab(Number(tab.dataset.qtab))));
+document.getElementById("qf-prev-btn").addEventListener("click", () => goToQfTab(qform.tab - 1));
+document.getElementById("qf-next-btn").addEventListener("click", () => {
+  if (qform.tab === 6) { submitQueueForm(); return; }
+  goToQfTab(qform.tab + 1);
+});
+
+function validateQfBasicInfo() {
+  const nameEl = document.getElementById("qf-name");
+  const locEl = document.getElementById("qf-location");
+  const nameValid = nameEl.value.trim().length > 0;
+  const locValid = locEl.value.trim().length > 0;
+  document.getElementById("qf-name-error").classList.toggle("show", !nameValid);
+  return nameValid && locValid;
+}
+document.getElementById("qf-name").addEventListener("input", e => {
+  document.getElementById("qf-name-preview").textContent = "Saved and reported as Inbound - " + e.target.value;
+});
+
+function renderQfDispositions() {
+  const grid = document.getElementById("qf-disp-grid");
+  grid.innerHTML = "";
+  DISPOSITIONS.forEach(label => {
+    const row = document.createElement("div");
+    row.className = "qf-disp-row";
+    row.innerHTML = `<span>${label}</span><label class="toggle-switch"><input type="checkbox" ${qform.dispositions[label] ? "checked" : ""}><span class="toggle-slider"></span></label>`;
+    row.querySelector("input").addEventListener("change", e => {
+      qform.dispositions[label] = e.target.checked;
+      qform.dirty = true;
+      updateQfDispCount();
+    });
+    grid.appendChild(row);
+  });
+  updateQfDispCount();
+}
+function updateQfDispCount() {
+  const n = Object.values(qform.dispositions).filter(Boolean).length;
+  document.getElementById("qf-disp-count").textContent = `${n} of 7 offered on this queue. Switch on only the ones that make sense here - a shorter list gets picked more honestly.`;
+  document.getElementById("qf-disposition-error").classList.toggle("show", n === 0);
+}
+function validateQfDispositions() {
+  const n = Object.values(qform.dispositions).filter(Boolean).length;
+  document.getElementById("qf-disposition-error").classList.toggle("show", n === 0);
+  return n > 0;
+}
+document.getElementById("qf-add-disposition").addEventListener("click", () => showToast("info", "Custom dispositions would be added here."));
+
+function renderQfMembers() {
+  const body = document.getElementById("qf-member-body");
   body.innerHTML = "";
-  DAY_LIST.forEach(([key, label]) => {
-    const d = days[key];
+  CC_PEOPLE.forEach(p => {
     const tr = document.createElement("tr");
+    const checked = qform.memberIds.includes(p.id);
     tr.innerHTML = `
-      <td class="day-name">${label}</td>
-      <td><label class="toggle-switch"><input type="checkbox" data-day="${key}" class="day-open-chk" ${d.open ? "checked" : ""}><span class="toggle-slider"></span></label></td>
-      <td>${d.open ? `<input type="time" class="time-input" data-day="${key}" data-field="from" value="${d.from}">` : '<span class="time-closed">—</span>'}</td>
-      <td>${d.open ? `<input type="time" class="time-input" data-day="${key}" data-field="to" value="${d.to}">` : '<span class="time-closed">—</span>'}</td>
-      <td>${d.open ? `<button class="copy-icon-btn" data-copy="${key}" title="Copy to all open days">⧉</button>` : ""}</td>
+      <td class="col-check"><input type="checkbox" class="qt-checkbox" ${checked ? "checked" : ""}></td>
+      <td>
+        <div class="name-cell" style="flex-direction:row; align-items:center; gap:10px;">
+          <div class="agent-avatar" style="background:${p.color}">${initials(p.name)}</div>
+          <div>
+            <div class="agent-name">${p.name}</div>
+            <div class="agent-role">${p.role} · ${p.ext} · ${p.email}</div>
+          </div>
+        </div>
+      </td>
+      <td>
+        <select style="padding:6px 8px; border:1px solid var(--border); border-radius:6px; font-size:12.5px;">
+          <option>No role — just a member</option><option>Admin</option><option>Operator</option><option>Supervisor</option>
+        </select>
+        <div class="field-hint" style="margin-top:4px;">Available after the next release. The server does not store a role on a contact centre membership yet.</div>
+      </td>
+      <td><span class="managed-text">No skills rated</span></td>
     `;
+    tr.querySelector('input[type="checkbox"]').addEventListener("change", e => {
+      if (e.target.checked) { if (!qform.memberIds.includes(p.id)) qform.memberIds.push(p.id); }
+      else qform.memberIds = qform.memberIds.filter(id => id !== p.id);
+      qform.dirty = true;
+      updateQfMemberStrip();
+      renderQfRingMembers();
+    });
     body.appendChild(tr);
   });
-  body.querySelectorAll(".day-open-chk").forEach(chk => chk.addEventListener("change", e => {
-    days[e.target.dataset.day].open = e.target.checked;
-    renderHoursTable(bodyId, days);
-  }));
-  body.querySelectorAll(".time-input").forEach(inp => inp.addEventListener("input", e => {
-    days[e.target.dataset.day][e.target.dataset.field] = e.target.value;
-  }));
-  body.querySelectorAll("[data-copy]").forEach(btn => btn.addEventListener("click", () => {
-    const src = days[btn.dataset.copy];
-    Object.keys(days).forEach(k => { if (days[k].open) { days[k].from = src.from; days[k].to = src.to; } });
-    renderHoursTable(bodyId, days);
-    showToast("info", "Hours copied to all open days.");
-  }));
+  renderQfRingMembers();
 }
-function renderWizardHours() { renderHoursTable("w-hours-body", wizardState.days); }
 
-document.getElementById("w-preset-247").addEventListener("click", function () {
-  document.querySelectorAll("#wizard-step-4 .preset-btn").forEach(b => b.classList.remove("active"));
-  this.classList.add("active");
-  Object.keys(wizardState.days).forEach(k => wizardState.days[k] = { open: true, from: "00:00", to: "23:59" });
-  renderWizardHours();
-});
-document.getElementById("w-preset-weekdays").addEventListener("click", function () {
-  document.querySelectorAll("#wizard-step-4 .preset-btn").forEach(b => b.classList.remove("active"));
-  this.classList.add("active");
-  ["mon","tue","wed","thu","fri"].forEach(k => wizardState.days[k] = { open: true, from: "09:00", to: "17:00" });
-  ["sat","sun"].forEach(k => wizardState.days[k].open = false);
-  renderWizardHours();
-});
-document.getElementById("w-preset-custom").addEventListener("click", function () {
-  document.querySelectorAll("#wizard-step-4 .preset-btn").forEach(b => b.classList.remove("active"));
-  this.classList.add("active");
-});
-document.getElementById("w-closed-handling").addEventListener("change", e => {
-  document.getElementById("w-closed-queue-row").hidden = e.target.value !== "queue";
+function updateQfMemberStrip() {
+  const members = qform.memberIds.map(id => CC_PEOPLE.find(p => p.id === id)).filter(Boolean);
+  document.getElementById("qf-member-count-badge").textContent = `${members.length} ${members.length === 1 ? "person is" : "people are"} in this contact centre`;
+  const chipsWrap = document.getElementById("qf-member-chips");
+  chipsWrap.innerHTML = "";
+  members.forEach((m, i) => {
+    const chip = document.createElement("span");
+    chip.className = "qf-member-chip";
+    chip.innerHTML = `${m.name} · ${m.ext} ${i === 0 ? '<span class="qf-runs-it">RUNS IT</span>' : ""} <button>${ic("x")}</button>`;
+    chip.querySelector("button").addEventListener("click", () => {
+      qform.memberIds = qform.memberIds.filter(id => id !== m.id);
+      updateQfMemberStrip();
+      renderQfMembers();
+    });
+    chipsWrap.appendChild(chip);
+  });
+  document.getElementById("qf-manager-name").textContent = members[0] ? members[0].name : "—";
+}
+
+function renderQfRingMembers() {
+  const body = document.getElementById("qf-ring-members-body");
+  if (!body) return;
+  const members = qform.memberIds.map(id => CC_PEOPLE.find(p => p.id === id)).filter(Boolean);
+  body.innerHTML = members.length
+    ? members.map(m => `<tr><td>${initials(m.name)} — ${m.name} | ${m.role} | ${m.ext} | ${m.email}</td><td>6 times / 30 secs</td></tr>`).join("")
+    : `<tr><td colspan="2" class="managed-text">No members yet.</td></tr>`;
+}
+
+document.querySelectorAll("#qf-routing-cards .routing-card").forEach(card => {
+  card.addEventListener("click", () => {
+    document.querySelectorAll("#qf-routing-cards .routing-card").forEach(c => c.classList.remove("selected"));
+    card.classList.add("selected");
+    qform.dirty = true;
+    const key = card.dataset.routing;
+    document.getElementById("qf-sim-timeline").innerHTML =
+      `<div><b>at once</b> — Ringing: ${ROUTING_DESC[key] || ""}</div>
+       <div><b>60s</b> — The caller has waited 60s, which is the longest this queue holds anybody. They should go to the failover rather than keep ringing.</div>`;
+  });
 });
 
-function renderOverflowRules(containerId, rules) {
-  const wrap = document.getElementById(containerId);
+document.querySelectorAll('.seg-toggle').forEach(seg => {
+  seg.querySelectorAll(".seg-btn").forEach(btn => btn.addEventListener("click", () => {
+    seg.querySelectorAll(".seg-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    qform.dirty = true;
+  }));
+});
+
+document.getElementById("qf-screen-capture").addEventListener("change", e => {
+  document.getElementById("qf-screen-capture-label").textContent = e.target.checked
+    ? "On — the agent's screen is recorded on every call from this contact centre they answer while sharing."
+    : "Off — audio only, as before.";
+});
+document.getElementById("qf-skills-requirement").addEventListener("change", e => {
+  document.getElementById("qf-skills-empty").hidden = e.target.checked;
+});
+document.getElementById("qf-queue-priority").addEventListener("change", e => {
+  document.getElementById("qf-priority-empty").hidden = e.target.checked;
+  document.getElementById("qf-priority-value").hidden = !e.target.checked;
+});
+
+const MEDIA_SLOTS = ["Business hour message", "On hold music message", "Ring tone message", "Waiting | no agent available | all agent busy message", "Repeating message message"];
+function renderQfMediaSlots() {
+  const wrap = document.getElementById("qf-media-slots");
   wrap.innerHTML = "";
-  rules.forEach((r, i) => {
-    const div = document.createElement("div");
-    div.className = "overflow-rule " + r.type;
-    div.innerHTML = `
-      <div class="reorder-btns"><button class="reorder-btn" data-dir="-1">${ic("up")}</button><button class="reorder-btn" data-dir="1">${ic("down")}</button></div>
-      <span>${r.label}</span>
-      <input type="number" class="mini-input" value="${r.value}">
-      <span>${r.unit}</span>
-      <span>→</span>
-      <select>
-        <option${r.action === "Voicemail" ? " selected" : ""}>Voicemail</option>
-        <option${r.action === "Transfer to queue" ? " selected" : ""}>Transfer to queue</option>
-        <option${r.action === "Transfer to external number" ? " selected" : ""}>Transfer to external number</option>
-        <option${r.action === "Play message and disconnect" ? " selected" : ""}>Play message and disconnect</option>
-        <option${r.action === "Send to IVR" ? " selected" : ""}>Send to IVR</option>
-      </select>
-      <button class="rule-delete">${ic("trash")}</button>
+  MEDIA_SLOTS.forEach(slot => {
+    const on = !!qform.mediaOn[slot];
+    const row = document.createElement("div");
+    row.className = "qf-media-row";
+    row.innerHTML = `
+      <div>
+        <div class="qf-media-row-label">Do you want to add "${slot}" ?</div>
+        <div class="qf-media-picker ${on ? "show" : ""}">
+          <span class="qf-media-chip">${on ? "Hold music - Bach Prelude" : "No file selected"} <button>${ic("x")}</button></span>
+          <button class="qf-play-btn" title="Play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4l14 8-14 8V4Z"/></svg></button>
+        </div>
+      </div>
+      <label class="toggle-switch"><input type="checkbox" ${on ? "checked" : ""}><span class="toggle-slider"></span></label>
     `;
-    div.querySelector(".mini-input").addEventListener("input", e => r.value = e.target.value);
-    div.querySelector("select").addEventListener("change", e => r.action = e.target.value);
-    div.querySelector(".rule-delete").addEventListener("click", () => { rules.splice(i, 1); renderOverflowRules(containerId, rules); });
-    div.querySelectorAll(".reorder-btn").forEach(btn => btn.addEventListener("click", () => {
-      const dir = Number(btn.dataset.dir);
-      const j = i + dir;
-      if (j < 0 || j >= rules.length) return;
-      [rules[i], rules[j]] = [rules[j], rules[i]];
-      renderOverflowRules(containerId, rules);
-    }));
-    wrap.appendChild(div);
+    row.querySelector('input[type="checkbox"]').addEventListener("change", e => {
+      qform.mediaOn[slot] = e.target.checked;
+      qform.dirty = true;
+      renderQfMediaSlots();
+    });
+    const removeBtn = row.querySelector(".qf-media-chip button");
+    if (removeBtn) removeBtn.addEventListener("click", () => { qform.mediaOn[slot] = false; renderQfMediaSlots(); });
+    wrap.appendChild(row);
   });
 }
-document.getElementById("w-add-rule").addEventListener("click", () => {
-  wizardState.overflowRules.push({ type: "rule-info", label: "If no agents available", value: 0, unit: "", action: "Voicemail" });
-  renderOverflowRules("w-overflow-rules", wizardState.overflowRules);
+
+/* --- Cancel / Discard --- */
+function closeQueueForm() { document.getElementById("qform-overlay").classList.remove("open"); }
+document.getElementById("qform-close-btn").addEventListener("click", () => {
+  if (qform.dirty) document.getElementById("discard-modal").classList.add("open");
+  else closeQueueForm();
+});
+document.getElementById("qf-cancel-btn").addEventListener("click", () => {
+  if (qform.dirty) document.getElementById("discard-modal").classList.add("open");
+  else closeQueueForm();
+});
+document.getElementById("discard-modal-x").addEventListener("click", () => document.getElementById("discard-modal").classList.remove("open"));
+document.getElementById("discard-keep-btn").addEventListener("click", () => document.getElementById("discard-modal").classList.remove("open"));
+document.getElementById("discard-confirm-btn").addEventListener("click", () => {
+  document.getElementById("discard-modal").classList.remove("open");
+  closeQueueForm();
 });
 
-/* --- Review step --- */
-function populateReview() {
-  const agents = wizardState.agentIds.map(id => AGENTS.find(a => a.id === id)).filter(Boolean);
-  document.getElementById("review-basic").innerHTML = `
-    <div><b>Name:</b> ${wizardState.name || "—"}</div>
-    <div><b>Site:</b> ${wizardState.site} &nbsp; <b>Extension:</b> ${wizardState.ext}</div>
-    <div><b>Phone:</b> ${wizardState.phone || document.getElementById("w-phone").value || "No number"} &nbsp; <b>Type:</b> ${wizardState.type === "voice" ? "Voice" : "Digital"}</div>`;
-  document.getElementById("review-agents").innerHTML = agents.length
-    ? `${agents.slice(0, 3).map(a => a.name).join(" · ")}${agents.length > 3 ? ` +${agents.length - 3} more` : ""}`
-    : "No agents added yet.";
-  document.getElementById("review-routing").innerHTML = `<b>Method:</b> ${ROUTING_META[wizardState.routing].label} &nbsp; <b>ACW:</b> ${document.getElementById("w-acw").selectedOptions[0].textContent} &nbsp; <b>Priority:</b> ${wizardState.priority}`;
-  const openDays = DAY_LIST.filter(([k]) => wizardState.days[k].open).map(([, l]) => l);
-  document.getElementById("review-hours").innerHTML = `
-    <div>${openDays.length ? openDays.join(", ") : "No days open"} (${wizardState.timezone})</div>
-    <div><b>Closed:</b> ${document.getElementById("w-closed-handling").selectedOptions[0].textContent}</div>
-    ${wizardState.overflowRules.map(r => `<div>${r.label} ${r.value}${r.unit ? " " + r.unit : ""} → ${r.action}</div>`).join("")}`;
+function submitQueueForm() {
+  const name = "Inbound - " + (document.getElementById("qf-name").value.trim() || "Untitled");
+  const site = document.getElementById("qf-location").value;
+  const ext = document.getElementById("qf-ext").value;
+  const selectedCard = document.querySelector("#qf-routing-cards .routing-card.selected");
+  const routing = selectedCard ? selectedCard.dataset.routing : "roundrobin";
 
-  const items = [
-    { label: "Basic Info", ok: !!wizardState.name },
-    { label: "Agents", ok: agents.length > 0 },
-    { label: "Routing", ok: !!wizardState.routing },
-    { label: "Business Hours", ok: openDays.length > 0 },
-  ];
-  document.getElementById("w-completeness").innerHTML = items.map(it =>
-    `<span class="completeness-item ${it.ok ? "" : "warn"}">${ic("check")}${it.label}</span>`
-  ).join("") + `<span class="completeness-item warn">${ic("check")}IVR (optional — configure after creating)</span>`;
-}
-
-document.getElementById("w-priority").addEventListener("input", e => wizardState.priority = e.target.value);
-
-function createQueueFromWizard() {
-  wizardState.priority = document.getElementById("w-priority").value;
-  const newQ = {
-    id: ++queueSeq, name: wizardState.name || "Untitled Queue", campaign: false,
-    site: wizardState.site, ext: wizardState.ext,
-    number: document.getElementById("w-phone").value || "No number",
-    numberLink: !!document.getElementById("w-phone").value,
-    routing: wizardState.routing, hours: DAY_LIST.some(([k]) => !wizardState.days[k].open) ? "weekday" : "open24",
-    members: wizardState.agentIds.length, sla: null, status: "Active", created: "Just now",
-  };
-  QUEUES.unshift(newQ);
-  showView("view-contact-centres", "");
+  if (qform.mode === "edit") {
+    const q = QUEUES.find(item => item.id === qform.queueId);
+    if (q) { q.name = name; q.site = site; q.ext = ext; q.routing = routing; q.members = qform.memberIds.length || null; }
+    showToast("success", `Queue "${name}" updated.`);
+  } else {
+    const newQ = {
+      id: ++queueSeq, name, campaign: false, site, ext, number: "No number",
+      routing, hours: "notset", members: qform.memberIds.length || null, sla: null, status: "Active", created: "Just now",
+    };
+    QUEUES.unshift(newQ);
+    showToast("success", `Queue "${name}" created successfully.`, "View Queue →", () => openQueueDetail(newQ.id));
+  }
+  closeQueueForm();
   renderQueueTable();
-  showToast("success", `Queue "${newQ.name}" created successfully.`, "View Queue →", () => openQueueDetail(newQ.id));
-  const row = tableBody.querySelector(`tr[data-id="${newQ.id}"]`);
-  if (row) { row.classList.add("row-highlight"); setTimeout(() => row.classList.remove("row-highlight"), 2000); }
 }
 
 /* =========================================================
@@ -3844,6 +3920,10 @@ document.getElementById("detail-name").addEventListener("click", function () {
   this.hidden = true; input.hidden = false; input.focus();
 });
 document.getElementById("detail-edit-name-link").addEventListener("click", () => document.getElementById("detail-name").click());
+document.getElementById("detail-edit-queue-btn").addEventListener("click", () => {
+  const q = QUEUES.find(item => item.id === currentDetailId);
+  if (q) openQueueForm("edit", q);
+});
 function commitNameEdit() {
   const input = document.getElementById("detail-name-input");
   const span = document.getElementById("detail-name");
@@ -3956,6 +4036,36 @@ document.getElementById("routing-save-btn").addEventListener("click", () => {
 });
 
 /* Business hours tab */
+const DAY_LIST = [["mon","Monday"],["tue","Tuesday"],["wed","Wednesday"],["thu","Thursday"],["fri","Friday"],["sat","Saturday"],["sun","Sunday"]];
+function renderHoursTable(bodyId, days) {
+  const body = document.getElementById(bodyId);
+  body.innerHTML = "";
+  DAY_LIST.forEach(([key, label]) => {
+    const d = days[key];
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td class="day-name">${label}</td>
+      <td><label class="toggle-switch"><input type="checkbox" data-day="${key}" class="day-open-chk" ${d.open ? "checked" : ""}><span class="toggle-slider"></span></label></td>
+      <td>${d.open ? `<input type="time" class="time-input" data-day="${key}" data-field="from" value="${d.from}">` : '<span class="time-closed">—</span>'}</td>
+      <td>${d.open ? `<input type="time" class="time-input" data-day="${key}" data-field="to" value="${d.to}">` : '<span class="time-closed">—</span>'}</td>
+      <td>${d.open ? `<button class="copy-icon-btn" data-copy="${key}" title="Copy to all open days">⧉</button>` : ""}</td>
+    `;
+    body.appendChild(tr);
+  });
+  body.querySelectorAll(".day-open-chk").forEach(chk => chk.addEventListener("change", e => {
+    days[e.target.dataset.day].open = e.target.checked;
+    renderHoursTable(bodyId, days);
+  }));
+  body.querySelectorAll(".time-input").forEach(inp => inp.addEventListener("input", e => {
+    days[e.target.dataset.day][e.target.dataset.field] = e.target.value;
+  }));
+  body.querySelectorAll("[data-copy]").forEach(btn => btn.addEventListener("click", () => {
+    const src = days[btn.dataset.copy];
+    Object.keys(days).forEach(k => { if (days[k].open) { days[k].from = src.from; days[k].to = src.to; } });
+    renderHoursTable(bodyId, days);
+    showToast("info", "Hours copied to all open days.");
+  }));
+}
 let detailDays = null;
 function renderDetailHours() {
   detailDays = { mon:{open:true,from:"09:00",to:"17:00"}, tue:{open:true,from:"09:00",to:"17:00"}, wed:{open:true,from:"09:00",to:"17:00"},
@@ -3990,6 +4100,40 @@ document.getElementById("hq-callback").addEventListener("change", e => document.
 document.getElementById("hq-save-btn").addEventListener("click", () => showToast("success", "Hold queue settings saved."));
 
 /* Overflow tab */
+function renderOverflowRules(containerId, rules) {
+  const wrap = document.getElementById(containerId);
+  wrap.innerHTML = "";
+  rules.forEach((r, i) => {
+    const div = document.createElement("div");
+    div.className = "overflow-rule " + r.type;
+    div.innerHTML = `
+      <div class="reorder-btns"><button class="reorder-btn" data-dir="-1">${ic("up")}</button><button class="reorder-btn" data-dir="1">${ic("down")}</button></div>
+      <span>${r.label}</span>
+      <input type="number" class="mini-input" value="${r.value}">
+      <span>${r.unit}</span>
+      <span>→</span>
+      <select>
+        <option${r.action === "Voicemail" ? " selected" : ""}>Voicemail</option>
+        <option${r.action === "Transfer to queue" ? " selected" : ""}>Transfer to queue</option>
+        <option${r.action === "Transfer to external number" ? " selected" : ""}>Transfer to external number</option>
+        <option${r.action === "Play message and disconnect" ? " selected" : ""}>Play message and disconnect</option>
+        <option${r.action === "Send to IVR" ? " selected" : ""}>Send to IVR</option>
+      </select>
+      <button class="rule-delete">${ic("trash")}</button>
+    `;
+    div.querySelector(".mini-input").addEventListener("input", e => r.value = e.target.value);
+    div.querySelector("select").addEventListener("change", e => r.action = e.target.value);
+    div.querySelector(".rule-delete").addEventListener("click", () => { rules.splice(i, 1); renderOverflowRules(containerId, rules); });
+    div.querySelectorAll(".reorder-btn").forEach(btn => btn.addEventListener("click", () => {
+      const dir = Number(btn.dataset.dir);
+      const j = i + dir;
+      if (j < 0 || j >= rules.length) return;
+      [rules[i], rules[j]] = [rules[j], rules[i]];
+      renderOverflowRules(containerId, rules);
+    }));
+    wrap.appendChild(div);
+  });
+}
 let detailOverflowRules = null;
 function renderDetailOverflow() {
   detailOverflowRules = [
