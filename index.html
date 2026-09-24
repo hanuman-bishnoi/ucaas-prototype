@@ -1,0 +1,4159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Call queues · Admin Hub</title>
+<style>
+/* =========================================================
+   VARIABLES
+   ========================================================= */
+:root {
+  --navy: #182236;
+  --text-body: #384253;
+  --text-muted: #8a93a6;
+  --text-faint: #b0b7c3;
+  --border: #e7e9ee;
+  --border-light: #eef0f4;
+  --bg-page: #ffffff;
+  --bg-subtle: #f8f9fb;
+  --bg-sidebar: #ffffff;
+  --blue: #3f6df0;
+  --blue-dark: #3660db;
+  --blue-bg: #eaf0fe;
+  --blue-bg-strong: #dbe6fd;
+  --banner-bg: #eaf1ff;
+  --banner-border: #c7dbff;
+  --banner-text: #2c4a8a;
+  --purple-bg: #f3ebfd;
+  --purple-text: #8b5cf6;
+  --purple-border: #e4d3fb;
+  --orange: #f0883e;
+  --green: #3fb95e;
+  --radius-s: 6px;
+  --radius-m: 8px;
+  --shadow-btn: 0 1px 2px rgba(20, 30, 60, 0.06);
+
+  /* extended design tokens (Queue Management views) */
+  --primary: var(--blue);
+  --primary-hover: var(--blue-dark);
+  --primary-light: var(--blue-bg);
+  --success: #10b981;
+  --success-light: #d1fae5;
+  --warning: #f59e0b;
+  --warning-light: #fef3c7;
+  --danger: #ef4444;
+  --danger-light: #fee2e2;
+  --info: #3b82f6;
+  --info-light: #dbeafe;
+  --teal: #0d9488;
+  --teal-light: #ccfbf1;
+  --pink: #db2777;
+  --pink-light: #fce7f3;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  font-size: 15px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: var(--bg-page);
+  color: var(--text-body);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+button, input, select {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+}
+
+svg { display: block; }
+
+/* =========================================================
+   SCROLLBARS
+   ========================================================= */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #d7dbe3; border-radius: 6px; border: 2px solid #fff; }
+::-webkit-scrollbar-thumb:hover { background: #c1c6d1; }
+
+/* =========================================================
+   TOP BAR
+   ========================================================= */
+.topbar {
+  height: 60px;
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  padding: 0 22px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-page);
+}
+
+.topbar-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  color: var(--blue);
+  flex-shrink: 0;
+}
+
+.topbar-nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 12px;
+  border-radius: var(--radius-s);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-body);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s;
+}
+
+.nav-link svg { width: 17px; height: 17px; flex-shrink: 0; }
+
+.nav-link:hover { background: var(--bg-subtle); }
+
+.nav-link.active {
+  color: var(--blue-dark);
+  background: var(--blue-bg);
+  font-weight: 600;
+}
+
+.topbar-divider {
+  width: 1px;
+  height: 26px;
+  background: var(--border);
+  flex-shrink: 0;
+}
+
+.topbar-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  max-width: 300px;
+  min-width: 140px;
+  height: 36px;
+  padding: 0 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-s);
+  background: var(--bg-subtle);
+}
+
+.topbar-search svg { width: 16px; height: 16px; color: var(--text-faint); flex-shrink: 0; }
+
+.topbar-search input {
+  border: none;
+  background: transparent;
+  outline: none;
+  flex: 1;
+  min-width: 0;
+  font-size: 13.5px;
+  color: var(--text-body);
+}
+
+.topbar-search input::placeholder { color: var(--text-faint); }
+
+.kbd {
+  font-size: 11px;
+  color: var(--text-faint);
+  border: 1px solid var(--border);
+  background: #fff;
+  padding: 2px 6px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.icon-btn {
+  position: relative;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  border-radius: 50%;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.icon-btn svg { width: 19px; height: 19px; }
+
+.icon-btn:hover { background: var(--bg-subtle); color: var(--text-body); }
+
+.notif-badge {
+  position: absolute;
+  top: 1px;
+  right: 1px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 3px;
+  border-radius: 8px;
+  background: #ef4444;
+  color: #fff;
+  font-size: 9.5px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #fff;
+}
+
+.topbar-clock {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.topbar-clock svg { width: 16px; height: 16px; }
+
+.topbar-balance {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-body);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.topbar-balance svg { width: 15px; height: 15px; color: var(--text-muted); }
+.topbar-balance:hover { background: var(--bg-subtle); }
+
+.topbar-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text-muted);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--text-faint);
+  flex-shrink: 0;
+}
+
+.topbar-avatar {
+  position: relative;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #eef1f6;
+  color: var(--navy);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.avatar-online {
+  position: absolute;
+  right: -1px;
+  bottom: -1px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--green);
+  border: 2px solid #fff;
+}
+
+/* =========================================================
+   APP BODY / LAYOUT
+   ========================================================= */
+.app-body {
+  display: flex;
+  align-items: flex-start;
+  height: calc(100vh - 60px);
+}
+
+/* =========================================================
+   SIDEBAR
+   ========================================================= */
+.sidebar-wrap {
+  position: relative;
+  flex-shrink: 0;
+  height: 100%;
+}
+
+.sidebar {
+  width: 314px;
+  flex-shrink: 0;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  border-right: 1px solid var(--border);
+  background: var(--bg-sidebar);
+  padding: 20px 16px 24px;
+  transition: width 0.2s ease, padding 0.2s ease;
+}
+
+.sidebar-wrap.collapsed .sidebar {
+  width: 0;
+  padding-left: 0;
+  padding-right: 0;
+  border-right: none;
+}
+
+.sidebar-collapse-btn {
+  position: absolute;
+  top: 22px;
+  right: -13px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  background: var(--blue);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 5;
+  box-shadow: 0 1px 3px rgba(20, 30, 60, 0.18);
+}
+
+.sidebar-collapse-btn svg { width: 14px; height: 14px; transition: transform 0.2s ease; }
+
+.sidebar-wrap.collapsed .sidebar-collapse-btn svg { transform: rotate(180deg); }
+
+.sidebar-collapse-btn:hover { background: var(--blue-dark); }
+
+.sidebar-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  padding: 0 6px;
+  margin-bottom: 16px;
+}
+
+.sidebar-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 38px;
+  padding: 0 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-s);
+  margin-bottom: 10px;
+}
+
+.sidebar-search svg { width: 16px; height: 16px; color: var(--text-faint); flex-shrink: 0; }
+
+.sidebar-search input {
+  border: none;
+  outline: none;
+  background: transparent;
+  flex: 1;
+  min-width: 0;
+  font-size: 13.5px;
+}
+
+.sidebar-search input::placeholder { color: var(--text-faint); }
+
+.all-settings-btn {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  height: 40px;
+  padding: 0 12px;
+  margin-bottom: 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-s);
+  background: #fff;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--text-body);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.all-settings-btn svg { width: 16px; height: 16px; color: var(--text-muted); flex-shrink: 0; }
+
+.all-settings-btn:hover { background: var(--bg-subtle); border-color: #d8dbe2; }
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nav-group-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  height: 40px;
+  padding: 0 8px;
+  border: none;
+  background: transparent;
+  border-radius: var(--radius-s);
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--text-body);
+  cursor: pointer;
+  text-align: left;
+}
+
+.nav-group-header:hover { background: var(--bg-subtle); }
+
+.nav-group.expanded > .nav-group-header {
+  background: var(--blue-bg);
+  color: var(--blue-dark);
+  font-weight: 600;
+}
+
+.nav-group.expanded > .nav-group-header .nav-group-label svg { color: var(--blue-dark); }
+
+.nav-group-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  flex: 1;
+}
+
+.nav-group-label span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nav-group-label svg {
+  width: 17px;
+  height: 17px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.nav-group-header .chev {
+  width: 15px;
+  height: 15px;
+  color: var(--text-faint);
+  flex-shrink: 0;
+  transition: transform 0.18s;
+}
+
+.nav-group.expanded > .nav-group-header .chev { color: var(--blue-dark); }
+
+.nav-group.expanded > .nav-group-header .chev {
+  transform: rotate(180deg);
+}
+
+.nav-leaf {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 40px;
+  padding: 0 8px 0 34px;
+  border-radius: var(--radius-s);
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--text-body);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.nav-leaf.with-icon { padding-left: 8px; }
+
+.nav-leaf svg { width: 17px; height: 17px; color: var(--text-muted); flex-shrink: 0; }
+
+.nav-leaf:hover { background: var(--bg-subtle); }
+
+.nav-leaf.active { color: var(--blue); font-weight: 600; }
+.nav-leaf.active svg { color: var(--blue); }
+
+.nav-submenu {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 2px 0 6px;
+  max-height: 0;
+  overflow: hidden;
+}
+
+.nav-group.expanded .nav-submenu {
+  max-height: 400px;
+}
+
+.sub-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 38px;
+  padding: 0 8px 0 34px;
+  border-radius: var(--radius-s);
+  font-size: 13.5px;
+  color: var(--text-body);
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s;
+}
+
+.sub-item svg {
+  width: 16px;
+  height: 16px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.sub-item:hover { background: var(--bg-subtle); }
+
+.sub-item.active { color: var(--blue); font-weight: 600; }
+.sub-item.active svg { color: var(--blue); }
+
+/* =========================================================
+   MAIN CONTENT
+   ========================================================= */
+.content {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  overflow-y: auto;
+  padding: 30px 36px 40px;
+}
+
+.page-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.eyebrow {
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  margin-bottom: 8px;
+}
+
+.page-head h1 {
+  margin: 0 0 10px;
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--navy);
+  letter-spacing: -0.01em;
+}
+
+.page-desc {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--text-muted);
+  max-width: 640px;
+}
+
+.btn-primary {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  height: 42px;
+  padding: 0 18px;
+  border: none;
+  border-radius: var(--radius-s);
+  background: var(--blue);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: var(--shadow-btn);
+  transition: background 0.15s;
+}
+
+.btn-primary svg { width: 17px; height: 17px; }
+
+.btn-primary:hover { background: var(--blue-dark); }
+
+/* filter row */
+.filter-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.table-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  max-width: 460px;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-s);
+  background: #fff;
+}
+
+.table-search svg { width: 16px; height: 16px; color: var(--text-faint); flex-shrink: 0; }
+
+.table-search input {
+  border: none;
+  outline: none;
+  background: transparent;
+  flex: 1;
+  min-width: 0;
+  font-size: 14px;
+}
+
+.table-search input::placeholder { color: var(--text-faint); }
+
+.select-wrap {
+  position: relative;
+  width: 230px;
+  flex-shrink: 0;
+}
+
+.select-wrap select {
+  width: 100%;
+  height: 40px;
+  padding: 0 34px 0 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-s);
+  background: #fff;
+  font-size: 14px;
+  color: var(--text-body);
+  appearance: none;
+  cursor: pointer;
+}
+
+.select-wrap select:focus { outline: none; border-color: var(--blue); }
+
+.select-wrap .select-chev {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 15px;
+  height: 15px;
+  color: var(--text-faint);
+  pointer-events: none;
+}
+
+.select-wrap.small { width: 72px; }
+.select-wrap.small select { padding: 0 26px 0 12px; height: 34px; }
+.select-wrap.small .select-chev { right: 8px; width: 13px; height: 13px; }
+
+/* info banner */
+.info-banner {
+  background: var(--banner-bg);
+  border: 1px solid var(--banner-border);
+  border-radius: var(--radius-m);
+  padding: 14px 18px;
+  margin-bottom: 22px;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--banner-text);
+}
+
+/* =========================================================
+   VIEWS
+   ========================================================= */
+.view[hidden] { display: none; }
+
+/* =========================================================
+   SKILLS PAGE
+   ========================================================= */
+.skills-head { align-items: flex-start; margin-bottom: 22px; }
+
+.page-title-sm {
+  margin: 0 0 6px;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--navy);
+}
+
+.skills-head .page-desc { max-width: 760px; }
+
+.skills-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.skills-search {
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-s);
+  display: flex;
+  align-items: center;
+  width: 180px;
+}
+
+.skills-search input {
+  border: none;
+  outline: none;
+  background: transparent;
+  width: 100%;
+  font-size: 13.5px;
+}
+
+.skills-search input::placeholder { color: var(--text-faint); }
+
+.btn-outline {
+  height: 36px;
+  padding: 0 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-s);
+  background: #fff;
+  color: var(--text-body);
+  font-size: 13.5px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btn-outline:hover { background: var(--bg-subtle); }
+
+.btn-outline-blue {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 16px;
+  border: 1px solid var(--blue);
+  border-radius: var(--radius-s);
+  background: #fff;
+  color: var(--blue);
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btn-outline-blue svg { width: 15px; height: 15px; }
+
+.btn-outline-blue:hover { background: var(--blue-bg); }
+
+.skill-category {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-m);
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.skill-category-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 13px 18px;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.skill-category-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cat-name { font-size: 14.5px; font-weight: 700; color: var(--navy); }
+
+.cat-badge {
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.cat-count { font-size: 13px; color: var(--text-muted); }
+
+.cat-add-link {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--blue);
+  text-decoration: underline;
+}
+
+.cat-add-link:hover { color: var(--blue-dark); }
+
+.skill-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.skill-row:last-child { border-bottom: none; }
+
+.skill-row-main { min-width: 0; }
+
+.skill-row-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.skill-name { font-size: 14px; font-weight: 700; color: var(--navy); }
+
+.skill-badge {
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+.skill-desc { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+
+.skill-row-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-shrink: 0;
+}
+
+.people-link {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--blue);
+  text-decoration: underline;
+  white-space: nowrap;
+}
+
+.people-link:hover { color: var(--blue-dark); }
+
+.action-btn.people { background: var(--bg-subtle); color: var(--text-muted); }
+.action-btn.people:hover { background: var(--border); color: var(--text-body); }
+
+/* =========================================================
+   TABLE
+   ========================================================= */
+.table-shell {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-m);
+  overflow: hidden;
+  margin-bottom: 18px;
+}
+
+.table-scroll {
+  overflow-x: auto;
+  overflow-y: auto;
+  max-height: 420px;
+}
+
+table {
+  width: 100%;
+  min-width: 1330px;
+  border-collapse: collapse;
+}
+
+thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--bg-subtle);
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  padding: 12px 18px;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.col-name { width: 200px; }
+.col-site { width: 160px; }
+.col-ext { width: 100px; }
+.col-num { width: 120px; }
+.col-shared { width: 190px; }
+.col-hours { width: 140px; }
+.col-members { width: 90px; }
+.col-created { width: 160px; }
+.col-actions { width: 170px; }
+
+tbody td {
+  padding: 15px 18px;
+  font-size: 14px;
+  color: var(--text-body);
+  border-bottom: 1px solid var(--border-light);
+  white-space: nowrap;
+}
+
+tbody tr:last-child td { border-bottom: none; }
+
+tbody tr:hover { background: var(--bg-subtle); }
+
+tbody tr.row-hidden { display: none; }
+
+.name-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.name-link {
+  color: var(--blue);
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.name-link:hover { color: var(--blue-dark); text-decoration: underline; }
+
+.badge-campaign {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--purple-bg);
+  border: 1px solid var(--purple-border);
+  color: var(--purple-text);
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
+.no-number { color: var(--orange); font-weight: 500; }
+
+.phone-link { color: var(--blue); font-weight: 500; }
+
+.managed-text { color: var(--text-muted); font-size: 13px; }
+
+.action-icons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.action-btn {
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s, color 0.15s;
+}
+
+.action-btn svg { width: 15px; height: 15px; }
+
+.action-btn.edit { background: var(--bg-subtle); color: var(--text-muted); }
+.action-btn.edit:hover { background: var(--border); color: var(--text-body); }
+
+.action-btn.delete { background: #fdecec; color: #e0483f; }
+.action-btn.delete:hover { background: #fbd6d4; color: #c0362e; }
+
+.avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #eef1f6;
+  color: #55607a;
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11.5px;
+  font-weight: 700;
+}
+
+/* =========================================================
+   PAGINATION
+   ========================================================= */
+.pagination-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.pagination-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13.5px;
+  color: var(--text-muted);
+}
+
+.per-page-label { white-space: nowrap; }
+
+.vdiv {
+  width: 1px;
+  height: 18px;
+  background: var(--border);
+}
+
+.refresh-btn {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  border-radius: 50%;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.refresh-btn svg { width: 16px; height: 16px; }
+
+.refresh-btn:hover { background: var(--bg-subtle); color: var(--text-body); }
+.refresh-btn.spinning svg { animation: spin 0.6s linear; }
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.pagination-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.page-btn {
+  min-width: 32px;
+  height: 32px;
+  padding: 0 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-s);
+  background: #fff;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--text-body);
+  cursor: pointer;
+}
+
+.page-btn svg { width: 15px; height: 15px; }
+
+.page-btn:hover:not(:disabled) { border-color: var(--blue); color: var(--blue); }
+
+.page-btn:disabled { color: var(--text-faint); cursor: not-allowed; }
+.page-btn:disabled:hover { border-color: var(--border); }
+
+.page-btn.active {
+  background: var(--blue);
+  border-color: var(--blue);
+  color: #fff;
+}
+
+/* =========================================================
+   QUEUE LIST — stats, enhanced table, bulk bar, empty state
+   ========================================================= */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.stat-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: #fff;
+}
+
+.stat-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+.stat-icon svg { width: 19px; height: 19px; }
+
+.stat-icon.warning { background: var(--warning-light); color: var(--warning); }
+.stat-icon.success { background: var(--success-light); color: var(--success); }
+
+.stat-label { font-size: 12px; color: var(--text-muted); margin-bottom: 2px; }
+.stat-value { font-size: 20px; font-weight: 700; color: var(--navy); }
+.stat-value.warning { color: var(--warning); }
+.stat-value.success { color: var(--success); }
+
+.filter-row .btn-columns {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 40px;
+  padding: 0 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-s);
+  background: #fff;
+  color: var(--text-body);
+  font-size: 13.5px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+.filter-row .btn-columns svg { width: 15px; height: 15px; }
+.filter-row .btn-columns:hover { background: var(--bg-subtle); }
+
+.bulk-bar {
+  display: none;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 16px;
+  margin-bottom: 12px;
+  border: 1px solid var(--primary-light);
+  background: var(--primary-light);
+  border-radius: var(--radius-m);
+  font-size: 13.5px;
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.bulk-bar.show { display: flex; }
+
+.bulk-bar .spacer { flex: 1; }
+
+.bulk-btn {
+  height: 30px;
+  padding: 0 12px;
+  border-radius: var(--radius-s);
+  border: 1px solid var(--border);
+  background: #fff;
+  color: var(--text-body);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.bulk-btn.danger { border-color: var(--danger); color: var(--danger); }
+.bulk-btn:hover { background: var(--bg-subtle); }
+
+.qt-checkbox {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--primary);
+  cursor: pointer;
+}
+
+th.col-check, td.col-check { width: 36px; padding-right: 0; }
+
+.name-link.sortable-th,
+th.sortable {
+  cursor: pointer;
+  user-select: none;
+}
+
+th.sortable .sort-ic { display: inline-flex; vertical-align: middle; margin-left: 4px; width: 11px; height: 11px; color: var(--text-faint); }
+th.sortable.sort-asc .sort-ic, th.sortable.sort-desc .sort-ic { color: var(--primary); }
+
+.badge-type {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 7px;
+  border-radius: 4px;
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin-top: 3px;
+}
+
+.badge-type.inbound { background: var(--info-light); color: var(--info); }
+.badge-type.campaign { background: var(--purple-bg); color: var(--purple-text); }
+
+.chip-mono {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 5px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  font-family: ui-monospace, "SF Mono", Consolas, monospace;
+  font-size: 12.5px;
+  color: var(--text-body);
+}
+
+.badge-routing {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 600;
+  background: var(--badge-bg, var(--bg-subtle));
+  color: var(--badge-fg, var(--text-body));
+  white-space: nowrap;
+}
+
+.pill-hours {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 600;
+  background: var(--pill-bg, var(--bg-subtle));
+  color: var(--pill-fg, var(--text-muted));
+  white-space: nowrap;
+}
+
+.sla-wrap { display: flex; align-items: center; gap: 8px; }
+.sla-bar-track { width: 56px; height: 6px; border-radius: 3px; background: var(--border-light); overflow: hidden; flex-shrink: 0; }
+.sla-bar-fill { height: 100%; border-radius: 3px; background: var(--success); }
+.sla-bar-fill.mid { background: var(--warning); }
+.sla-bar-fill.low { background: var(--danger); }
+.sla-label { font-size: 12.5px; font-weight: 600; color: var(--text-body); }
+.sla-none { color: var(--text-faint); }
+
+.status-row { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-body); }
+.status-row .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--text-faint); flex-shrink: 0; }
+.status-row.active .dot { background: var(--success); }
+.status-row.active { color: var(--success); font-weight: 600; }
+
+.row-menu-wrap { position: relative; display: inline-block; }
+.kebab-btn {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  border-radius: 50%;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+.kebab-btn svg { width: 17px; height: 17px; }
+.kebab-btn:hover { background: var(--bg-subtle); color: var(--text-body); }
+
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  min-width: 168px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-m);
+  box-shadow: var(--shadow-lg);
+  padding: 6px;
+  z-index: 60;
+  display: none;
+}
+.dropdown-menu.open { display: block; }
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 9px 10px;
+  border: none;
+  background: none;
+  border-radius: 6px;
+  font-size: 13.5px;
+  color: var(--text-body);
+  cursor: pointer;
+  text-align: left;
+}
+.dropdown-item svg { width: 15px; height: 15px; flex-shrink: 0; }
+.dropdown-item:hover { background: var(--bg-subtle); }
+.dropdown-item.danger { color: var(--danger); }
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 64px 24px;
+  color: var(--text-muted);
+}
+.empty-state svg { width: 64px; height: 64px; color: var(--text-faint); margin-bottom: 16px; }
+.empty-state h3 { margin: 0 0 6px; font-size: 16px; color: var(--navy); }
+.empty-state p { margin: 0 0 18px; font-size: 13.5px; }
+
+.row-highlight { animation: rowFlash 2s ease; }
+@keyframes rowFlash {
+  0% { background: var(--success-light); }
+  100% { background: transparent; }
+}
+
+/* =========================================================
+   BACK LINK / PAGE-SUBHEAD (wizard + detail)
+   ========================================================= */
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-decoration: none;
+  cursor: pointer;
+  margin-bottom: 14px;
+}
+.back-link svg { width: 15px; height: 15px; }
+.back-link:hover { color: var(--primary); }
+
+/* =========================================================
+   WIZARD
+   ========================================================= */
+.wizard-title { font-size: 20px; font-weight: 700; color: var(--navy); margin: 0 0 22px; }
+
+.wizard-progress {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 30px;
+  max-width: 760px;
+}
+.wp-step { display: flex; flex-direction: column; align-items: center; flex: 1; position: relative; }
+.wp-circle {
+  width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700;
+  background: #fff; border: 2px solid var(--border); color: var(--text-faint);
+  margin-bottom: 6px; z-index: 1;
+}
+.wp-label { font-size: 12px; color: var(--text-faint); font-weight: 500; text-align: center; }
+.wp-connector { position: absolute; top: 13px; left: 50%; width: 100%; height: 2px; background: var(--border); z-index: 0; }
+.wp-step:last-child .wp-connector { display: none; }
+
+.wp-step.active .wp-circle { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+.wp-step.active .wp-label { color: var(--primary); font-weight: 700; }
+.wp-step.done .wp-circle { border-color: var(--success); background: var(--success); color: #fff; }
+.wp-step.done .wp-label { color: var(--success); }
+.wp-step.done .wp-connector { background: var(--success); }
+
+.wizard-step-count { font-size: 12.5px; color: var(--text-muted); margin: -18px 0 24px; }
+
+.wizard-body { max-width: 620px; padding-bottom: 110px; }
+.wizard-body.wide { max-width: 900px; }
+
+.field { margin-bottom: 18px; }
+.field-label { display: block; font-size: 13px; font-weight: 600; color: var(--navy); margin-bottom: 6px; }
+.field-label .req { color: var(--danger); }
+.field-hint { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+.field-input,
+.field select,
+.field textarea {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-s);
+  font-size: 14px;
+  background: #fff;
+  color: var(--text-body);
+}
+.field-input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
+.field-input.error, .field select.error { border-color: var(--danger); }
+.field-input.success-input { border-color: var(--success); }
+.field-error { display: none; font-size: 12px; color: var(--danger); margin-top: 5px; }
+.field-error.show { display: block; }
+.field-input-wrap { position: relative; }
+.field-check-ic { position: absolute; right: 11px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: var(--success); display: none; }
+.field-check-ic.show { display: block; }
+.field-readonly { background: var(--bg-subtle); color: var(--text-muted); }
+.field-inline-link { font-size: 12.5px; font-weight: 600; color: var(--primary); cursor: pointer; margin-left: 8px; }
+.field-row { display: flex; align-items: center; gap: 8px; }
+.field-row .field-input { flex: 1; }
+.textarea-counter { text-align: right; font-size: 11.5px; color: var(--text-faint); margin-top: 4px; }
+
+.routing-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 6px; }
+.routing-grid.six { grid-template-columns: repeat(2, 1fr); }
+.routing-card {
+  position: relative;
+  border: 2px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  cursor: pointer;
+  background: #fff;
+  transition: border-color 0.15s, background 0.15s;
+}
+.routing-card:hover { border-color: var(--text-faint); }
+.routing-card.selected { border-color: var(--primary); background: var(--primary-light); }
+.routing-card .rc-icon { font-size: 20px; margin-bottom: 6px; display: block; }
+.routing-card .rc-title { font-size: 14px; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+.routing-card .rc-desc { font-size: 12.5px; color: var(--text-muted); margin-bottom: 4px; line-height: 1.4; }
+.routing-card .rc-best { font-size: 11.5px; color: var(--text-faint); margin-bottom: 10px; }
+.rc-radio { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--border); position: relative; }
+.routing-card.selected .rc-radio { border-color: var(--primary); }
+.routing-card.selected .rc-radio::after { content: ""; position: absolute; inset: 2px; border-radius: 50%; background: var(--primary); }
+
+.info-note {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  font-size: 12.5px;
+  color: var(--warning);
+  background: var(--warning-light);
+  border: 1px solid #fde3ad;
+  border-radius: var(--radius-s);
+  padding: 10px 12px;
+  margin-top: 10px;
+}
+.info-box {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  font-size: 12.5px;
+  color: var(--info);
+  background: var(--info-light);
+  border: 1px solid #bfdbfe;
+  border-radius: var(--radius-s);
+  padding: 10px 12px;
+  margin-top: 10px;
+}
+.info-note svg, .info-box svg { width: 15px; height: 15px; flex-shrink: 0; margin-top: 1px; }
+
+.skill-chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.skill-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 10px; border-radius: 999px;
+  background: var(--primary-light); color: var(--primary-hover);
+  font-size: 12.5px; font-weight: 600;
+}
+.skill-chip button { border: none; background: none; color: inherit; cursor: pointer; display: flex; padding: 0; }
+.skill-chip button svg { width: 12px; height: 12px; }
+
+.radio-option-group { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
+.radio-option { display: flex; align-items: flex-start; gap: 9px; font-size: 13.5px; color: var(--text-body); cursor: pointer; }
+.radio-option input { margin-top: 2px; accent-color: var(--primary); width: 15px; height: 15px; flex-shrink: 0; }
+
+.toggle-switch { position: relative; display: inline-block; width: 38px; height: 22px; flex-shrink: 0; }
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.toggle-slider {
+  position: absolute; inset: 0; background: var(--border); border-radius: 999px; cursor: pointer; transition: 0.15s;
+}
+.toggle-slider::before {
+  content: ""; position: absolute; width: 16px; height: 16px; left: 3px; top: 3px;
+  background: #fff; border-radius: 50%; transition: 0.15s; box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+.toggle-switch input:checked + .toggle-slider { background: var(--primary); }
+.toggle-switch input:checked + .toggle-slider::before { transform: translateX(16px); }
+
+.toggle-row { display: flex; align-items: center; gap: 10px; margin-top: 6px; }
+.toggle-row-label { font-size: 13.5px; color: var(--text-body); font-weight: 500; }
+
+.priority-row { display: flex; align-items: center; gap: 12px; }
+.priority-row .field-input { width: 120px; }
+.escalation-fields { display: none; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 12px; font-size: 13px; color: var(--text-body); }
+.escalation-fields.show { display: flex; }
+.escalation-fields .mini-input { width: 64px; padding: 6px 8px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; }
+
+.wizard-footer {
+  position: sticky;
+  bottom: 0;
+  background: #fff;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 0;
+  margin-top: 12px;
+}
+.wizard-footer .spacer { flex: 1; }
+.btn-ghost {
+  height: 40px; padding: 0 18px; border-radius: var(--radius-s);
+  border: 1px solid var(--border); background: #fff; color: var(--text-body);
+  font-size: 13.5px; font-weight: 600; cursor: pointer;
+}
+.btn-ghost:hover { background: var(--bg-subtle); }
+.btn-primary-lg {
+  display: flex; align-items: center; gap: 7px;
+  height: 40px; padding: 0 20px; border-radius: var(--radius-s);
+  border: none; background: var(--primary); color: #fff;
+  font-size: 13.5px; font-weight: 700; cursor: pointer;
+}
+.btn-primary-lg:hover { background: var(--primary-hover); }
+.btn-primary-lg svg { width: 16px; height: 16px; }
+
+/* Agents step */
+.agents-picker { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.agents-panel { border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 14px; }
+.agents-panel-title { font-size: 13px; font-weight: 700; color: var(--navy); margin-bottom: 10px; }
+.agent-tabs { display: flex; gap: 4px; margin-bottom: 10px; }
+.agent-tab-btn {
+  padding: 6px 12px; border-radius: 999px; border: 1px solid var(--border);
+  background: #fff; font-size: 12.5px; font-weight: 600; color: var(--text-muted); cursor: pointer;
+}
+.agent-tab-btn.active { background: var(--primary); border-color: var(--primary); color: #fff; }
+.agent-list { max-height: 300px; overflow-y: auto; display: flex; flex-direction: column; gap: 2px; }
+.agent-row {
+  display: flex; align-items: center; gap: 10px; padding: 8px; border-radius: var(--radius-s); cursor: pointer;
+}
+.agent-row:hover { background: var(--bg-subtle); }
+.agent-avatar {
+  width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11.5px; font-weight: 700; color: #fff;
+}
+.agent-info { flex: 1; min-width: 0; }
+.agent-name { font-size: 13.5px; font-weight: 600; color: var(--navy); }
+.agent-role { font-size: 11.5px; color: var(--text-muted); }
+.agent-row input[type="checkbox"] { accent-color: var(--primary); width: 16px; height: 16px; }
+.selected-agent-row { display: flex; align-items: center; gap: 10px; padding: 9px 8px; border-bottom: 1px solid var(--border-light); }
+.selected-agent-row:last-child { border-bottom: none; }
+.selected-agent-remove { margin-left: auto; border: none; background: none; color: var(--text-faint); cursor: pointer; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
+.selected-agent-remove:hover { background: var(--danger-light); color: var(--danger); }
+.selected-agent-remove svg { width: 14px; height: 14px; }
+.empty-mini { text-align: center; padding: 30px 10px; font-size: 12.5px; color: var(--text-muted); }
+
+/* Business hours table */
+.hours-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+.hours-table th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); padding: 8px 10px; border-bottom: 1px solid var(--border); }
+.hours-table td { padding: 8px 10px; border-bottom: 1px solid var(--border-light); font-size: 13.5px; vertical-align: middle; }
+.hours-table .day-name { font-weight: 600; color: var(--navy); }
+.time-input { width: 92px; padding: 6px 8px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; }
+.copy-icon-btn { border: none; background: none; color: var(--text-faint); cursor: pointer; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; border-radius: 6px; }
+.copy-icon-btn:hover { background: var(--bg-subtle); color: var(--primary); }
+.copy-icon-btn svg { width: 15px; height: 15px; }
+.preset-btns { display: flex; gap: 8px; margin: 12px 0 4px; }
+.preset-btn {
+  padding: 6px 13px; border-radius: 999px; border: 1px solid var(--border);
+  background: #fff; font-size: 12.5px; font-weight: 600; color: var(--text-body); cursor: pointer;
+}
+.preset-btn:hover { background: var(--bg-subtle); }
+.preset-btn.active { background: var(--primary); border-color: var(--primary); color: #fff; }
+.time-closed { color: var(--text-faint); font-size: 13px; }
+
+.overflow-rule {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  padding: 12px 14px; border: 1px solid var(--border); border-left: 4px solid var(--warning);
+  border-radius: var(--radius-m); margin-bottom: 10px; font-size: 13.5px; color: var(--text-body); background: #fff;
+}
+.overflow-rule.rule-danger { border-left-color: var(--danger); }
+.overflow-rule.rule-info { border-left-color: var(--info); }
+.overflow-rule .mini-input { width: 60px; padding: 6px 8px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; }
+.overflow-rule select { padding: 6px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; background: #fff; }
+.overflow-rule .reorder-btns { display: flex; flex-direction: column; gap: 2px; margin-right: 2px; }
+.reorder-btn { border: none; background: none; color: var(--text-faint); cursor: pointer; width: 18px; height: 14px; display: flex; align-items: center; justify-content: center; }
+.reorder-btn:hover { color: var(--primary); }
+.reorder-btn svg { width: 11px; height: 11px; }
+.rule-delete { margin-left: auto; border: none; background: none; color: var(--text-faint); cursor: pointer; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; border-radius: 6px; }
+.rule-delete:hover { background: var(--danger-light); color: var(--danger); }
+.rule-delete svg { width: 15px; height: 15px; }
+.add-rule-link { font-size: 13px; font-weight: 600; color: var(--primary); cursor: pointer; display: inline-flex; align-items: center; gap: 4px; }
+.add-rule-link svg { width: 14px; height: 14px; }
+
+/* Review step */
+.review-card { border: 1px solid var(--border); border-radius: var(--radius-lg); margin-bottom: 14px; overflow: hidden; }
+.review-card-head { display: flex; align-items: center; justify-content: space-between; padding: 11px 16px; background: var(--bg-subtle); border-bottom: 1px solid var(--border); font-size: 13px; font-weight: 700; color: var(--navy); }
+.review-card-head a { font-size: 12.5px; font-weight: 600; color: var(--primary); text-decoration: none; }
+.review-card-body { padding: 14px 16px; font-size: 13.5px; color: var(--text-body); line-height: 1.7; }
+.completeness-row { display: flex; flex-wrap: wrap; gap: 10px 18px; margin-bottom: 20px; }
+.completeness-item { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--success); }
+.completeness-item.warn { color: var(--warning); }
+.completeness-item svg { width: 15px; height: 15px; }
+
+/* =========================================================
+   QUEUE DETAIL
+   ========================================================= */
+.detail-header { border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px 18px; margin-bottom: 16px; }
+.detail-title-row { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+.detail-title-row .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--success); flex-shrink: 0; }
+.detail-name { font-size: 17px; font-weight: 700; color: var(--navy); cursor: text; border-radius: 4px; padding: 1px 4px; margin: -1px -4px; }
+.detail-name:hover { background: var(--bg-subtle); }
+.detail-name-input { font-size: 17px; font-weight: 700; color: var(--navy); border: 1px solid var(--primary); border-radius: 4px; padding: 1px 4px; }
+.status-pill { display: inline-flex; align-items: center; gap: 5px; padding: 2px 9px; border-radius: 999px; background: var(--success-light); color: var(--success); font-size: 11.5px; font-weight: 700; }
+.detail-title-row .spacer { flex: 1; }
+.detail-edit-link { font-size: 12.5px; font-weight: 600; color: var(--primary); cursor: pointer; }
+.detail-meta { font-size: 13px; color: var(--text-muted); }
+.detail-meta b { color: var(--text-body); font-weight: 600; }
+
+.kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 18px; }
+.kpi-tile { border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 14px 16px; background: #fff; }
+.kpi-label { font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
+.kpi-value-row { display: flex; align-items: baseline; gap: 6px; }
+.kpi-value { font-size: 22px; font-weight: 700; color: var(--navy); }
+.kpi-trend { font-size: 12px; font-weight: 700; }
+.kpi-trend.up { color: var(--success); }
+.kpi-trend.down { color: var(--danger); }
+.kpi-tile svg.spark { width: 100%; height: 32px; margin-top: 8px; display: block; }
+
+.tabs-bar { display: flex; gap: 2px; border-bottom: 1px solid var(--border); margin-bottom: 20px; overflow-x: auto; }
+.tab-btn {
+  padding: 11px 4px; margin-right: 22px; border: none; background: none; cursor: pointer;
+  font-size: 13.5px; font-weight: 600; color: var(--text-muted); border-bottom: 2px solid transparent; white-space: nowrap;
+}
+.tab-btn:hover { color: var(--text-body); }
+.tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+.section-block { margin-bottom: 26px; }
+.section-block-title { font-size: 13px; font-weight: 700; color: var(--navy); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 12px; }
+
+.activity-feed { border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+.activity-row { display: flex; align-items: center; gap: 12px; padding: 11px 16px; border-bottom: 1px solid var(--border-light); font-size: 13px; }
+.activity-row:last-child { border-bottom: none; }
+.activity-row .act-time { color: var(--text-muted); width: 64px; flex-shrink: 0; }
+.activity-row .act-num { color: var(--navy); font-weight: 600; width: 150px; flex-shrink: 0; }
+.activity-row .act-agent { color: var(--text-body); flex: 1; }
+.activity-row .act-dur { color: var(--text-muted); width: 50px; text-align: right; }
+.activity-status { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 999px; }
+.activity-status.answered { background: var(--success-light); color: var(--success); }
+.activity-status.abandoned { background: var(--danger-light); color: var(--danger); }
+.activity-status.voicemail { background: var(--info-light); color: var(--info); }
+
+.checklist { border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 6px; }
+.checklist-item { display: flex; align-items: center; gap: 9px; padding: 9px 10px; font-size: 13.5px; color: var(--text-body); }
+.checklist-item svg { width: 16px; height: 16px; flex-shrink: 0; }
+.checklist-item.done svg { color: var(--success); }
+.checklist-item.warn svg { color: var(--warning); }
+.checklist-item.missing svg { color: var(--text-faint); }
+
+.avail-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+.avail-dot.available { background: var(--success); }
+.avail-dot.wrapup { background: var(--warning); }
+.avail-dot.oncall { background: var(--danger); }
+.avail-dot.offduty { background: var(--text-faint); }
+.stars { color: var(--warning); font-size: 13px; letter-spacing: 1px; }
+.stars .off { color: var(--border); }
+
+.btn-add-agents {
+  display: flex; align-items: center; gap: 6px; height: 36px; padding: 0 14px;
+  border: none; border-radius: var(--radius-s); background: var(--primary); color: #fff;
+  font-size: 13px; font-weight: 600; cursor: pointer;
+}
+.btn-add-agents svg { width: 15px; height: 15px; }
+.btn-add-agents:hover { background: var(--primary-hover); }
+
+.group-row { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border: 1px solid var(--border); border-radius: var(--radius-m); margin-bottom: 8px; font-size: 13.5px; }
+.group-row .g-name { font-weight: 600; color: var(--navy); width: 160px; }
+.group-row .g-members { color: var(--text-muted); flex: 1; }
+.group-row .g-remove { color: var(--danger); font-size: 12.5px; font-weight: 600; cursor: pointer; }
+
+.unsaved-bar {
+  display: none;
+  align-items: center;
+  gap: 14px;
+  position: sticky;
+  bottom: 0;
+  margin-top: 16px;
+  padding: 12px 16px;
+  background: var(--navy);
+  color: #fff;
+  border-radius: var(--radius-m);
+  font-size: 13px;
+}
+.unsaved-bar.show { display: flex; }
+.unsaved-bar .spacer { flex: 1; }
+.unsaved-bar .btn-ghost { background: transparent; border-color: rgba(255,255,255,0.3); color: #fff; }
+.unsaved-bar .btn-primary-lg { background: var(--primary); }
+
+.file-row { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border: 1px solid var(--border); border-radius: var(--radius-s); font-size: 13px; color: var(--text-body); }
+.file-row svg { width: 16px; height: 16px; color: var(--text-muted); }
+.file-row .spacer { flex: 1; }
+.file-row button { border: none; background: none; color: var(--text-muted); cursor: pointer; }
+.slider-row { display: flex; align-items: center; gap: 12px; }
+.slider-row input[type="range"] { flex: 1; accent-color: var(--primary); }
+.slider-row .slider-val { font-size: 13.5px; font-weight: 700; color: var(--navy); width: 54px; text-align: right; }
+
+.ivr-empty { border: 1px dashed var(--border); border-radius: var(--radius-lg); padding: 50px 24px; text-align: center; max-width: 460px; margin: 20px auto; }
+.ivr-empty svg { width: 44px; height: 44px; color: var(--text-faint); margin-bottom: 12px; }
+.ivr-empty h3 { margin: 0 0 8px; font-size: 15px; color: var(--navy); }
+.ivr-empty p { margin: 0 0 18px; font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+.ivr-empty .btn-row { display: flex; gap: 10px; justify-content: center; }
+
+.template-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; max-width: 620px; margin-top: 16px; }
+.template-card { border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 15px; }
+.template-card .tc-icon { font-size: 18px; margin-bottom: 6px; display: block; }
+.template-card .tc-title { font-size: 13.5px; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+.template-card .tc-desc { font-size: 12px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.4; }
+.template-card .tc-actions { display: flex; gap: 8px; }
+.template-card .tc-actions button { flex: 1; height: 32px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; }
+.template-card .tc-actions .btn-ghost { height: 32px; padding: 0 10px; }
+.template-card .tc-actions .btn-use { border: none; background: var(--primary); color: #fff; }
+.template-card .tc-actions .btn-use:hover { background: var(--primary-hover); }
+
+.flow-diagram-wrap { border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px; margin-top: 16px; background: var(--bg-subtle); }
+.node-property-panel { border: 1px solid var(--border); border-radius: var(--radius-m); padding: 12px 14px; margin-top: 14px; font-size: 13px; color: var(--text-body); background: #fff; }
+.node-property-panel b { color: var(--navy); }
+
+.ivr-canvas-overlay {
+  position: fixed; inset: 0; background: #fff; z-index: 200;
+  display: none; flex-direction: column;
+}
+.ivr-canvas-overlay.open { display: flex; }
+.ivr-canvas-topbar { display: flex; align-items: center; gap: 10px; padding: 12px 20px; border-bottom: 1px solid var(--border); }
+.ivr-canvas-topbar h3 { margin: 0; font-size: 15px; color: var(--navy); flex: 1; }
+.ivr-canvas-body { flex: 1; display: flex; overflow: hidden; }
+.node-library {
+  width: 220px; flex-shrink: 0; border-right: 1px solid var(--border); padding: 14px; overflow-y: auto;
+  background: var(--bg-subtle);
+}
+.node-library-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); margin-bottom: 10px; }
+.node-card {
+  display: flex; align-items: center; gap: 9px; padding: 9px 10px; border-radius: var(--radius-s);
+  background: #fff; border: 1px solid var(--border); font-size: 12.5px; font-weight: 600; color: var(--text-body);
+  cursor: pointer; margin-bottom: 6px;
+}
+.node-card:hover { border-color: var(--primary); color: var(--primary); }
+.canvas-area { flex: 1; overflow: auto; padding: 30px; background-image: radial-gradient(circle, #e5e7eb 1px, transparent 1px); background-size: 18px 18px; }
+.canvas-flow { display: flex; flex-direction: column; align-items: center; gap: 0; max-width: 260px; margin: 0 auto; }
+.canvas-node {
+  width: 220px; padding: 12px 14px; border-radius: var(--radius-m); border: 2px solid var(--border);
+  background: #fff; font-size: 12.5px; font-weight: 600; color: var(--navy); cursor: pointer; box-shadow: var(--shadow-sm);
+  text-align: center;
+}
+.canvas-node.selected { border-color: var(--primary); background: var(--primary-light); }
+.canvas-connector { width: 2px; height: 26px; background: var(--border); }
+.node-props-panel { width: 260px; flex-shrink: 0; border-left: 1px solid var(--border); padding: 16px; overflow-y: auto; }
+.node-props-panel h4 { margin: 0 0 12px; font-size: 13px; color: var(--navy); }
+
+/* Analytics */
+.date-presets { display: flex; gap: 6px; margin-bottom: 18px; flex-wrap: wrap; }
+.chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+.chart-card { border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; }
+.chart-card h4 { margin: 0 0 12px; font-size: 13px; color: var(--navy); }
+.chart-legend { display: flex; gap: 14px; font-size: 11.5px; color: var(--text-muted); margin-top: 8px; }
+.chart-legend span { display: inline-flex; align-items: center; gap: 5px; }
+.chart-legend i { width: 9px; height: 9px; border-radius: 2px; display: inline-block; }
+
+/* =========================================================
+   GLOBAL: TOAST / MODAL / DRAWER
+   ========================================================= */
+.toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 500; display: flex; flex-direction: column; gap: 10px; max-width: 340px; }
+.toast {
+  display: flex; align-items: flex-start; gap: 10px;
+  background: #fff; border: 1px solid var(--border); border-left: 4px solid var(--info);
+  border-radius: var(--radius-m); box-shadow: var(--shadow-lg); padding: 12px 14px;
+  font-size: 13px; color: var(--text-body); animation: toastIn 0.2s ease;
+}
+@keyframes toastIn { from { opacity: 0; transform: translateX(16px); } to { opacity: 1; transform: translateX(0); } }
+.toast.success { border-left-color: var(--success); }
+.toast.warning { border-left-color: var(--warning); }
+.toast.error { border-left-color: var(--danger); }
+.toast svg.toast-ic { width: 17px; height: 17px; flex-shrink: 0; margin-top: 1px; }
+.toast.success svg.toast-ic { color: var(--success); }
+.toast.warning svg.toast-ic { color: var(--warning); }
+.toast.error svg.toast-ic { color: var(--danger); }
+.toast.info svg.toast-ic { color: var(--info); }
+.toast-body { flex: 1; }
+.toast-action { display: block; margin-top: 6px; font-size: 12.5px; font-weight: 700; color: var(--primary); cursor: pointer; }
+.toast-close { border: none; background: none; color: var(--text-faint); cursor: pointer; flex-shrink: 0; }
+.toast-close svg { width: 14px; height: 14px; }
+
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(15, 20, 35, 0.5); z-index: 300;
+  display: none; align-items: center; justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+.modal-box { width: 400px; background: #fff; border-radius: var(--radius-lg); box-shadow: var(--shadow-xl); padding: 22px; }
+.modal-box h3 { display: flex; align-items: center; gap: 8px; margin: 0 0 10px; font-size: 15px; color: var(--navy); }
+.modal-box h3 svg { width: 18px; height: 18px; color: var(--danger); }
+.modal-box p { margin: 0 0 20px; font-size: 13.5px; color: var(--text-muted); line-height: 1.6; }
+.modal-actions { display: flex; justify-content: flex-end; gap: 10px; }
+.btn-danger-lg { height: 38px; padding: 0 16px; border: none; border-radius: var(--radius-s); background: var(--danger); color: #fff; font-size: 13.5px; font-weight: 700; cursor: pointer; }
+.btn-danger-lg:hover { background: #dc2626; }
+
+.drawer-overlay { position: fixed; inset: 0; background: rgba(15, 20, 35, 0.45); z-index: 250; display: none; }
+.drawer-overlay.open { display: block; }
+.drawer-panel {
+  position: fixed; top: 0; right: 0; bottom: 0; width: 380px; background: #fff;
+  box-shadow: var(--shadow-xl); z-index: 251; display: flex; flex-direction: column;
+  transform: translateX(100%); transition: transform 0.22s ease;
+}
+.drawer-overlay.open .drawer-panel { transform: translateX(0); }
+.drawer-header { display: flex; align-items: center; padding: 16px 18px; border-bottom: 1px solid var(--border); }
+.drawer-header h3 { margin: 0; font-size: 15px; color: var(--navy); flex: 1; }
+.drawer-close { border: none; background: none; color: var(--text-muted); cursor: pointer; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+.drawer-close:hover { background: var(--bg-subtle); }
+.drawer-close svg { width: 17px; height: 17px; }
+.drawer-body { flex: 1; overflow-y: auto; padding: 16px 18px; }
+.drawer-footer { padding: 14px 18px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; }
+.drawer-agent-row { display: flex; align-items: center; gap: 10px; padding: 9px 4px; border-bottom: 1px solid var(--border-light); }
+.drawer-agent-row:last-child { border-bottom: none; }
+.drawer-agent-row .spacer { flex: 1; }
+.btn-sm-add { height: 28px; padding: 0 12px; border-radius: 6px; border: 1px solid var(--primary); background: #fff; color: var(--primary); font-size: 12px; font-weight: 700; cursor: pointer; }
+.btn-sm-add:hover { background: var(--primary-light); }
+.btn-sm-add.added { border-color: var(--success); color: var(--success); background: var(--success-light); cursor: default; }
+
+/* =========================================================
+   DARK MODE
+   ========================================================= */
+body.dark {
+  --navy: #f1f4fa;
+  --text-body: #cfd6e4;
+  --text-muted: #8f98ab;
+  --text-faint: #6b7386;
+  --border: #2a3244;
+  --border-light: #262e3e;
+  --bg-page: #12161f;
+  --bg-subtle: #1a1f2b;
+  --bg-sidebar: #12161f;
+  --blue-bg: #1c2a4d;
+  --blue-bg-strong: #223258;
+  --banner-bg: #172440;
+  --banner-border: #274070;
+  --banner-text: #a9c3f5;
+  --purple-bg: #2b2140;
+  --purple-border: #40315e;
+}
+
+body.dark .topbar,
+body.dark .sidebar,
+body.dark .table-search,
+body.dark .select-wrap select,
+body.dark .all-settings-btn,
+body.dark .page-btn,
+body.dark .topbar-balance,
+body.dark .kbd,
+body.dark thead th {
+  background: var(--bg-page);
+}
+
+body.dark .topbar-search,
+body.dark thead th { background: var(--bg-subtle); }
+
+body.dark .avatar { background: #232a3a; border-color: var(--border); color: #b6bdcc; }
+
+body.dark .action-btn.edit,
+body.dark .action-btn.people { background: #1a1f2b; color: var(--text-muted); }
+body.dark .action-btn.delete { background: #3a1e1e; color: #f0736a; }
+body.dark .skills-search,
+body.dark .btn-outline,
+body.dark .cat-badge,
+body.dark .skill-badge { background: var(--bg-page); }
+
+body.dark .avatar-online,
+body.dark .notif-badge { border-color: var(--bg-page); }
+
+body.dark ::-webkit-scrollbar-thumb { background: #333c50; border-color: var(--bg-page); }
+body.dark ::-webkit-scrollbar-thumb:hover { background: #3f4a63; }
+
+/* dark mode — queue management views */
+body.dark {
+  --success-light: #103326;
+  --warning-light: #3a2c10;
+  --danger-light: #3a1e1e;
+  --info-light: #17273f;
+}
+body.dark .stat-card,
+body.dark .routing-card,
+body.dark .review-card-body,
+body.dark .kpi-tile,
+body.dark .detail-header,
+body.dark .activity-feed,
+body.dark .checklist,
+body.dark .node-property-panel,
+body.dark .dropdown-menu,
+body.dark .modal-box,
+body.dark .drawer-panel,
+body.dark .toast,
+body.dark .template-card,
+body.dark .agents-panel,
+body.dark .field-input,
+body.dark .field select,
+body.dark .field textarea,
+body.dark .time-input,
+body.dark .mini-input,
+body.dark .overflow-rule,
+body.dark .file-row,
+body.dark .btn-ghost,
+body.dark .btn-outline-blue,
+body.dark .filter-row .btn-columns,
+body.dark .preset-btn,
+body.dark .bulk-btn,
+body.dark .wizard-footer,
+body.dark .agent-tab-btn,
+body.dark .canvas-node,
+body.dark .node-card {
+  background: var(--bg-page);
+  border-color: var(--border);
+  color: var(--text-body);
+}
+body.dark .review-card-head,
+body.dark .chip-mono,
+body.dark .empty-mini { background: var(--bg-subtle); }
+body.dark .node-library,
+body.dark .canvas-area { background: var(--bg-subtle); }
+body.dark .ivr-canvas-overlay { background: var(--bg-page); }
+body.dark .flow-diagram-wrap { background: var(--bg-subtle); }
+body.dark .sla-bar-track { background: var(--border); }
+body.dark .toggle-slider { background: var(--border); }
+body.dark .unsaved-bar { background: #0a0d14; }
+</style>
+</head>
+<body>
+
+<!-- ===================== HEADER ===================== -->
+<header class="topbar">
+  <div class="topbar-logo">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 16.5a5 5 0 0 1 7 0"/><path d="M5 13a9 9 0 0 1 14 0"/><path d="M1.5 9.5a13 13 0 0 1 21 0"/><circle cx="12" cy="20" r="1.5" fill="currentColor" stroke="none"/></svg>
+  </div>
+
+  <nav class="topbar-nav">
+    <a href="#" class="nav-link" data-tab="dashboard">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>
+      Dashboard
+    </a>
+    <a href="#" class="nav-link" data-tab="directory">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 20c1.4-3.6 4.3-5.5 7.5-5.5s6.1 1.9 7.5 5.5"/></svg>
+      Directory
+    </a>
+    <a href="#" class="nav-link" data-tab="interactions">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 4.5h4l2 5-2.5 1.5a11 11 0 0 0 5 5l1.5-2.5 5 2v4c0 1-1 1.5-1.8 1.4C10 20.6 4.4 15 3.6 7.3 3.4 6.5 4 5.5 4.5 4.5Z"/></svg>
+      Interactions
+    </a>
+    <a href="#" class="nav-link" data-tab="analytics">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M12 20V4M20 20v-7"/></svg>
+      Analytics
+    </a>
+    <a href="#" class="nav-link active" data-tab="settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 13a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.9 2.9l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V19a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.9-2.9l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.6-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.9-2.9l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.6V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.9 2.9l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.6 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.6 1Z"/></svg>
+      Settings
+    </a>
+  </nav>
+
+  <div class="topbar-divider"></div>
+
+  <div class="topbar-search">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+    <input type="text" id="header-search" placeholder="Search here...">
+    <span class="kbd">Ctrl K</span>
+  </div>
+
+  <div class="topbar-right">
+    <button class="icon-btn" id="notif-btn" title="Notifications">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 1 1 12 0c0 5 1.5 6.5 1.5 6.5h-15S6 13 6 8Z"/><path d="M10 19a2 2 0 0 0 4 0"/></svg>
+      <span class="notif-badge">9+</span>
+    </button>
+    <button class="icon-btn" id="theme-btn" title="Toggle theme">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 14.3A8.5 8.5 0 1 1 9.7 3.5a7 7 0 0 0 10.8 10.8Z"/></svg>
+    </button>
+    <div class="topbar-clock">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>
+      <span id="clock-time">18:44:20</span>
+    </div>
+    <button class="topbar-balance" id="balance-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/><circle cx="16.5" cy="14" r="1"/></svg>
+      $3.00
+    </button>
+    <div class="topbar-status" id="status-toggle">
+      <span class="status-dot"></span>
+      Off duty
+      <span id="status-timer">1:23:28</span>
+    </div>
+    <div class="topbar-avatar">
+      HB
+      <span class="avatar-online"></span>
+    </div>
+  </div>
+</header>
+
+<div class="app-body">
+
+<!-- ===================== SIDEBAR ===================== -->
+<div class="sidebar-wrap" id="sidebar-wrap">
+<button class="sidebar-collapse-btn" id="sidebar-collapse-btn" title="Collapse sidebar">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m14 6-6 6 6 6"/></svg>
+</button>
+<aside class="sidebar">
+  <div class="sidebar-title">Admin Hub</div>
+
+  <div class="sidebar-search">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+    <input type="text" id="sidebar-search" placeholder="Search admin">
+  </div>
+
+  <button class="all-settings-btn" id="all-settings-btn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.3"/><rect x="14" y="3" width="7" height="7" rx="1.3"/><rect x="3" y="14" width="7" height="7" rx="1.3"/><rect x="14" y="14" width="7" height="7" rx="1.3"/></svg>
+    All settings screens
+  </button>
+
+  <nav class="sidebar-nav" id="sidebar-nav">
+
+    <div class="nav-group" data-group="captain">
+      <button class="nav-group-header">
+        <span class="nav-group-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 3 6v5c0 5.3 3.6 9.7 9 11 5.4-1.3 9-5.7 9-11V6l-9-4Z"/></svg>
+          <span>Captain</span>
+        </span>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+    </div>
+
+    <div class="nav-group" data-group="company">
+      <button class="nav-group-header">
+        <span class="nav-group-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="10" height="18"/><path d="M14 8h6v13h-6"/><path d="M7.5 7h1M7.5 11h1M7.5 15h1"/></svg>
+          <span>Company</span>
+        </span>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+    </div>
+
+    <div class="nav-group" data-group="myaccount">
+      <button class="nav-group-header">
+        <span class="nav-group-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 20c1.4-3.6 4.3-5.5 7.5-5.5s6.1 1.9 7.5 5.5"/></svg>
+          <span>My Account</span>
+        </span>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+    </div>
+
+    <div class="nav-group" data-group="people">
+      <button class="nav-group-header">
+        <span class="nav-group-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M2.5 19c1.1-3 3.5-4.6 6.5-4.6s5.4 1.6 6.5 4.6"/><circle cx="17" cy="8" r="2.6"/><path d="M16 11.3c2.3.3 4 1.8 4.8 4"/></svg>
+          <span>People</span>
+        </span>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+    </div>
+
+    <div class="nav-group" data-group="numbers">
+      <button class="nav-group-header">
+        <span class="nav-group-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4v16M9 4v16M4 9h16M4 15h16"/></svg>
+          <span>Numbers</span>
+        </span>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+    </div>
+
+    <div class="nav-group expanded" data-group="phonesystem">
+      <button class="nav-group-header">
+        <span class="nav-group-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 4.5h4l2 5-2.5 1.5a11 11 0 0 0 5 5l1.5-2.5 5 2v4c0 1-1 1.5-1.8 1.4C10 20.6 4.4 15 3.6 7.3 3.4 6.5 4 5.5 4.5 4.5Z"/></svg>
+          <span>Phone System</span>
+        </span>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+
+      <div class="nav-submenu">
+        <a href="#" class="sub-item" data-sub="Contact Centres">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1.5 1.5"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1.5-1.5"/></svg>
+          Contact Centres
+        </a>
+        <a href="#" class="sub-item active" data-sub="Skills">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2.5 2.9 6 6.6.9-4.8 4.6 1.1 6.5L12 17.5l-5.8 3 1.1-6.5-4.8-4.6 6.6-.9 2.9-6Z"/></svg>
+          Skills
+        </a>
+        <a href="#" class="sub-item" data-sub="Departments">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M2.5 19c1.1-3 3.5-4.6 6.5-4.6s5.4 1.6 6.5 4.6"/><circle cx="17" cy="8" r="2.6"/><path d="M16 11.3c2.3.3 4 1.8 4.8 4"/></svg>
+          Departments
+        </a>
+        <a href="#" class="sub-item" data-sub="Coaching Teams">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13a8 8 0 0 1 16 0"/><rect x="2.5" y="13" width="4" height="6" rx="1.3"/><rect x="17.5" y="13" width="4" height="6" rx="1.3"/><path d="M17.5 19v.5a3 3 0 0 1-3 3h-1"/></svg>
+          Coaching Teams
+        </a>
+        <a href="#" class="sub-item" data-sub="IVR Menus">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h.01M12 8h.01M16 8h.01M8 12h.01M12 12h.01M16 12h.01M8 16h.01M12 16h.01"/></svg>
+          IVR Menus
+        </a>
+      </div>
+    </div>
+
+    <a href="#" class="nav-leaf" data-sub="Media Files">Media Files</a>
+
+    <div class="nav-group" data-group="integration">
+      <button class="nav-group-header">
+        <span class="nav-group-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2.3"/><circle cx="18" cy="6" r="2.3"/><circle cx="12" cy="18" r="2.3"/><path d="M7.8 7.3 10.5 16M16.2 7.3 13.5 16M8.3 6h7.4"/></svg>
+          <span>Integration</span>
+        </span>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+    </div>
+
+    <a href="#" class="nav-leaf with-icon" data-sub="Social Media Channels">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="12" r="2.3"/><circle cx="18" cy="6" r="2.3"/><circle cx="18" cy="18" r="2.3"/><path d="M8 11l8-4M8 13l8 4"/></svg>
+      Social Media Channels
+    </a>
+
+    <div class="nav-group" data-group="smsrates">
+      <button class="nav-group-header">
+        <span class="nav-group-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9.5 9.5c0-1.1 1-2 2.5-2s2.5.8 2.5 1.8c0 2.7-5 1.4-5 4.1 0 1 1 1.8 2.5 1.8s2.5-.9 2.5-2"/></svg>
+          <span>SMS/Calling Rates</span>
+        </span>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+    </div>
+
+    <div class="nav-group" data-group="billing">
+      <button class="nav-group-header">
+        <span class="nav-group-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2.5h9l3 3V21a.5.5 0 0 1-.5.5h-11A.5.5 0 0 1 6 21V3a.5.5 0 0 1 .5-.5Z"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>
+          <span>Billing</span>
+        </span>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+    </div>
+
+    <div class="nav-group" data-group="10dlc">
+      <button class="nav-group-header">
+        <span class="nav-group-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 5-3 8.5-7 10-4-1.5-7-5-7-10V6l7-3Z"/><path d="m9 12 2 2 4-4"/></svg>
+          <span>10DLC Compliance</span>
+        </span>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+    </div>
+
+  </nav>
+</aside>
+</div>
+
+<!-- ===================== MAIN CONTENT ===================== -->
+<main class="content">
+
+<div class="view" id="view-contact-centres" hidden>
+
+  <div class="page-head">
+    <div>
+      <div class="eyebrow">Phone System / Contact Centres</div>
+      <h1>Contact Centres</h1>
+      <p class="page-desc">Where incoming calls wait and which agents answer them. Queues can be company-wide<br>or per site.</p>
+    </div>
+    <button class="btn-primary" id="new-queue-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+      New Queue
+    </button>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1.5 1.5"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1.5-1.5"/></svg></div>
+      <div><div class="stat-label">Total Queues</div><div class="stat-value" id="stat-total">24</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m9 12 2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg></div>
+      <div><div class="stat-label">Active</div><div class="stat-value" id="stat-active">18</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon warning"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></div>
+      <div><div class="stat-label">Calls Waiting</div><div class="stat-value warning" id="stat-waiting">3</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon success"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M2.5 19c1.1-3 3.5-4.6 6.5-4.6s5.4 1.6 6.5 4.6"/><circle cx="17" cy="8" r="2.6"/><path d="M16 11.3c2.3.3 4 1.8 4.8 4"/></svg></div>
+      <div><div class="stat-label">Agents Available</div><div class="stat-value success" id="stat-agents">12</div></div>
+    </div>
+  </div>
+
+  <div class="filter-row">
+    <div class="table-search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input type="text" id="table-search" placeholder="Search queues…">
+    </div>
+    <div class="select-wrap" style="width:170px">
+      <select id="site-select">
+        <option value="">All Sites</option>
+        <option>Unified Testing Team</option>
+        <option>Company</option>
+      </select>
+      <svg class="select-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+    </div>
+    <div class="select-wrap" style="width:200px">
+      <select id="routing-select">
+        <option value="">All Routing Methods</option>
+        <option value="ringall">Ring All</option>
+        <option value="roundrobin">Round Robin</option>
+        <option value="topdown">Top Down</option>
+        <option value="longestidle">Longest Idle</option>
+        <option value="fewestcalls">Fewest Calls</option>
+        <option value="leasttalk">Least Talk Time</option>
+        <option value="skills">Skills-Based</option>
+      </select>
+      <svg class="select-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+    </div>
+    <div class="select-wrap" style="width:170px">
+      <select id="hours-select">
+        <option value="">All Hours</option>
+        <option value="open24">Open 24 hours</option>
+        <option value="weekday">Set per weekday</option>
+      </select>
+      <svg class="select-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+    </div>
+    <button class="btn-columns" id="columns-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16M15 4v16"/></svg>
+      Columns
+    </button>
+    <div class="dropdown-menu" id="columns-menu" style="right:0; left:auto;">
+      <label class="dropdown-item" style="cursor:pointer"><input type="checkbox" class="qt-checkbox col-toggle" data-col="site" checked style="margin-right:6px"> Site</label>
+      <label class="dropdown-item" style="cursor:pointer"><input type="checkbox" class="qt-checkbox col-toggle" data-col="ext" checked style="margin-right:6px"> Extension</label>
+      <label class="dropdown-item" style="cursor:pointer"><input type="checkbox" class="qt-checkbox col-toggle" data-col="members" checked style="margin-right:6px"> Members</label>
+      <label class="dropdown-item" style="cursor:pointer"><input type="checkbox" class="qt-checkbox col-toggle" data-col="sla" checked style="margin-right:6px"> SLA</label>
+    </div>
+  </div>
+
+  <div class="bulk-bar" id="bulk-bar">
+    <span id="bulk-count">0 selected</span>
+    <div class="spacer"></div>
+    <button class="bulk-btn" id="bulk-deactivate">Deactivate</button>
+    <button class="bulk-btn danger" id="bulk-delete">Delete</button>
+    <button class="bulk-btn" id="bulk-cancel">Cancel</button>
+  </div>
+
+  <div class="table-shell">
+    <div class="table-scroll">
+      <table id="queues-table">
+        <thead>
+          <tr>
+            <th class="col-check"><input type="checkbox" class="qt-checkbox" id="select-all-chk"></th>
+            <th class="sortable" data-sort="name">Name <span class="sort-ic">↕</span></th>
+            <th data-col="site">Site</th>
+            <th data-col="ext">Extension</th>
+            <th>Phone Number</th>
+            <th class="sortable" data-sort="routingLabel">Routing Method <span class="sort-ic">↕</span></th>
+            <th>Hours</th>
+            <th data-col="members">Members</th>
+            <th class="sortable" data-sort="sla" data-col="sla">SLA <span class="sort-ic">↕</span></th>
+            <th class="sortable" data-sort="status">Status <span class="sort-ic">↕</span></th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="table-body">
+          <!-- rows injected by script -->
+        </tbody>
+      </table>
+      <div class="empty-state" id="empty-state" hidden>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h16l-1.5 10a2 2 0 0 1-2 1.8H7.5a2 2 0 0 1-2-1.8L4 8Z"/><path d="M8 8V6a4 4 0 0 1 8 0v2"/><path d="M9.5 13h5"/></svg>
+        <h3>No queues found</h3>
+        <p>Try adjusting your filters or create a new queue.</p>
+        <button class="btn-primary" id="empty-new-queue-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+          New Queue
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="pagination-bar">
+    <div class="pagination-left">
+      <div class="select-wrap small">
+        <select id="per-page-select">
+          <option value="10">10</option>
+          <option value="20" selected>20</option>
+          <option value="50">50</option>
+        </select>
+        <svg class="select-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+      </div>
+      <span class="per-page-label">rows per page</span>
+      <span class="vdiv"></span>
+      <span id="record-count">Showing 1–18 of 18 queues</span>
+    </div>
+    <div class="pagination-right" id="pagination-controls">
+      <!-- buttons injected by script -->
+    </div>
+  </div>
+
+</div>
+
+<!-- ===================== NEW QUEUE WIZARD ===================== -->
+<div class="view" id="view-queue-wizard" hidden>
+  <a href="#" class="back-link" id="wizard-back-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+    Back to Contact Centres
+  </a>
+  <h1 class="wizard-title">New Queue</h1>
+
+  <div class="wizard-progress" id="wizard-progress">
+    <div class="wp-step active" data-step="1"><div class="wp-connector"></div><div class="wp-circle">1</div><div class="wp-label">Basic Info</div></div>
+    <div class="wp-step" data-step="2"><div class="wp-connector"></div><div class="wp-circle">2</div><div class="wp-label">Agents</div></div>
+    <div class="wp-step" data-step="3"><div class="wp-connector"></div><div class="wp-circle">3</div><div class="wp-label">Routing</div></div>
+    <div class="wp-step" data-step="4"><div class="wp-connector"></div><div class="wp-circle">4</div><div class="wp-label">Business Hours</div></div>
+    <div class="wp-step" data-step="5"><div class="wp-circle">5</div><div class="wp-label">Review</div></div>
+  </div>
+  <div class="wizard-step-count" id="wizard-step-count">Step 1 of 5</div>
+
+  <div class="wizard-body">
+
+    <!-- STEP 1: BASIC INFO -->
+    <div class="wizard-step" id="wizard-step-1">
+      <div class="field">
+        <label class="field-label">Queue Name <span class="req">*</span></label>
+        <div class="field-input-wrap">
+          <input type="text" class="field-input" id="w-name" placeholder="e.g. Sales Support">
+          <svg class="field-check-ic" id="w-name-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-11"/></svg>
+        </div>
+        <div class="field-error" id="w-name-error">Name is required</div>
+      </div>
+      <div class="field">
+        <label class="field-label">Site <span class="req">*</span></label>
+        <select id="w-site">
+          <option value="Company">Company</option>
+          <option value="Unified Testing Team" selected>Unified Testing Team</option>
+          <option value="__add">+ Add site…</option>
+        </select>
+      </div>
+      <div class="field">
+        <label class="field-label">Phone Number</label>
+        <select id="w-phone">
+          <option value="">No number for now</option>
+          <option value="+1 646 934 8292">🇺🇸 +1 646 934 8292</option>
+          <option value="+1 415 555 0100">🇺🇸 +1 415 555 0100</option>
+        </select>
+      </div>
+      <div class="field">
+        <label class="field-label">Extension</label>
+        <div class="field-row">
+          <input type="text" class="field-input field-readonly" id="w-ext" readonly>
+          <span class="field-inline-link" id="w-ext-regen">Regenerate</span>
+        </div>
+      </div>
+      <div class="field">
+        <label class="field-label">Routing Type <span class="req">*</span></label>
+        <div class="routing-grid">
+          <div class="routing-card selected" data-type="voice" id="w-type-voice">
+            <span class="rc-icon">📞</span>
+            <div class="rc-title">Voice</div>
+            <div class="rc-desc">Calls, SMS, call recording</div>
+            <div class="rc-radio"></div>
+          </div>
+          <div class="routing-card" data-type="digital" id="w-type-digital">
+            <span class="rc-icon">💬</span>
+            <div class="rc-title">Digital</div>
+            <div class="rc-desc">Web chat, social messaging channels</div>
+            <div class="rc-radio"></div>
+          </div>
+        </div>
+        <div class="info-note">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg>
+          Routing type cannot be changed after creating the queue.
+        </div>
+      </div>
+      <div class="field">
+        <label class="field-label">Description</label>
+        <textarea id="w-desc" rows="3" maxlength="200" placeholder="What is this queue for?"></textarea>
+        <div class="textarea-counter"><span id="w-desc-count">0</span>/200</div>
+      </div>
+      <div class="field">
+        <label class="field-label">Copy settings from</label>
+        <select id="w-copyfrom">
+          <option value="">None (start fresh)</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- STEP 2: AGENTS -->
+    <div class="wizard-step" id="wizard-step-2" hidden>
+      <div class="agents-picker">
+        <div class="agents-panel">
+          <div class="agents-panel-title">Add Agents</div>
+          <div class="agent-tabs">
+            <button class="agent-tab-btn active" data-agent-tab="agents">Agents</button>
+            <button class="agent-tab-btn" data-agent-tab="groups">Groups</button>
+          </div>
+          <div class="table-search" style="margin-bottom:10px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+            <input type="text" id="w-agent-search" placeholder="Search agents or groups…">
+          </div>
+          <div class="agent-list" id="w-agent-list"></div>
+        </div>
+        <div class="agents-panel">
+          <div class="agents-panel-title" id="w-selected-title">Selected Agents (0)</div>
+          <div id="w-selected-list"></div>
+          <div class="empty-mini" id="w-selected-empty">No agents added yet. Search and add agents from the left.</div>
+          <div class="info-box" id="w-skill-note" hidden>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg>
+            Skill ratings will be configurable after selecting a routing method in Step 3.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 3: ROUTING -->
+    <div class="wizard-step" id="wizard-step-3" hidden>
+      <div class="field">
+        <label class="field-label">How should calls be distributed?</label>
+        <div class="routing-grid six" id="w-routing-cards">
+          <div class="routing-card selected" data-routing="roundrobin"><span class="rc-icon">🔄</span><div class="rc-title">Round Robin</div><div class="rc-desc">Agents take turns in rotation</div><div class="rc-best">Best for: equal distribution</div><div class="rc-radio"></div></div>
+          <div class="routing-card" data-routing="longestidle"><span class="rc-icon">⏱</span><div class="rc-title">Longest Idle</div><div class="rc-desc">Agent idle longest gets next call</div><div class="rc-best">Best for: fair load balancing</div><div class="rc-radio"></div></div>
+          <div class="routing-card" data-routing="topdown"><span class="rc-icon">📋</span><div class="rc-title">Top Down</div><div class="rc-desc">Always tries #1 agent first</div><div class="rc-best">Best for: priority agent routing</div><div class="rc-radio"></div></div>
+          <div class="routing-card" data-routing="fewestcalls"><span class="rc-icon">📊</span><div class="rc-title">Fewest Calls</div><div class="rc-desc">Agent with lowest call count today</div><div class="rc-best">Best for: balanced workload today</div><div class="rc-radio"></div></div>
+          <div class="routing-card" data-routing="ringall"><span class="rc-icon">🔔</span><div class="rc-title">Ring All</div><div class="rc-desc">All agents ring simultaneously</div><div class="rc-best">Best for: speed</div><div class="rc-radio"></div></div>
+          <div class="routing-card" data-routing="skills"><span class="rc-icon">⭐</span><div class="rc-title">Skills-Based</div><div class="rc-desc">Match caller to most skilled agent</div><div class="rc-best">Best for: expert matching</div><div class="rc-radio"></div></div>
+        </div>
+      </div>
+
+      <div class="field" id="w-skills-section" hidden>
+        <label class="field-label">Required Skills for This Queue</label>
+        <select id="w-skill-select">
+          <option value="">Select a skill to add…</option>
+          <option>Spanish</option><option>English</option><option>Technical Support</option>
+          <option>Billing</option><option>Enterprise</option><option>Sales</option>
+        </select>
+        <div class="skill-chip-row" id="w-skill-chips"></div>
+        <label class="field-label" style="margin-top:14px;">Skill Evaluation</label>
+        <div class="radio-option-group">
+          <label class="radio-option"><input type="radio" name="w-skill-eval" checked> Best Available (highest proficiency, idle breaks ties)</label>
+          <label class="radio-option"><input type="radio" name="w-skill-eval"> All Required (must have ALL skills)</label>
+          <label class="radio-option"><input type="radio" name="w-skill-eval"> Disregard Skills (next available agent)</label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label">After Call Work (ACW)</label>
+        <select id="w-acw">
+          <option value="optional">Optional</option>
+          <option value="mandatory">Mandatory Discretionary</option>
+          <option value="timeboxed">Mandatory Time-boxed</option>
+          <option value="noexit">No Early Exit</option>
+          <option value="requested">Agent Requested</option>
+        </select>
+        <div class="field-row" id="w-acw-timeout-row" hidden style="margin-top:10px;">
+          <input type="number" class="field-input" id="w-acw-seconds" value="60" min="10" max="3600" style="width:100px;">
+          <span class="field-hint">seconds</span>
+        </div>
+        <div class="info-box" id="w-acw-info" hidden>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg>
+          <span>With Mandatory Time-boxed, agents are automatically set to Available after <b id="w-acw-info-val">60</b> seconds.</span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label">Priority</label>
+        <div class="priority-row">
+          <input type="number" class="field-input" id="w-priority" value="500" min="1" max="1000">
+          <span class="field-hint">Starting Priority (1–1000)</span>
+        </div>
+        <div class="toggle-row">
+          <label class="toggle-switch"><input type="checkbox" id="w-escalation"><span class="toggle-slider"></span></label>
+          <span class="toggle-row-label">Increase priority while waiting</span>
+        </div>
+        <div class="escalation-fields" id="w-escalation-fields">
+          Increase by <input type="number" class="mini-input" id="w-esc-increase" value="10"> every <input type="number" class="mini-input" id="w-esc-every" value="5"> minutes, max <input type="number" class="mini-input" id="w-esc-max" value="1000">
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 4: BUSINESS HOURS -->
+    <div class="wizard-step" id="wizard-step-4" hidden>
+      <div class="section-block">
+        <div class="section-block-title">Business Hours</div>
+        <div class="field" style="max-width:280px;">
+          <label class="field-label">Timezone</label>
+          <select id="w-timezone">
+            <option selected>America/New_York</option>
+            <option>America/Los_Angeles</option>
+            <option>America/Chicago</option>
+            <option>Asia/Kolkata</option>
+            <option>Europe/London</option>
+          </select>
+        </div>
+        <div class="preset-btns">
+          <button class="preset-btn" id="w-preset-247">24/7</button>
+          <button class="preset-btn active" id="w-preset-weekdays">Weekdays 9–5</button>
+          <button class="preset-btn" id="w-preset-custom">Custom</button>
+        </div>
+        <table class="hours-table">
+          <thead><tr><th>Day</th><th>Open</th><th>From</th><th>To</th><th>Copy</th></tr></thead>
+          <tbody id="w-hours-body"></tbody>
+        </table>
+      </div>
+
+      <div class="section-block">
+        <div class="section-block-title">Closed Hours Handling</div>
+        <div class="field">
+          <label class="field-label">When the queue is closed, route calls to:</label>
+          <select id="w-closed-handling">
+            <option value="voicemail">Voicemail</option>
+            <option value="queue">Another queue</option>
+            <option value="external">External number</option>
+            <option value="message">Play message and disconnect</option>
+          </select>
+        </div>
+        <div class="field" id="w-closed-queue-row" hidden>
+          <label class="field-label">Target queue</label>
+          <select id="w-closed-queue"></select>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <div class="section-block-title">Overflow Rules</div>
+        <div class="toggle-row" style="margin-bottom:12px;">
+          <label class="toggle-switch"><input type="checkbox" id="w-overflow-enable" checked><span class="toggle-slider"></span></label>
+          <span class="toggle-row-label">Enable overflow rules</span>
+        </div>
+        <div id="w-overflow-rules"></div>
+        <span class="add-rule-link" id="w-add-rule">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+          Add rule
+        </span>
+      </div>
+    </div>
+
+    <!-- STEP 5: REVIEW -->
+    <div class="wizard-step" id="wizard-step-5" hidden>
+      <div class="completeness-row" id="w-completeness"></div>
+      <div class="review-card">
+        <div class="review-card-head">Basic Information <a href="#" data-goto-step="1">Edit</a></div>
+        <div class="review-card-body" id="review-basic"></div>
+      </div>
+      <div class="review-card">
+        <div class="review-card-head">Agents <a href="#" data-goto-step="2">Edit</a></div>
+        <div class="review-card-body" id="review-agents"></div>
+      </div>
+      <div class="review-card">
+        <div class="review-card-head">Routing <a href="#" data-goto-step="3">Edit</a></div>
+        <div class="review-card-body" id="review-routing"></div>
+      </div>
+      <div class="review-card">
+        <div class="review-card-head">Business Hours &amp; Overflow <a href="#" data-goto-step="4">Edit</a></div>
+        <div class="review-card-body" id="review-hours"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="wizard-footer">
+    <button class="btn-ghost" id="wiz-cancel-btn">Cancel</button>
+    <button class="btn-ghost" id="wiz-back-btn" hidden>← Back</button>
+    <button class="btn-ghost" id="wiz-skip-btn" hidden>Skip for now</button>
+    <div class="spacer"></div>
+    <button class="btn-primary-lg" id="wiz-next-btn">Next: Add Agents →</button>
+  </div>
+</div>
+
+<!-- ===================== QUEUE DETAIL ===================== -->
+<div class="view" id="view-queue-detail" hidden>
+  <a href="#" class="back-link" id="detail-back-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+    Contact Centres
+  </a>
+
+  <div class="detail-header">
+    <div class="detail-title-row">
+      <span class="dot"></span>
+      <span class="detail-name" id="detail-name">Inbound - Sales Support</span>
+      <input type="text" class="detail-name-input" id="detail-name-input" hidden>
+      <span class="status-pill" id="detail-status">Active</span>
+      <div class="spacer"></div>
+      <span class="detail-edit-link" id="detail-edit-name-link">Edit Name</span>
+      <div class="row-menu-wrap">
+        <button class="kebab-btn" id="detail-kebab-btn">
+          <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></svg>
+        </button>
+        <div class="dropdown-menu" id="detail-menu">
+          <button class="dropdown-item" data-action="duplicate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>Duplicate</button>
+          <button class="dropdown-item" data-action="deactivate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M6 6l12 12"/></svg>Deactivate</button>
+          <button class="dropdown-item danger" data-action="delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16"/><path d="M6 7l1 13a1.5 1.5 0 0 0 1.5 1.5h7A1.5 1.5 0 0 0 17 20l1-13"/></svg>Delete</button>
+        </div>
+      </div>
+    </div>
+    <div class="detail-meta" id="detail-meta-line1">+1 646 934 8292 · Ext: 1012 · Round Robin</div>
+    <div class="detail-meta" id="detail-meta-line2">Unified Testing Team · Created Sep 17, 2026</div>
+  </div>
+
+  <div class="kpi-row">
+    <div class="kpi-tile"><div class="kpi-label">SLA</div><div class="kpi-value-row"><span class="kpi-value">87%</span><span class="kpi-trend up">▲ 3%</span></div></div>
+    <div class="kpi-tile"><div class="kpi-label">ASA</div><div class="kpi-value-row"><span class="kpi-value">42s</span></div></div>
+    <div class="kpi-tile"><div class="kpi-label">Abandon Rate</div><div class="kpi-value-row"><span class="kpi-value">3.2%</span><span class="kpi-trend down">▼ 0.4%</span></div></div>
+    <div class="kpi-tile"><div class="kpi-label">In Queue Now</div><div class="kpi-value-row"><span class="kpi-value">4</span></div></div>
+  </div>
+
+  <div class="tabs-bar" id="detail-tabs">
+    <button class="tab-btn active" data-tab="overview">Overview</button>
+    <button class="tab-btn" data-tab="agents">Agents</button>
+    <button class="tab-btn" data-tab="routing">Routing</button>
+    <button class="tab-btn" data-tab="hours">Business Hours</button>
+    <button class="tab-btn" data-tab="holdqueue">Hold Queue</button>
+    <button class="tab-btn" data-tab="overflow">Overflow</button>
+    <button class="tab-btn" data-tab="ivr">IVR</button>
+    <button class="tab-btn" data-tab="analytics">Analytics</button>
+  </div>
+
+  <!-- OVERVIEW -->
+  <div class="tab-panel active" id="tab-overview">
+    <div class="section-block">
+      <div class="section-block-title">Recent Activity</div>
+      <div class="activity-feed">
+        <div class="activity-row"><span class="act-time">10:41</span><span class="act-num">+1 646 934 8292</span><span class="act-agent">Sarah K.</span><span class="act-dur">4:12</span><span class="activity-status answered">Answered</span></div>
+        <div class="activity-row"><span class="act-time">10:22</span><span class="act-num">+1 212 555 0110</span><span class="act-agent">—</span><span class="act-dur">1:03</span><span class="activity-status abandoned">Abandoned</span></div>
+        <div class="activity-row"><span class="act-time">09:58</span><span class="act-num">+1 646 934 8292</span><span class="act-agent">Michael T.</span><span class="act-dur">6:47</span><span class="activity-status answered">Answered</span></div>
+        <div class="activity-row"><span class="act-time">09:40</span><span class="act-num">+1 917 555 0142</span><span class="act-agent">—</span><span class="act-dur">0:00</span><span class="activity-status voicemail">Voicemail</span></div>
+        <div class="activity-row"><span class="act-time">09:15</span><span class="act-num">+1 646 934 8292</span><span class="act-agent">Emma R.</span><span class="act-dur">3:29</span><span class="activity-status answered">Answered</span></div>
+      </div>
+    </div>
+    <div class="section-block">
+      <div class="section-block-title">Quick Setup Checklist</div>
+      <div class="checklist">
+        <div class="checklist-item done"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></svg>Basic Info</div>
+        <div class="checklist-item done"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></svg>Agents (5)</div>
+        <div class="checklist-item done"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></svg>Routing (Round Robin)</div>
+        <div class="checklist-item warn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg>Business Hours — not fully configured</div>
+        <div class="checklist-item missing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9 9l6 6M15 9l-6 6"/></svg>IVR — not set up (optional)</div>
+        <div class="checklist-item done"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></svg>Overflow rules</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AGENTS -->
+  <div class="tab-panel" id="tab-agents">
+    <div class="section-block">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+        <div class="section-block-title" style="margin:0;">Agents in Queue</div>
+        <button class="btn-add-agents" id="detail-add-agents-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+          Add Agents
+        </button>
+      </div>
+      <div class="table-shell">
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th class="col-check"><input type="checkbox" class="qt-checkbox"></th><th>Agent</th><th>Role</th><th>Availability</th><th>Calls Today</th><th>Avg Handle</th><th>Skill Rating</th><th>Active</th></tr></thead>
+            <tbody id="detail-agents-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="section-block">
+      <div class="section-block-title">Agent Groups</div>
+      <div id="detail-groups-list">
+        <div class="group-row"><span class="g-name">Sales Team A</span><span class="g-members">4 members</span><span class="g-remove">Remove</span></div>
+      </div>
+      <span class="add-rule-link" id="detail-add-group-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Add Group</span>
+    </div>
+  </div>
+
+  <!-- ROUTING -->
+  <div class="tab-panel" id="tab-routing">
+    <div class="wizard-body" id="detail-routing-body"></div>
+    <div class="unsaved-bar" id="routing-unsaved-bar">
+      <span>You have unsaved changes to Routing settings.</span>
+      <div class="spacer"></div>
+      <button class="btn-ghost" id="routing-discard-btn">Discard</button>
+      <button class="btn-primary-lg" id="routing-save-btn">Save Changes</button>
+    </div>
+  </div>
+
+  <!-- BUSINESS HOURS -->
+  <div class="tab-panel" id="tab-hours">
+    <div class="wizard-body" id="detail-hours-body"></div>
+    <div class="section-block" style="margin-top:22px;">
+      <div class="section-block-title">Holidays</div>
+      <table class="hours-table" id="holidays-table">
+        <thead><tr><th>Holiday</th><th>Date</th><th>Closed Handling</th><th></th></tr></thead>
+        <tbody id="holidays-body">
+          <tr><td>New Year's Day</td><td>Jan 1, 2027</td><td>Voicemail</td><td></td></tr>
+        </tbody>
+      </table>
+      <span class="add-rule-link" id="add-holiday-btn" style="margin-top:10px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Add Holiday</span>
+      <div id="holiday-form-row" hidden style="display:flex; gap:8px; margin-top:10px; align-items:center;">
+        <input type="text" class="field-input" id="holiday-name" placeholder="Holiday name" style="width:160px;">
+        <input type="date" class="field-input" id="holiday-date" style="width:150px;">
+        <select id="holiday-action" style="padding:9px 10px; border:1px solid var(--border); border-radius:6px;">
+          <option>Voicemail</option><option>Play message and disconnect</option>
+        </select>
+        <button class="btn-primary-lg" id="holiday-save-btn">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOLD QUEUE -->
+  <div class="tab-panel" id="tab-holdqueue">
+    <div class="wizard-body">
+      <div class="field">
+        <label class="field-label">Max Queue Size</label>
+        <div class="field-row"><input type="number" class="field-input" id="hq-max-size" value="50" style="width:120px;"><span class="field-hint">callers — beyond this limit calls hit overflow handling</span></div>
+      </div>
+      <div class="field">
+        <label class="field-label">Max Wait Time</label>
+        <div class="slider-row"><input type="range" id="hq-max-wait" min="1" max="120" value="20"><span class="slider-val" id="hq-max-wait-val">20 min</span></div>
+      </div>
+      <div class="field">
+        <label class="field-label">Queue Greeting</label>
+        <div class="radio-option-group">
+          <label class="radio-option"><input type="radio" name="hq-greeting" value="upload"> Upload file</label>
+          <label class="radio-option"><input type="radio" name="hq-greeting" value="record"> Record</label>
+          <label class="radio-option"><input type="radio" name="hq-greeting" value="tts" checked> Text-to-speech</label>
+        </div>
+        <div id="hq-greeting-tts" style="margin-top:10px;">
+          <textarea id="hq-tts-text" rows="2" placeholder="Thanks for calling — all agents are busy, please hold.">Thanks for calling — all our agents are busy, please hold and we'll be right with you.</textarea>
+          <select id="hq-tts-voice" style="margin-top:8px;">
+            <option>English (US) — Female</option><option>English (US) — Male</option><option>English (UK) — Female</option>
+          </select>
+        </div>
+        <div id="hq-greeting-upload" class="file-row" hidden style="margin-top:10px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+          <span>greeting_v2.mp3</span><div class="spacer"></div><button title="Play">▶</button><button title="Delete">✕</button>
+        </div>
+      </div>
+      <div class="field">
+        <label class="field-label">Hold Music</label>
+        <div class="radio-option-group">
+          <label class="radio-option"><input type="radio" name="hq-music" checked> Default</label>
+          <label class="radio-option"><input type="radio" name="hq-music"> Upload custom</label>
+        </div>
+      </div>
+      <div class="field">
+        <div class="toggle-row"><label class="toggle-switch"><input type="checkbox" id="hq-ewt" checked><span class="toggle-slider"></span></label><span class="toggle-row-label">Announce estimated wait time to callers</span></div>
+        <div class="escalation-fields show" id="hq-ewt-fields">Announce every <input type="number" class="mini-input" id="hq-ewt-interval" value="5"> minutes</div>
+      </div>
+      <div class="field">
+        <div class="toggle-row"><label class="toggle-switch"><input type="checkbox" id="hq-callback"><span class="toggle-slider"></span></label><span class="toggle-row-label">Offer callback to callers</span></div>
+        <div class="escalation-fields" id="hq-callback-fields">
+          <label class="radio-option" style="margin:0;"><input type="radio" name="hq-cb-mode" checked> Agent First</label>
+          <label class="radio-option" style="margin:0;"><input type="radio" name="hq-cb-mode"> Customer First</label>
+          Max attempts <input type="number" class="mini-input" id="hq-cb-attempts" value="2">
+        </div>
+      </div>
+      <button class="btn-primary-lg" id="hq-save-btn">Save Changes</button>
+    </div>
+  </div>
+
+  <!-- OVERFLOW -->
+  <div class="tab-panel" id="tab-overflow">
+    <div class="wizard-body" id="detail-overflow-body"></div>
+  </div>
+
+  <!-- IVR -->
+  <div class="tab-panel" id="tab-ivr">
+    <div id="ivr-empty-state">
+      <div class="ivr-empty">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h4"/></svg>
+        <h3>No IVR configured</h3>
+        <p>Route callers through a menu before they reach the queue.</p>
+        <div class="btn-row">
+          <button class="btn-ghost" id="ivr-use-template-btn">Use a Template</button>
+          <button class="btn-primary-lg" id="ivr-build-scratch-btn">Build from Scratch</button>
+        </div>
+      </div>
+      <div class="template-grid" id="ivr-template-grid" hidden>
+        <div class="template-card"><span class="tc-icon">📞</span><div class="tc-title">Standard Menu</div><div class="tc-desc">DTMF 1–9 menu for departments</div><div class="tc-actions"><button class="btn-ghost" data-preview="Standard Menu">Preview</button><button class="btn-use" data-use="Standard Menu">Use</button></div></div>
+        <div class="template-card"><span class="tc-icon">🕐</span><div class="tc-title">Hours Router</div><div class="tc-desc">Open/closed hour detection</div><div class="tc-actions"><button class="btn-ghost" data-preview="Hours Router">Preview</button><button class="btn-use" data-use="Hours Router">Use</button></div></div>
+        <div class="template-card"><span class="tc-icon">⭐</span><div class="tc-title">VIP Detect</div><div class="tc-desc">Route by caller ID or segment</div><div class="tc-actions"><button class="btn-ghost" data-preview="VIP Detect">Preview</button><button class="btn-use" data-use="VIP Detect">Use</button></div></div>
+        <div class="template-card"><span class="tc-icon">📲</span><div class="tc-title">Callback</div><div class="tc-desc">Deflect to callback option</div><div class="tc-actions"><button class="btn-ghost" data-preview="Callback">Preview</button><button class="btn-use" data-use="Callback">Use</button></div></div>
+      </div>
+    </div>
+
+    <div id="ivr-flow-state" hidden>
+      <div style="display:flex; align-items:center; justify-content:space-between;">
+        <div class="section-block-title" style="margin:0;">Current IVR Flow</div>
+        <button class="btn-primary-lg" id="ivr-edit-builder-btn">Edit in IVR Builder</button>
+      </div>
+      <div class="flow-diagram-wrap">
+        <svg viewBox="0 0 320 420" width="100%" height="380" id="ivr-flow-svg"></svg>
+      </div>
+      <div class="node-property-panel" id="ivr-flow-props">Click a node above to see its details.</div>
+    </div>
+  </div>
+
+  <!-- ANALYTICS -->
+  <div class="tab-panel" id="tab-analytics">
+    <div class="date-presets" id="analytics-presets">
+      <button class="preset-btn" data-range="today">Today</button>
+      <button class="preset-btn" data-range="yesterday">Yesterday</button>
+      <button class="preset-btn active" data-range="7d">Last 7 days</button>
+      <button class="preset-btn" data-range="30d">Last 30 days</button>
+      <button class="preset-btn" data-range="month">This Month</button>
+      <button class="preset-btn" data-range="custom">Custom range</button>
+    </div>
+    <div class="kpi-row">
+      <div class="kpi-tile"><div class="kpi-label">Calls Offered</div><div class="kpi-value">342</div></div>
+      <div class="kpi-tile"><div class="kpi-label">Calls Answered</div><div class="kpi-value">318 <span style="font-size:12px;color:var(--text-muted);">(92.9%)</span></div></div>
+      <div class="kpi-tile"><div class="kpi-label">Abandoned</div><div class="kpi-value">24 <span style="font-size:12px;color:var(--text-muted);">(7.1%)</span></div></div>
+      <div class="kpi-tile"><div class="kpi-label">Avg Speed to Answer</div><div class="kpi-value">38s</div></div>
+    </div>
+    <div class="chart-row">
+      <div class="chart-card">
+        <h4>Call Volume</h4>
+        <svg viewBox="0 0 340 200" width="100%" height="200" id="chart-volume"></svg>
+        <div class="chart-legend"><span><i style="background:var(--primary)"></i>Offered</span><span><i style="background:var(--success)"></i>Answered</span></div>
+      </div>
+      <div class="chart-card">
+        <h4>SLA Over Time</h4>
+        <svg viewBox="0 0 340 200" width="100%" height="200" id="chart-sla"></svg>
+        <div class="chart-legend"><span><i style="background:var(--primary)"></i>SLA %</span><span><i style="background:var(--text-faint)"></i>Target (80%)</span></div>
+      </div>
+    </div>
+    <div class="section-block">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+        <div class="section-block-title" style="margin:0;">Agent Performance</div>
+        <button class="btn-ghost" id="analytics-export-btn">Export</button>
+      </div>
+      <div class="table-shell">
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th class="sortable" data-perf-sort="name">Agent <span class="sort-ic">↕</span></th><th class="sortable" data-perf-sort="calls">Calls Handled <span class="sort-ic">↕</span></th><th>Avg Handle Time</th><th>Avg Hold Time</th><th>ACW</th><th>SLA Contribution</th></tr></thead>
+            <tbody id="agent-perf-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===================== IVR CANVAS OVERLAY ===================== -->
+<div class="ivr-canvas-overlay" id="ivr-canvas-overlay">
+  <div class="ivr-canvas-topbar">
+    <h3>IVR Builder</h3>
+    <button class="btn-ghost" id="ivr-save-draft-btn">Save Draft</button>
+    <button class="btn-primary-lg" id="ivr-publish-btn">Publish</button>
+    <button class="kebab-btn" id="ivr-canvas-close-btn" title="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+  </div>
+  <div class="ivr-canvas-body">
+    <div class="node-library">
+      <div class="node-library-title">Node Library</div>
+      <div class="node-card" data-node="Play Message">📢 Play Message</div>
+      <div class="node-card" data-node="Menu (DTMF)">🔢 Menu (DTMF)</div>
+      <div class="node-card" data-node="Branch (If/Else)">🔀 Branch (If/Else)</div>
+      <div class="node-card" data-node="Transfer to Queue">📞 Transfer to Queue</div>
+      <div class="node-card" data-node="Transfer to Agent">👤 Transfer to Agent</div>
+      <div class="node-card" data-node="Transfer to Number">📱 Transfer to Number</div>
+      <div class="node-card" data-node="Voicemail">📬 Voicemail</div>
+      <div class="node-card" data-node="End Call">❌ End Call</div>
+    </div>
+    <div class="canvas-area">
+      <div class="canvas-flow" id="canvas-flow"></div>
+    </div>
+    <div class="node-props-panel">
+      <h4>Node Properties</h4>
+      <div id="canvas-node-props">Select a node to edit its properties, or click a node in the library to append it to the flow.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SKILLS VIEW ===================== -->
+<div class="view" id="view-skills">
+
+  <div class="page-head skills-head">
+    <div>
+      <h1 class="page-title-sm">Skills</h1>
+      <p class="page-desc">Skills sit under categories: Language, Customer service, Sales, whatever you call your work. Put people on a skill and rate them 1 to 5; a queue asks for one skill from each category it names and rings the best-rated free person first.</p>
+    </div>
+    <div class="skills-toolbar">
+      <div class="skills-search">
+        <input type="text" id="skills-search" placeholder="Search skills">
+      </div>
+      <button class="btn-outline" id="categories-btn">Categories</button>
+      <button class="btn-outline-blue" id="add-skill-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+        Add skill
+      </button>
+    </div>
+  </div>
+
+  <div class="skill-category">
+    <div class="skill-category-head">
+      <div class="skill-category-title">
+        <span class="cat-name">Language</span>
+        <span class="cat-badge">LANGUAGES</span>
+        <span class="cat-count">1 skill</span>
+      </div>
+      <a href="#" class="cat-add-link">Add language</a>
+    </div>
+    <div class="skill-row">
+      <div class="skill-row-main">
+        <div class="skill-row-title"><span class="skill-name">English</span><span class="skill-badge">ENG-IN</span></div>
+        <div class="skill-desc">Skill for english in india</div>
+      </div>
+      <div class="skill-row-actions">
+        <a href="#" class="people-link">6 people</a>
+        <button class="action-btn people" title="Assign people">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M2.8 19c1.1-3.2 3.4-4.8 6.2-4.8s5.1 1.6 6.2 4.8"/><path d="M17 8h4M19 6v4"/></svg>
+        </button>
+        <button class="action-btn edit" title="Edit">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+        </button>
+        <button class="action-btn delete" title="Delete">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16"/><path d="M9 7V4.5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1V7"/><path d="M6 7l1 13a1.5 1.5 0 0 0 1.5 1.5h7A1.5 1.5 0 0 0 17 20l1-13"/><path d="M10 11.5v6M14 11.5v6"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="skill-category">
+    <div class="skill-category-head">
+      <div class="skill-category-title">
+        <span class="cat-name">General</span>
+        <span class="cat-badge">SKILLS</span>
+        <span class="cat-count">2 skills</span>
+      </div>
+      <a href="#" class="cat-add-link">Add skill</a>
+    </div>
+    <div class="skill-row">
+      <div class="skill-row-main">
+        <div class="skill-row-title"><span class="skill-name">Sales</span></div>
+        <div class="skill-desc">This is for sales team</div>
+      </div>
+      <div class="skill-row-actions">
+        <a href="#" class="people-link">4 people</a>
+        <button class="action-btn people" title="Assign people">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M2.8 19c1.1-3.2 3.4-4.8 6.2-4.8s5.1 1.6 6.2 4.8"/><path d="M17 8h4M19 6v4"/></svg>
+        </button>
+        <button class="action-btn edit" title="Edit">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+        </button>
+        <button class="action-btn delete" title="Delete">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16"/><path d="M9 7V4.5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1V7"/><path d="M6 7l1 13a1.5 1.5 0 0 0 1.5 1.5h7A1.5 1.5 0 0 0 17 20l1-13"/><path d="M10 11.5v6M14 11.5v6"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="skill-row">
+      <div class="skill-row-main">
+        <div class="skill-row-title"><span class="skill-name">test_skill</span></div>
+        <div class="skill-desc">this is best skill section</div>
+      </div>
+      <div class="skill-row-actions">
+        <a href="#" class="people-link">2 people</a>
+        <button class="action-btn people" title="Assign people">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M2.8 19c1.1-3.2 3.4-4.8 6.2-4.8s5.1 1.6 6.2 4.8"/><path d="M17 8h4M19 6v4"/></svg>
+        </button>
+        <button class="action-btn edit" title="Edit">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+        </button>
+        <button class="action-btn delete" title="Delete">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16"/><path d="M9 7V4.5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1V7"/><path d="M6 7l1 13a1.5 1.5 0 0 0 1.5 1.5h7A1.5 1.5 0 0 0 17 20l1-13"/><path d="M10 11.5v6M14 11.5v6"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===================== PLACEHOLDER VIEW ===================== -->
+<div class="view" id="view-placeholder" hidden>
+  <div class="eyebrow">Phone System</div>
+  <h1 id="placeholder-title">Section</h1>
+  <p class="page-desc">This section isn't wired up in this prototype yet.</p>
+</div>
+
+</main>
+</div>
+
+<!-- ===================== GLOBAL: TOAST / MODAL / DRAWER ===================== -->
+<div class="toast-container" id="toast-container"></div>
+
+<div class="modal-overlay" id="confirm-modal">
+  <div class="modal-box">
+    <h3>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>
+      <span id="confirm-modal-title">Delete queue?</span>
+    </h3>
+    <p id="confirm-modal-body">This will permanently delete the queue. This cannot be undone.</p>
+    <div class="modal-actions">
+      <button class="btn-ghost" id="confirm-modal-cancel">Cancel</button>
+      <button class="btn-danger-lg" id="confirm-modal-confirm">Delete Queue</button>
+    </div>
+  </div>
+</div>
+
+<div class="drawer-overlay" id="drawer-overlay">
+  <div class="drawer-panel">
+    <div class="drawer-header"><h3 id="drawer-title">Add Agents to Queue</h3><button class="drawer-close" id="drawer-close-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+    <div class="drawer-body" id="drawer-body"></div>
+    <div class="drawer-footer"><button class="btn-primary-lg" id="drawer-done-btn">Done</button></div>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   DATA
+   ========================================================= */
+const ROUTING_META = {
+  ringall:     { label: "Ring All",         bg: "var(--info-light)",   fg: "var(--info)" },
+  roundrobin:  { label: "Round Robin",      bg: "var(--primary-light)", fg: "var(--primary)" },
+  topdown:     { label: "Top Down",         bg: "var(--warning-light)", fg: "var(--warning)" },
+  longestidle: { label: "Longest Idle",     bg: "var(--teal-light)",    fg: "var(--teal)" },
+  fewestcalls: { label: "Fewest Calls",     bg: "var(--success-light)", fg: "var(--success)" },
+  leasttalk:   { label: "Least Talk Time",  bg: "var(--purple-bg)",     fg: "var(--purple-text)" },
+  skills:      { label: "Skills-Based",     bg: "var(--pink-light)",    fg: "var(--pink)" },
+};
+
+const HOURS_META = {
+  open24:  { label: "Open 24 hours",   bg: "var(--success-light)", fg: "var(--success)" },
+  weekday: { label: "Set per weekday", bg: "var(--info-light)",    fg: "var(--info)" },
+  notset:  { label: "Not set",         bg: "var(--bg-subtle)",     fg: "var(--text-muted)" },
+};
+
+let queueSeq = 100;
+const QUEUES = [
+  { id: 1,  name: "hgfs", campaign: true, site: "", ext: "2328", number: "No number", routing: "ringall", hours: "notset", members: null, sla: null, status: "Active", created: "Sep 19, 2026" },
+  { id: 2,  name: "hgfs", campaign: true, site: "", ext: "2045", number: "No number", routing: "ringall", hours: "notset", members: null, sla: null, status: "Active", created: "Sep 18, 2026" },
+  { id: 3,  name: "Inbound - fewest_testing", campaign: false, site: "Unified Testing Team", ext: "7093", number: "No number", routing: "fewestcalls", hours: "weekday", members: 4, sla: 91, status: "Active", created: "Sep 18, 2026" },
+  { id: 4,  name: "Inbound - topdown2", campaign: false, site: "Unified Testing Team", ext: "1483", number: "No number", routing: "topdown", hours: "open24", members: 6, sla: 78, status: "Active", created: "Sep 18, 2026" },
+  { id: 5,  name: "Inbound - top_down_testing", campaign: false, site: "Unified Testing Team", ext: "2157", number: "No number", routing: "topdown", hours: "weekday", members: 3, sla: 84, status: "Active", created: "Sep 18, 2026" },
+  { id: 6,  name: "Inbound - Agentwithleasttalk", campaign: false, site: "Unified Testing Team", ext: "3148", number: "No number", routing: "leasttalk", hours: "open24", members: 5, sla: 96, status: "Active", created: "Sep 18, 2026" },
+  { id: 7,  name: "Inbound - mcm_call_queues_testing", campaign: false, site: "Unified Testing Team", ext: "1340", number: "No number", routing: "longestidle", hours: "weekday", members: 7, sla: 73, status: "Active", created: "Sep 18, 2026" },
+  { id: 8,  name: "Inbound - newcallqueue", campaign: false, site: "Unified Testing Team", ext: "7971", number: "No number", routing: "roundrobin", hours: "open24", members: 3, sla: 88, status: "Active", created: "Sep 18, 2026" },
+  { id: 9,  name: "Inbound - testing_call_queues_3", campaign: false, site: "Unified Testing Team", ext: "6282", number: "No number", routing: "longestidle", hours: "weekday", members: 2, sla: 70, status: "Active", created: "Sep 18, 2026" },
+  { id: 10, name: "Inbound - mk's_test4", campaign: false, site: "Unified Testing Team", ext: "1012", number: "🇺🇸 +1 646 934 8292", numberLink: true, routing: "ringall", hours: "open24", members: 8, sla: 93, status: "Active", created: "Sep 17, 2026" },
+  { id: 11, name: "Inbound - mk_test2", campaign: false, site: "Unified Testing Team", ext: "1074", number: "No number", routing: "ringall", hours: "open24", members: 4, sla: 82, status: "Active", created: "Sep 17, 2026" },
+  { id: 12, name: "Inbound - Testing", campaign: false, site: "Unified Testing Team", ext: "8505", number: "No number", routing: "ringall", hours: "open24", members: 5, sla: 97, status: "Active", created: "Sep 17, 2026" },
+  { id: 13, name: "Inbound - call_queues_testing_2", campaign: false, site: "Unified Testing Team", ext: "4440", number: "No number", routing: "ringall", hours: "weekday", members: 3, sla: 75, status: "Active", created: "Sep 17, 2026" },
+  { id: 14, name: "Inbound - mk's_team", campaign: false, site: "Unified Testing Team", ext: "9698", number: "No number", routing: "roundrobin", hours: "open24", members: 9, sla: 89, status: "Active", created: "Sep 17, 2026" },
+  { id: 15, name: "Inbound - call_queues_testing_1", campaign: false, site: "Unified Testing Team", ext: "3339", number: "No number", routing: "ringall", hours: "weekday", members: 2, sla: 71, status: "Inactive", created: "Sep 16, 2026" },
+  { id: 16, name: "Inbound - Queue_testing", campaign: false, site: "Unified Testing Team", ext: "9368", number: "No number", routing: "skills", hours: "weekday", members: 6, sla: 85, status: "Active", created: "Sep 16, 2026" },
+  { id: 17, name: "Inbound_testing", campaign: true, site: "", ext: "3518", number: "No number", routing: "ringall", hours: "notset", members: null, sla: null, status: "Active", created: "Sep 16, 2026" },
+  { id: 18, name: "hgfs", campaign: true, site: "", ext: "2714", number: "No number", routing: "ringall", hours: "notset", members: null, sla: null, status: "Active", created: "Sep 16, 2026" },
+];
+
+/* =========================================================
+   CLOCK
+   ========================================================= */
+function updateClock() {
+  const now = new Date();
+  const pad = n => String(n).padStart(2, "0");
+  document.getElementById("clock-time").textContent =
+    `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())} GMT+5:30`;
+}
+updateClock();
+setInterval(updateClock, 1000);
+
+/* off-duty timer ticks up */
+(function offDutyTimer() {
+  let totalSeconds = 1 * 3600 + 23 * 60 + 28;
+  const el = document.getElementById("status-timer");
+  setInterval(() => {
+    totalSeconds++;
+    const h = Math.floor(totalSeconds / 3600);
+    const m = Math.floor((totalSeconds % 3600) / 60);
+    const s = totalSeconds % 60;
+    el.textContent = `${h}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+  }, 1000);
+})();
+
+/* =========================================================
+   TOP NAV TAB SWITCHING
+   ========================================================= */
+document.querySelectorAll(".nav-link").forEach(link => {
+  link.addEventListener("click", e => {
+    e.preventDefault();
+    document.querySelectorAll(".nav-link").forEach(l => l.classList.remove("active"));
+    link.classList.add("active");
+  });
+});
+
+/* =========================================================
+   HEADER ICON BUTTONS
+   ========================================================= */
+document.getElementById("theme-btn").addEventListener("click", () => {
+  document.body.classList.toggle("dark");
+});
+
+document.getElementById("notif-btn").addEventListener("click", () => {
+  document.getElementById("notif-btn").classList.toggle("open");
+});
+
+document.getElementById("status-toggle").addEventListener("click", function () {
+  const dot = this.querySelector(".status-dot");
+  if (this.classList.toggle("on-duty")) {
+    dot.style.background = "#3fb95e";
+    this.childNodes[1].textContent = " On duty ";
+  } else {
+    dot.style.background = "";
+    this.childNodes[1].textContent = " Off duty ";
+  }
+});
+
+document.getElementById("balance-btn").addEventListener("click", () => {
+  alert("Balance: $3.00");
+});
+
+/* =========================================================
+   SIDEBAR: EXPAND / COLLAPSE GROUPS
+   ========================================================= */
+document.querySelectorAll(".nav-group-header").forEach(header => {
+  header.addEventListener("click", () => {
+    const group = header.closest(".nav-group");
+    const wasExpanded = group.classList.contains("expanded");
+    document.querySelectorAll(".nav-group").forEach(g => g.classList.remove("expanded"));
+    if (!wasExpanded) group.classList.add("expanded");
+  });
+});
+
+/* SIDEBAR: SELECT NAV ITEM (sub-items + top-level leaves) + SWITCH MAIN VIEW */
+const VIEW_BY_LABEL = {
+  "Contact Centres": "view-contact-centres",
+  "Skills": "view-skills",
+};
+
+function showView(viewId, label) {
+  document.querySelectorAll(".view").forEach(v => v.hidden = true);
+  const target = document.getElementById(viewId);
+  if (target) target.hidden = false;
+  if (viewId === "view-placeholder") {
+    document.getElementById("placeholder-title").textContent = label;
+  }
+}
+
+document.querySelectorAll(".sub-item, .nav-leaf").forEach(item => {
+  item.addEventListener("click", e => {
+    e.preventDefault();
+    document.querySelectorAll(".sub-item, .nav-leaf").forEach(i => i.classList.remove("active"));
+    item.classList.add("active");
+    const label = item.dataset.sub;
+    showView(VIEW_BY_LABEL[label] || "view-placeholder", label);
+  });
+});
+
+showView("view-skills", "Skills");
+
+/* SIDEBAR: COLLAPSE / EXPAND */
+document.getElementById("sidebar-collapse-btn").addEventListener("click", () => {
+  document.getElementById("sidebar-wrap").classList.toggle("collapsed");
+});
+
+/* SIDEBAR SEARCH — filters the nav groups/sub-items by text */
+document.getElementById("sidebar-search").addEventListener("input", e => {
+  const q = e.target.value.trim().toLowerCase();
+  document.querySelectorAll(".nav-group").forEach(group => {
+    const groupLabel = group.querySelector(".nav-group-label").textContent.toLowerCase();
+    const subItems = group.querySelectorAll(".sub-item");
+    let groupMatches = groupLabel.includes(q);
+    let anySubMatch = false;
+
+    subItems.forEach(sub => {
+      const match = sub.textContent.toLowerCase().includes(q);
+      sub.style.display = match || q === "" ? "" : "none";
+      if (match) anySubMatch = true;
+    });
+
+    group.style.display = (groupMatches || anySubMatch || q === "") ? "" : "none";
+    if (q !== "" && anySubMatch && !groupMatches) group.classList.add("expanded");
+  });
+});
+
+/* =========================================================
+   ICONS (shared helpers)
+   ========================================================= */
+function ic(name) {
+  const icons = {
+    check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></svg>',
+    edit: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>',
+    trash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16"/><path d="M9 7V4.5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1V7"/><path d="M6 7l1 13a1.5 1.5 0 0 0 1.5 1.5h7A1.5 1.5 0 0 0 17 20l1-13"/><path d="M10 11.5v6M14 11.5v6"/></svg>',
+    dup: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>',
+    off: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M6 6l12 12"/></svg>',
+    x: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6 6 18"/></svg>',
+    first: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m17 17-5-5 5-5M10 17l-5-5 5-5"/></svg>',
+    prev: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m14 17-5-5 5-5"/></svg>',
+    next: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m10 17 5-5-5-5"/></svg>',
+    last: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7 17 5-5-5-5M14 17l5-5-5-5"/></svg>',
+    up: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m5 15 7-7 7 7"/></svg>',
+    down: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m5 9 7 7 7-7"/></svg>',
+  };
+  return icons[name] || "";
+}
+function initials(name) { return name.split(/\s+/).map(w => w[0]).join("").slice(0, 2).toUpperCase(); }
+
+/* =========================================================
+   TOAST
+   ========================================================= */
+function showToast(type, message, actionLabel, actionFn) {
+  const container = document.getElementById("toast-container");
+  const el = document.createElement("div");
+  el.className = "toast " + type;
+  const icons = {
+    success: '<svg class="toast-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></svg>',
+    warning: '<svg class="toast-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg>',
+    error:   '<svg class="toast-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9 9l6 6M15 9l-6 6"/></svg>',
+    info:    '<svg class="toast-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8h.01M12 12v4"/><circle cx="12" cy="12" r="9"/></svg>',
+  };
+  el.innerHTML = `${icons[type] || icons.info}<div class="toast-body">${message}${actionLabel ? `<span class="toast-action">${actionLabel}</span>` : ""}</div><button class="toast-close">${ic("x")}</button>`;
+  container.appendChild(el);
+  const remove = () => { el.remove(); };
+  el.querySelector(".toast-close").addEventListener("click", remove);
+  if (actionLabel) el.querySelector(".toast-action").addEventListener("click", () => { if (actionFn) actionFn(); remove(); });
+  setTimeout(remove, 4500);
+}
+
+/* =========================================================
+   CONFIRM MODAL
+   ========================================================= */
+let confirmCallback = null;
+function openConfirmModal(title, body, confirmLabel, onConfirm) {
+  document.getElementById("confirm-modal-title").textContent = title;
+  document.getElementById("confirm-modal-body").textContent = body;
+  document.getElementById("confirm-modal-confirm").textContent = confirmLabel;
+  confirmCallback = onConfirm;
+  document.getElementById("confirm-modal").classList.add("open");
+}
+function closeConfirmModal() { document.getElementById("confirm-modal").classList.remove("open"); confirmCallback = null; }
+document.getElementById("confirm-modal-cancel").addEventListener("click", closeConfirmModal);
+document.getElementById("confirm-modal").addEventListener("click", e => { if (e.target.id === "confirm-modal") closeConfirmModal(); });
+document.getElementById("confirm-modal-confirm").addEventListener("click", () => {
+  const cb = confirmCallback;
+  closeConfirmModal();
+  if (cb) cb();
+});
+
+/* =========================================================
+   DRAWER
+   ========================================================= */
+function openDrawer(title, bodyHtml, onOpen) {
+  document.getElementById("drawer-title").textContent = title;
+  document.getElementById("drawer-body").innerHTML = bodyHtml;
+  document.getElementById("drawer-overlay").classList.add("open");
+  if (onOpen) onOpen();
+}
+function closeDrawer() { document.getElementById("drawer-overlay").classList.remove("open"); }
+document.getElementById("drawer-close-btn").addEventListener("click", closeDrawer);
+document.getElementById("drawer-done-btn").addEventListener("click", closeDrawer);
+document.getElementById("drawer-overlay").addEventListener("click", e => { if (e.target.id === "drawer-overlay") closeDrawer(); });
+
+/* =========================================================
+   GENERIC DROPDOWN (kebab / columns menus)
+   ========================================================= */
+function toggleDropdown(menuEl) {
+  const wasOpen = menuEl.classList.contains("open");
+  document.querySelectorAll(".dropdown-menu.open").forEach(m => m.classList.remove("open"));
+  if (!wasOpen) menuEl.classList.add("open");
+}
+document.addEventListener("click", e => {
+  if (!e.target.closest(".row-menu-wrap") && !e.target.closest("#columns-btn") && !e.target.closest("#columns-menu")) {
+    document.querySelectorAll(".dropdown-menu.open").forEach(m => m.classList.remove("open"));
+  }
+});
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") {
+    document.querySelectorAll(".dropdown-menu.open").forEach(m => m.classList.remove("open"));
+    closeDrawer();
+    closeConfirmModal();
+  }
+});
+
+/* =========================================================
+   AGENTS (shared sample data)
+   ========================================================= */
+const AGENTS = [
+  { id: 1, name: "Sarah K.",   role: "Agent",        queues: 2, avail: "available", callsToday: 12, avgHandle: "4:23", skill: 4, color: "#f59e0b" },
+  { id: 2, name: "Michael T.", role: "Agent",        queues: 3, avail: "wrapup",    callsToday: 8,  avgHandle: "5:12", skill: 3, color: "#3b82f6" },
+  { id: 3, name: "Emma R.",    role: "Senior Agent", queues: 1, avail: "oncall",    callsToday: 15, avgHandle: "3:45", skill: 5, color: "#8b5cf6" },
+  { id: 4, name: "David L.",   role: "Agent",        queues: 0, avail: "offduty",   callsToday: 0,  avgHandle: "—",    skill: 2, color: "#10b981" },
+  { id: 5, name: "Priya M.",   role: "Team Lead",    queues: 4, avail: "available", callsToday: 10, avgHandle: "4:02", skill: 5, color: "#db2777" },
+];
+const AVAIL_LABEL = { available: "Available", wrapup: "Wrap-up", oncall: "On Call", offduty: "Off Duty" };
+function starRating(n) { let s = ""; for (let i = 1; i <= 5; i++) s += i <= n ? "★" : '<span class="off">★</span>'; return `<span class="stars">${s}</span>`; }
+
+/* =========================================================
+   QUEUE LIST
+   ========================================================= */
+const tableBody = document.getElementById("table-body");
+let selectedIds = new Set();
+let sortKey = null, sortDir = 1;
+
+function slaClass(v) { return v >= 85 ? "" : v >= 75 ? "mid" : "low"; }
+
+function queueRowsFiltered() {
+  const q = (document.getElementById("table-search").value || "").trim().toLowerCase();
+  const site = document.getElementById("site-select").value;
+  const routing = document.getElementById("routing-select").value;
+  const hours = document.getElementById("hours-select").value;
+  let rows = QUEUES.filter(item => {
+    if (q && !item.name.toLowerCase().includes(q)) return false;
+    if (site && item.site !== site) return false;
+    if (routing && item.routing !== routing) return false;
+    if (hours && item.hours !== hours) return false;
+    return true;
+  });
+  if (sortKey) {
+    rows = rows.slice().sort((a, b) => {
+      let av = sortKey === "routingLabel" ? ROUTING_META[a.routing].label : a[sortKey];
+      let bv = sortKey === "routingLabel" ? ROUTING_META[b.routing].label : b[sortKey];
+      if (av == null) av = -1; if (bv == null) bv = -1;
+      if (typeof av === "string") return av.localeCompare(bv) * sortDir;
+      return (av - bv) * sortDir;
+    });
+  }
+  return rows;
+}
+
+function renderQueueRow(q) {
+  const tr = document.createElement("tr");
+  tr.dataset.id = q.id;
+  const rm = ROUTING_META[q.routing], hm = HOURS_META[q.hours];
+  const slaCell = q.sla == null
+    ? '<span class="sla-none">—</span>'
+    : `<div class="sla-wrap"><div class="sla-bar-track"><div class="sla-bar-fill ${slaClass(q.sla)}" style="width:${q.sla}%"></div></div><span class="sla-label">${q.sla}%</span></div>`;
+  const actionsCell = q.campaign
+    ? '<span class="managed-text">Managed by its campaign</span>'
+    : `<div class="row-menu-wrap">
+        <button class="kebab-btn" data-menu-trigger>⋯</button>
+        <div class="dropdown-menu">
+          <button class="dropdown-item" data-row-action="edit">${ic("edit")}Edit</button>
+          <button class="dropdown-item" data-row-action="duplicate">${ic("dup")}Duplicate</button>
+          <button class="dropdown-item danger" data-row-action="delete">${ic("trash")}Delete</button>
+        </div>
+      </div>`;
+  tr.innerHTML = `
+    <td class="col-check"><input type="checkbox" class="qt-checkbox row-chk"></td>
+    <td>
+      <div class="name-cell">
+        <div><a href="#" class="name-link">${q.name}</a></div>
+        <span class="badge-type ${q.campaign ? "campaign" : "inbound"}">${q.campaign ? "Campaign" : "Inbound"}</span>
+      </div>
+    </td>
+    <td data-col="site">${q.site || "—"}</td>
+    <td data-col="ext"><span class="chip-mono">${q.ext}</span></td>
+    <td><span class="${q.numberLink ? "phone-link" : "no-number"}">${q.number}</span></td>
+    <td><span class="badge-routing" style="--badge-bg:${rm.bg};--badge-fg:${rm.fg}">${rm.label}</span></td>
+    <td><span class="pill-hours" style="--pill-bg:${hm.bg};--pill-fg:${hm.fg}">${hm.label}</span></td>
+    <td data-col="members">${q.members == null ? '<span class="managed-text">—</span>' : q.members}</td>
+    <td data-col="sla">${slaCell}</td>
+    <td><span class="status-row ${q.status === "Active" ? "active" : ""}"><span class="dot"></span>${q.status}</span></td>
+    <td>${actionsCell}</td>
+  `;
+  tr.querySelector(".name-link").addEventListener("click", e => { e.preventDefault(); openQueueDetail(q.id); });
+  tr.querySelector(".row-chk").addEventListener("click", e => { e.stopPropagation(); toggleRowSelect(q.id, e.target.checked); });
+  tr.addEventListener("click", e => {
+    if (e.target.closest("a, button, input, .dropdown-menu")) return;
+    openQueueDetail(q.id);
+  });
+  const trigger = tr.querySelector("[data-menu-trigger]");
+  if (trigger) {
+    trigger.addEventListener("click", e => { e.stopPropagation(); toggleDropdown(trigger.nextElementSibling); });
+    tr.querySelectorAll("[data-row-action]").forEach(btn => btn.addEventListener("click", e => {
+      e.stopPropagation();
+      const action = btn.dataset.rowAction;
+      toggleDropdown(btn.closest(".dropdown-menu"));
+      if (action === "edit") openQueueDetail(q.id);
+      else if (action === "duplicate") duplicateQueue(q.id);
+      else if (action === "delete") confirmDeleteQueue(q.id);
+    }));
+  }
+  return tr;
+}
+
+function updateStats() {
+  document.getElementById("stat-total").textContent = QUEUES.length;
+  document.getElementById("stat-active").textContent = QUEUES.filter(q => q.status === "Active").length;
+}
+
+function renderQueueTable() {
+  const rows = queueRowsFiltered();
+  tableBody.innerHTML = "";
+  rows.forEach(q => tableBody.appendChild(renderQueueRow(q)));
+  document.getElementById("empty-state").hidden = rows.length !== 0;
+  document.querySelector("#queues-table").parentElement.style.display = rows.length === 0 ? "none" : "";
+  document.getElementById("record-count").textContent = `Showing 1–${rows.length} of ${QUEUES.length} queues`;
+  updateStats();
+  applyColumnVisibility();
+  document.getElementById("select-all-chk").checked = false;
+  selectedIds.clear();
+  updateBulkBar();
+}
+
+function toggleRowSelect(id, checked) {
+  if (checked) selectedIds.add(id); else selectedIds.delete(id);
+  updateBulkBar();
+}
+function updateBulkBar() {
+  const bar = document.getElementById("bulk-bar");
+  bar.classList.toggle("show", selectedIds.size > 0);
+  document.getElementById("bulk-count").textContent = `${selectedIds.size} selected`;
+}
+document.getElementById("select-all-chk").addEventListener("change", e => {
+  tableBody.querySelectorAll(".row-chk").forEach(chk => {
+    chk.checked = e.target.checked;
+    const id = Number(chk.closest("tr").dataset.id);
+    if (e.target.checked) selectedIds.add(id); else selectedIds.delete(id);
+  });
+  updateBulkBar();
+});
+document.getElementById("bulk-cancel").addEventListener("click", () => {
+  selectedIds.clear();
+  document.getElementById("select-all-chk").checked = false;
+  tableBody.querySelectorAll(".row-chk").forEach(c => c.checked = false);
+  updateBulkBar();
+});
+document.getElementById("bulk-deactivate").addEventListener("click", () => {
+  QUEUES.forEach(q => { if (selectedIds.has(q.id)) q.status = "Inactive"; });
+  showToast("success", `${selectedIds.size} queue(s) deactivated.`);
+  renderQueueTable();
+});
+document.getElementById("bulk-delete").addEventListener("click", () => {
+  openConfirmModal(`Delete ${selectedIds.size} queue(s)?`, "This will permanently delete the selected queues. This cannot be undone.", "Delete Queues", () => {
+    for (let i = QUEUES.length - 1; i >= 0; i--) if (selectedIds.has(QUEUES[i].id)) QUEUES.splice(i, 1);
+    showToast("success", "Selected queues deleted.");
+    renderQueueTable();
+  });
+});
+
+function duplicateQueue(id) {
+  const src = QUEUES.find(q => q.id === id);
+  if (!src) return;
+  const copy = Object.assign({}, src, { id: ++queueSeq, name: src.name + " (copy)", created: "Just now" });
+  QUEUES.unshift(copy);
+  showToast("success", `Duplicated "${src.name}".`);
+  renderQueueTable();
+}
+function confirmDeleteQueue(id) {
+  const q = QUEUES.find(item => item.id === id);
+  if (!q) return;
+  openConfirmModal(`Delete "${q.name}"?`, "This will permanently delete the queue and disconnect any assigned phone numbers. This cannot be undone.", "Delete Queue", () => {
+    QUEUES.splice(QUEUES.findIndex(item => item.id === id), 1);
+    showToast("success", `Queue "${q.name}" deleted.`);
+    renderQueueTable();
+  });
+}
+
+function applyColumnVisibility() {
+  document.querySelectorAll(".col-toggle").forEach(chk => {
+    const col = chk.dataset.col;
+    document.querySelectorAll(`[data-col="${col}"]`).forEach(el => el.style.display = chk.checked ? "" : "none");
+  });
+}
+document.querySelectorAll(".col-toggle").forEach(chk => chk.addEventListener("change", applyColumnVisibility));
+document.getElementById("columns-btn").addEventListener("click", e => { e.stopPropagation(); toggleDropdown(document.getElementById("columns-menu")); });
+
+["table-search", "site-select", "routing-select", "hours-select"].forEach(id => {
+  const el = document.getElementById(id);
+  el.addEventListener(id === "table-search" ? "input" : "change", renderQueueTable);
+});
+
+document.querySelectorAll("#queues-table th.sortable").forEach(th => {
+  th.addEventListener("click", () => {
+    const key = th.dataset.sort;
+    if (sortKey === key) sortDir *= -1; else { sortKey = key; sortDir = 1; }
+    document.querySelectorAll("#queues-table th.sortable").forEach(t => t.classList.remove("sort-asc", "sort-desc"));
+    th.classList.add(sortDir === 1 ? "sort-asc" : "sort-desc");
+    renderQueueTable();
+  });
+});
+
+document.getElementById("new-queue-btn").addEventListener("click", openWizard);
+document.getElementById("empty-new-queue-btn").addEventListener("click", openWizard);
+
+renderQueueTable();
+
+/* =========================================================
+   WIZARD
+   ========================================================= */
+const DAY_LIST = [["mon","Monday"],["tue","Tuesday"],["wed","Wednesday"],["thu","Thursday"],["fri","Friday"],["sat","Saturday"],["sun","Sunday"]];
+
+let wizardState = null;
+function freshWizardState() {
+  return {
+    step: 1, name: "", site: "Unified Testing Team", phone: "", ext: String(1000 + Math.floor(Math.random() * 9000)),
+    type: "voice", desc: "", copyFrom: "", agentIds: [],
+    routing: "roundrobin", skills: [], skillEval: "Best Available", acw: "optional", acwSeconds: 60,
+    priority: 500, escalation: false, escIncrease: 10, escEvery: 5, escMax: 1000,
+    timezone: "America/New_York",
+    days: { mon:{open:true,from:"09:00",to:"17:00"}, tue:{open:true,from:"09:00",to:"17:00"}, wed:{open:true,from:"09:00",to:"17:00"},
+            thu:{open:true,from:"09:00",to:"17:00"}, fri:{open:true,from:"09:00",to:"17:00"}, sat:{open:false,from:"09:00",to:"17:00"}, sun:{open:false,from:"09:00",to:"17:00"} },
+    closedHandling: "voicemail", closedQueue: "",
+    overflowEnabled: true,
+    overflowRules: [ { type: "rule-warning", label: "If caller waits more than", value: 30, unit: "minutes", action: "Voicemail" },
+                      { type: "rule-danger",  label: "If queue has more than", value: 50, unit: "callers", action: "Transfer to external number" } ],
+  };
+}
+
+function openWizard() {
+  wizardState = freshWizardState();
+  document.getElementById("w-copyfrom").innerHTML = '<option value="">None (start fresh)</option>' +
+    QUEUES.filter(q => !q.campaign).map(q => `<option>${q.name}</option>`).join("");
+  document.getElementById("w-closed-queue").innerHTML = QUEUES.filter(q => !q.campaign).map(q => `<option>${q.name}</option>`).join("");
+  document.getElementById("w-name").value = "";
+  document.getElementById("w-desc").value = "";
+  document.getElementById("w-desc-count").textContent = "0";
+  document.getElementById("w-ext").value = wizardState.ext;
+  renderAgentList("w-agent-list", "w-agent-search");
+  renderSelectedAgents();
+  renderWizardHours();
+  renderOverflowRules("w-overflow-rules", wizardState.overflowRules);
+  goToWizardStep(1);
+  showView("view-queue-wizard", "");
+}
+
+function goToWizardStep(n) {
+  wizardState.step = n;
+  document.querySelectorAll(".wizard-step").forEach((el, i) => el.hidden = (i + 1) !== n);
+  document.querySelectorAll(".wp-step").forEach(el => {
+    const s = Number(el.dataset.step);
+    el.classList.toggle("active", s === n);
+    el.classList.toggle("done", s < n);
+  });
+  document.getElementById("wizard-step-count").textContent = `Step ${n} of 5`;
+  document.getElementById("wiz-back-btn").hidden = n === 1;
+  document.getElementById("wiz-cancel-btn").hidden = n !== 1;
+  document.getElementById("wiz-skip-btn").hidden = n !== 2;
+  const nextBtn = document.getElementById("wiz-next-btn");
+  const labels = { 1: "Next: Add Agents →", 2: "Next: Routing →", 3: "Next: Business Hours →", 4: "Next: Review →", 5: "✓ Create Queue" };
+  nextBtn.textContent = labels[n];
+  if (n === 5) { populateReview(); }
+}
+
+document.getElementById("wiz-cancel-btn").addEventListener("click", () => showView("view-contact-centres", ""));
+document.getElementById("wizard-back-link").addEventListener("click", e => { e.preventDefault(); showView("view-contact-centres", ""); });
+document.getElementById("wiz-back-btn").addEventListener("click", () => goToWizardStep(wizardState.step - 1));
+document.getElementById("wiz-skip-btn").addEventListener("click", () => goToWizardStep(3));
+document.getElementById("wiz-next-btn").addEventListener("click", () => {
+  if (wizardState.step === 1 && !validateStep1()) return;
+  if (wizardState.step === 5) { createQueueFromWizard(); return; }
+  goToWizardStep(wizardState.step + 1);
+});
+document.querySelectorAll("[data-goto-step]").forEach(a => a.addEventListener("click", e => { e.preventDefault(); goToWizardStep(Number(a.dataset.gotoStep)); }));
+
+function validateStep1() {
+  const nameEl = document.getElementById("w-name");
+  const valid = nameEl.value.trim().length > 0;
+  nameEl.classList.toggle("error", !valid);
+  document.getElementById("w-name-error").classList.toggle("show", !valid);
+  document.getElementById("w-name-check").classList.toggle("show", valid);
+  if (valid) wizardState.name = nameEl.value.trim();
+  return valid;
+}
+document.getElementById("w-name").addEventListener("blur", validateStep1);
+document.getElementById("w-name").addEventListener("input", () => { wizardState.name = document.getElementById("w-name").value; });
+document.getElementById("w-ext-regen").addEventListener("click", () => {
+  wizardState.ext = String(1000 + Math.floor(Math.random() * 9000));
+  document.getElementById("w-ext").value = wizardState.ext;
+});
+document.getElementById("w-desc").addEventListener("input", e => {
+  document.getElementById("w-desc-count").textContent = e.target.value.length;
+});
+
+document.getElementById("w-type-voice").addEventListener("click", () => selectRoutingType("voice"));
+document.getElementById("w-type-digital").addEventListener("click", () => selectRoutingType("digital"));
+function selectRoutingType(type) {
+  wizardState.type = type;
+  document.getElementById("w-type-voice").classList.toggle("selected", type === "voice");
+  document.getElementById("w-type-digital").classList.toggle("selected", type === "digital");
+}
+
+/* --- Agents step --- */
+function renderAgentList(listId, searchId, excludeIds) {
+  excludeIds = excludeIds || [];
+  const list = document.getElementById(listId);
+  const q = (document.getElementById(searchId)?.value || "").trim().toLowerCase();
+  list.innerHTML = "";
+  AGENTS.filter(a => !excludeIds.includes(a.id) && a.name.toLowerCase().includes(q)).forEach(a => {
+    const row = document.createElement("div");
+    row.className = "agent-row";
+    row.innerHTML = `<input type="checkbox" ${wizardState && wizardState.agentIds.includes(a.id) ? "checked" : ""}>
+      <div class="agent-avatar" style="background:${a.color}">${initials(a.name)}</div>
+      <div class="agent-info"><div class="agent-name">${a.name}</div><div class="agent-role">${a.role} · ${a.queues} queue${a.queues === 1 ? "" : "s"}</div></div>`;
+    row.addEventListener("click", e => {
+      if (e.target.tagName !== "INPUT") row.querySelector("input").checked = !row.querySelector("input").checked;
+      const checked = row.querySelector("input").checked;
+      if (checked) { if (!wizardState.agentIds.includes(a.id)) wizardState.agentIds.push(a.id); }
+      else wizardState.agentIds = wizardState.agentIds.filter(id => id !== a.id);
+      renderSelectedAgents();
+    });
+    list.appendChild(row);
+  });
+}
+document.getElementById("w-agent-search").addEventListener("input", () => renderAgentList("w-agent-list", "w-agent-search"));
+document.querySelectorAll(".agent-tab-btn").forEach(btn => btn.addEventListener("click", () => {
+  document.querySelectorAll(".agent-tab-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+}));
+
+function renderSelectedAgents() {
+  const list = document.getElementById("w-selected-list");
+  const agents = wizardState.agentIds.map(id => AGENTS.find(a => a.id === id)).filter(Boolean);
+  document.getElementById("w-selected-title").textContent = `Selected Agents (${agents.length})`;
+  document.getElementById("w-selected-empty").hidden = agents.length > 0;
+  document.getElementById("w-skill-note").hidden = agents.length === 0;
+  list.innerHTML = "";
+  agents.forEach(a => {
+    const row = document.createElement("div");
+    row.className = "selected-agent-row";
+    row.innerHTML = `<div class="agent-avatar" style="background:${a.color}">${initials(a.name)}</div><div class="agent-info"><div class="agent-name">${a.name}</div><div class="agent-role">${a.role}</div></div><button class="selected-agent-remove">${ic("x")}</button>`;
+    row.querySelector("button").addEventListener("click", () => {
+      wizardState.agentIds = wizardState.agentIds.filter(id => id !== a.id);
+      renderSelectedAgents();
+      renderAgentList("w-agent-list", "w-agent-search");
+    });
+    list.appendChild(row);
+  });
+}
+
+/* --- Routing step --- */
+document.querySelectorAll("#w-routing-cards .routing-card").forEach(card => {
+  card.addEventListener("click", () => {
+    document.querySelectorAll("#w-routing-cards .routing-card").forEach(c => c.classList.remove("selected"));
+    card.classList.add("selected");
+    wizardState.routing = card.dataset.routing;
+    document.getElementById("w-skills-section").hidden = wizardState.routing !== "skills";
+  });
+});
+document.getElementById("w-skill-select").addEventListener("change", e => {
+  const val = e.target.value;
+  if (val && !wizardState.skills.includes(val)) {
+    wizardState.skills.push(val);
+    renderSkillChips();
+  }
+  e.target.value = "";
+});
+function renderSkillChips() {
+  const wrap = document.getElementById("w-skill-chips");
+  wrap.innerHTML = "";
+  wizardState.skills.forEach(s => {
+    const chip = document.createElement("span");
+    chip.className = "skill-chip";
+    chip.innerHTML = `${s} <button>${ic("x")}</button>`;
+    chip.querySelector("button").addEventListener("click", () => { wizardState.skills = wizardState.skills.filter(x => x !== s); renderSkillChips(); });
+    wrap.appendChild(chip);
+  });
+}
+document.getElementById("w-acw").addEventListener("change", e => {
+  const boxed = e.target.value === "timeboxed";
+  document.getElementById("w-acw-timeout-row").hidden = !boxed;
+  document.getElementById("w-acw-info").hidden = !boxed;
+});
+document.getElementById("w-acw-seconds").addEventListener("input", e => { document.getElementById("w-acw-info-val").textContent = e.target.value; });
+document.getElementById("w-escalation").addEventListener("change", e => document.getElementById("w-escalation-fields").classList.toggle("show", e.target.checked));
+
+/* --- Business hours step (shared renderer, reused in Detail too) --- */
+function renderHoursTable(bodyId, days, editable) {
+  const body = document.getElementById(bodyId);
+  body.innerHTML = "";
+  DAY_LIST.forEach(([key, label]) => {
+    const d = days[key];
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td class="day-name">${label}</td>
+      <td><label class="toggle-switch"><input type="checkbox" data-day="${key}" class="day-open-chk" ${d.open ? "checked" : ""}><span class="toggle-slider"></span></label></td>
+      <td>${d.open ? `<input type="time" class="time-input" data-day="${key}" data-field="from" value="${d.from}">` : '<span class="time-closed">—</span>'}</td>
+      <td>${d.open ? `<input type="time" class="time-input" data-day="${key}" data-field="to" value="${d.to}">` : '<span class="time-closed">—</span>'}</td>
+      <td>${d.open ? `<button class="copy-icon-btn" data-copy="${key}" title="Copy to all open days">⧉</button>` : ""}</td>
+    `;
+    body.appendChild(tr);
+  });
+  body.querySelectorAll(".day-open-chk").forEach(chk => chk.addEventListener("change", e => {
+    days[e.target.dataset.day].open = e.target.checked;
+    renderHoursTable(bodyId, days);
+  }));
+  body.querySelectorAll(".time-input").forEach(inp => inp.addEventListener("input", e => {
+    days[e.target.dataset.day][e.target.dataset.field] = e.target.value;
+  }));
+  body.querySelectorAll("[data-copy]").forEach(btn => btn.addEventListener("click", () => {
+    const src = days[btn.dataset.copy];
+    Object.keys(days).forEach(k => { if (days[k].open) { days[k].from = src.from; days[k].to = src.to; } });
+    renderHoursTable(bodyId, days);
+    showToast("info", "Hours copied to all open days.");
+  }));
+}
+function renderWizardHours() { renderHoursTable("w-hours-body", wizardState.days); }
+
+document.getElementById("w-preset-247").addEventListener("click", function () {
+  document.querySelectorAll("#wizard-step-4 .preset-btn").forEach(b => b.classList.remove("active"));
+  this.classList.add("active");
+  Object.keys(wizardState.days).forEach(k => wizardState.days[k] = { open: true, from: "00:00", to: "23:59" });
+  renderWizardHours();
+});
+document.getElementById("w-preset-weekdays").addEventListener("click", function () {
+  document.querySelectorAll("#wizard-step-4 .preset-btn").forEach(b => b.classList.remove("active"));
+  this.classList.add("active");
+  ["mon","tue","wed","thu","fri"].forEach(k => wizardState.days[k] = { open: true, from: "09:00", to: "17:00" });
+  ["sat","sun"].forEach(k => wizardState.days[k].open = false);
+  renderWizardHours();
+});
+document.getElementById("w-preset-custom").addEventListener("click", function () {
+  document.querySelectorAll("#wizard-step-4 .preset-btn").forEach(b => b.classList.remove("active"));
+  this.classList.add("active");
+});
+document.getElementById("w-closed-handling").addEventListener("change", e => {
+  document.getElementById("w-closed-queue-row").hidden = e.target.value !== "queue";
+});
+
+function renderOverflowRules(containerId, rules) {
+  const wrap = document.getElementById(containerId);
+  wrap.innerHTML = "";
+  rules.forEach((r, i) => {
+    const div = document.createElement("div");
+    div.className = "overflow-rule " + r.type;
+    div.innerHTML = `
+      <div class="reorder-btns"><button class="reorder-btn" data-dir="-1">${ic("up")}</button><button class="reorder-btn" data-dir="1">${ic("down")}</button></div>
+      <span>${r.label}</span>
+      <input type="number" class="mini-input" value="${r.value}">
+      <span>${r.unit}</span>
+      <span>→</span>
+      <select>
+        <option${r.action === "Voicemail" ? " selected" : ""}>Voicemail</option>
+        <option${r.action === "Transfer to queue" ? " selected" : ""}>Transfer to queue</option>
+        <option${r.action === "Transfer to external number" ? " selected" : ""}>Transfer to external number</option>
+        <option${r.action === "Play message and disconnect" ? " selected" : ""}>Play message and disconnect</option>
+        <option${r.action === "Send to IVR" ? " selected" : ""}>Send to IVR</option>
+      </select>
+      <button class="rule-delete">${ic("trash")}</button>
+    `;
+    div.querySelector(".mini-input").addEventListener("input", e => r.value = e.target.value);
+    div.querySelector("select").addEventListener("change", e => r.action = e.target.value);
+    div.querySelector(".rule-delete").addEventListener("click", () => { rules.splice(i, 1); renderOverflowRules(containerId, rules); });
+    div.querySelectorAll(".reorder-btn").forEach(btn => btn.addEventListener("click", () => {
+      const dir = Number(btn.dataset.dir);
+      const j = i + dir;
+      if (j < 0 || j >= rules.length) return;
+      [rules[i], rules[j]] = [rules[j], rules[i]];
+      renderOverflowRules(containerId, rules);
+    }));
+    wrap.appendChild(div);
+  });
+}
+document.getElementById("w-add-rule").addEventListener("click", () => {
+  wizardState.overflowRules.push({ type: "rule-info", label: "If no agents available", value: 0, unit: "", action: "Voicemail" });
+  renderOverflowRules("w-overflow-rules", wizardState.overflowRules);
+});
+
+/* --- Review step --- */
+function populateReview() {
+  const agents = wizardState.agentIds.map(id => AGENTS.find(a => a.id === id)).filter(Boolean);
+  document.getElementById("review-basic").innerHTML = `
+    <div><b>Name:</b> ${wizardState.name || "—"}</div>
+    <div><b>Site:</b> ${wizardState.site} &nbsp; <b>Extension:</b> ${wizardState.ext}</div>
+    <div><b>Phone:</b> ${wizardState.phone || document.getElementById("w-phone").value || "No number"} &nbsp; <b>Type:</b> ${wizardState.type === "voice" ? "Voice" : "Digital"}</div>`;
+  document.getElementById("review-agents").innerHTML = agents.length
+    ? `${agents.slice(0, 3).map(a => a.name).join(" · ")}${agents.length > 3 ? ` +${agents.length - 3} more` : ""}`
+    : "No agents added yet.";
+  document.getElementById("review-routing").innerHTML = `<b>Method:</b> ${ROUTING_META[wizardState.routing].label} &nbsp; <b>ACW:</b> ${document.getElementById("w-acw").selectedOptions[0].textContent} &nbsp; <b>Priority:</b> ${wizardState.priority}`;
+  const openDays = DAY_LIST.filter(([k]) => wizardState.days[k].open).map(([, l]) => l);
+  document.getElementById("review-hours").innerHTML = `
+    <div>${openDays.length ? openDays.join(", ") : "No days open"} (${wizardState.timezone})</div>
+    <div><b>Closed:</b> ${document.getElementById("w-closed-handling").selectedOptions[0].textContent}</div>
+    ${wizardState.overflowRules.map(r => `<div>${r.label} ${r.value}${r.unit ? " " + r.unit : ""} → ${r.action}</div>`).join("")}`;
+
+  const items = [
+    { label: "Basic Info", ok: !!wizardState.name },
+    { label: "Agents", ok: agents.length > 0 },
+    { label: "Routing", ok: !!wizardState.routing },
+    { label: "Business Hours", ok: openDays.length > 0 },
+  ];
+  document.getElementById("w-completeness").innerHTML = items.map(it =>
+    `<span class="completeness-item ${it.ok ? "" : "warn"}">${ic("check")}${it.label}</span>`
+  ).join("") + `<span class="completeness-item warn">${ic("check")}IVR (optional — configure after creating)</span>`;
+}
+
+document.getElementById("w-priority").addEventListener("input", e => wizardState.priority = e.target.value);
+
+function createQueueFromWizard() {
+  wizardState.priority = document.getElementById("w-priority").value;
+  const newQ = {
+    id: ++queueSeq, name: wizardState.name || "Untitled Queue", campaign: false,
+    site: wizardState.site, ext: wizardState.ext,
+    number: document.getElementById("w-phone").value || "No number",
+    numberLink: !!document.getElementById("w-phone").value,
+    routing: wizardState.routing, hours: DAY_LIST.some(([k]) => !wizardState.days[k].open) ? "weekday" : "open24",
+    members: wizardState.agentIds.length, sla: null, status: "Active", created: "Just now",
+  };
+  QUEUES.unshift(newQ);
+  showView("view-contact-centres", "");
+  renderQueueTable();
+  showToast("success", `Queue "${newQ.name}" created successfully.`, "View Queue →", () => openQueueDetail(newQ.id));
+  const row = tableBody.querySelector(`tr[data-id="${newQ.id}"]`);
+  if (row) { row.classList.add("row-highlight"); setTimeout(() => row.classList.remove("row-highlight"), 2000); }
+}
+
+/* =========================================================
+   QUEUE DETAIL
+   ========================================================= */
+let currentDetailId = null;
+let detailAgentIds = [2, 1, 3, 5];
+let routingDirty = false;
+
+function openQueueDetail(id) {
+  const q = QUEUES.find(item => item.id === id) || QUEUES[0];
+  currentDetailId = q.id;
+  document.getElementById("detail-name").textContent = q.name;
+  document.getElementById("detail-status").textContent = q.status;
+  document.querySelector(".detail-title-row .dot").style.background = q.status === "Active" ? "var(--success)" : "var(--text-faint)";
+  document.getElementById("detail-meta-line1").textContent = `${q.numberLink ? q.number : "No number"} · Ext: ${q.ext} · ${ROUTING_META[q.routing].label}`;
+  document.getElementById("detail-meta-line2").textContent = `${q.site || "Company"} · Created ${q.created}`;
+  document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+  document.querySelector('.tab-btn[data-tab="overview"]').classList.add("active");
+  document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+  document.getElementById("tab-overview").classList.add("active");
+  renderDetailAgents();
+  renderDetailRouting(q);
+  renderDetailHours();
+  renderDetailOverflow();
+  resetIvrTab();
+  renderAnalyticsCharts();
+  renderAgentPerf();
+  showView("view-queue-detail", "");
+}
+document.getElementById("detail-back-link").addEventListener("click", e => { e.preventDefault(); showView("view-contact-centres", ""); renderQueueTable(); });
+
+document.querySelectorAll(".tab-btn").forEach(btn => btn.addEventListener("click", () => {
+  document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+  document.getElementById("tab-" + btn.dataset.tab).classList.add("active");
+}));
+
+document.getElementById("detail-name").addEventListener("click", function () {
+  const input = document.getElementById("detail-name-input");
+  input.value = this.textContent;
+  this.hidden = true; input.hidden = false; input.focus();
+});
+document.getElementById("detail-edit-name-link").addEventListener("click", () => document.getElementById("detail-name").click());
+function commitNameEdit() {
+  const input = document.getElementById("detail-name-input");
+  const span = document.getElementById("detail-name");
+  if (input.value.trim()) {
+    span.textContent = input.value.trim();
+    const q = QUEUES.find(item => item.id === currentDetailId);
+    if (q) q.name = input.value.trim();
+  }
+  span.hidden = false; input.hidden = true;
+}
+document.getElementById("detail-name-input").addEventListener("blur", commitNameEdit);
+document.getElementById("detail-name-input").addEventListener("keydown", e => { if (e.key === "Enter") e.target.blur(); });
+
+document.getElementById("detail-kebab-btn").addEventListener("click", e => { e.stopPropagation(); toggleDropdown(document.getElementById("detail-menu")); });
+document.querySelectorAll("#detail-menu [data-action]").forEach(btn => btn.addEventListener("click", () => {
+  toggleDropdown(document.getElementById("detail-menu"));
+  const q = QUEUES.find(item => item.id === currentDetailId);
+  if (!q) return;
+  if (btn.dataset.action === "duplicate") { duplicateQueue(q.id); showView("view-contact-centres", ""); }
+  else if (btn.dataset.action === "deactivate") { q.status = q.status === "Active" ? "Inactive" : "Active"; openQueueDetail(q.id); showToast("success", `Queue ${q.status === "Active" ? "activated" : "deactivated"}.`); }
+  else if (btn.dataset.action === "delete") { confirmDeleteQueue(q.id); showView("view-contact-centres", ""); renderQueueTable(); }
+}));
+
+/* Agents tab */
+function renderDetailAgents() {
+  const body = document.getElementById("detail-agents-body");
+  body.innerHTML = "";
+  detailAgentIds.map(id => AGENTS.find(a => a.id === id)).filter(Boolean).forEach(a => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td class="col-check"><input type="checkbox" class="qt-checkbox"></td>
+      <td><div class="name-cell" style="flex-direction:row;align-items:center;gap:8px;"><div class="agent-avatar" style="background:${a.color}">${initials(a.name)}</div>${a.name}</div></td>
+      <td>${a.role}</td>
+      <td><span class="avail-dot ${a.avail}"></span>${AVAIL_LABEL[a.avail]}</td>
+      <td>${a.callsToday} calls</td>
+      <td>${a.avgHandle}</td>
+      <td>${starRating(a.skill)}</td>
+      <td>${a.avail === "offduty" ? "Inactive ○" : "Active ✅"}</td>
+    `;
+    body.appendChild(tr);
+  });
+}
+document.getElementById("detail-add-agents-btn").addEventListener("click", () => {
+  const body = AGENTS.filter(a => !detailAgentIds.includes(a.id)).map(a => `
+    <div class="drawer-agent-row" data-agent-id="${a.id}">
+      <div class="agent-avatar" style="background:${a.color}">${initials(a.name)}</div>
+      <div class="agent-info"><div class="agent-name">${a.name}</div><div class="agent-role">${a.role}</div></div>
+      <div class="spacer"></div>
+      <button class="btn-sm-add">Add</button>
+    </div>`).join("") || '<div class="empty-mini">All agents are already in this queue.</div>';
+  openDrawer("Add Agents to Queue", `<div class="table-search" style="margin-bottom:12px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input type="text" id="drawer-agent-search" placeholder="Search agents…"></div><div id="drawer-agent-list">${body}</div>`, () => {
+    document.querySelectorAll("#drawer-agent-list .btn-sm-add").forEach(btn => btn.addEventListener("click", () => {
+      const row = btn.closest(".drawer-agent-row");
+      const id = Number(row.dataset.agentId);
+      if (!detailAgentIds.includes(id)) detailAgentIds.push(id);
+      btn.textContent = "Added"; btn.classList.add("added"); btn.disabled = true;
+      renderDetailAgents();
+    }));
+    document.getElementById("drawer-agent-search")?.addEventListener("input", e => {
+      const q = e.target.value.toLowerCase();
+      document.querySelectorAll("#drawer-agent-list .drawer-agent-row").forEach(row => {
+        row.style.display = row.querySelector(".agent-name").textContent.toLowerCase().includes(q) ? "" : "none";
+      });
+    });
+  });
+});
+document.getElementById("detail-add-group-btn").addEventListener("click", () => showToast("info", "Group picker would open here."));
+
+/* Routing tab (reuses wizard-style routing cards) */
+function renderDetailRouting(q) {
+  const wrap = document.getElementById("detail-routing-body");
+  const methods = [
+    ["roundrobin","🔄","Round Robin","Agents take turns in rotation"], ["longestidle","⏱","Longest Idle","Agent idle longest gets next call"],
+    ["topdown","📋","Top Down","Always tries #1 agent first"], ["fewestcalls","📊","Fewest Calls","Agent with lowest call count today"],
+    ["ringall","🔔","Ring All","All agents ring simultaneously"], ["skills","⭐","Skills-Based","Match caller to most skilled agent"],
+  ];
+  wrap.innerHTML = `
+    <div class="field"><label class="field-label">Routing Method</label>
+      <div class="routing-grid six" id="detail-routing-cards">
+        ${methods.map(([key, icon, title, desc]) => `<div class="routing-card${q.routing===key?" selected":""}" data-routing="${key}"><span class="rc-icon">${icon}</span><div class="rc-title">${title}</div><div class="rc-desc">${desc}</div><div class="rc-radio"></div></div>`).join("")}
+      </div>
+    </div>
+    <div class="field"><label class="field-label">Last Agent Routing</label>
+      <div class="radio-option-group">
+        <label class="radio-option"><input type="radio" name="d-last-agent" checked> Last agent on any queue</label>
+        <label class="radio-option"><input type="radio" name="d-last-agent"> Last agent on this queue only</label>
+        <label class="radio-option"><input type="radio" name="d-last-agent"> Disabled</label>
+      </div>
+    </div>
+    <div class="field"><label class="field-label">Priority</label>
+      <div class="priority-row"><input type="number" class="field-input" id="d-priority" value="500" style="width:120px;"><span class="field-hint">Starting priority</span></div>
+    </div>`;
+  wrap.querySelectorAll("#detail-routing-cards .routing-card").forEach(card => card.addEventListener("click", () => {
+    wrap.querySelectorAll(".routing-card").forEach(c => c.classList.remove("selected"));
+    card.classList.add("selected");
+    markRoutingDirty();
+  }));
+  wrap.querySelectorAll("input").forEach(inp => inp.addEventListener("input", markRoutingDirty));
+  routingDirty = false;
+  document.getElementById("routing-unsaved-bar").classList.remove("show");
+}
+function markRoutingDirty() { routingDirty = true; document.getElementById("routing-unsaved-bar").classList.add("show"); }
+document.getElementById("routing-discard-btn").addEventListener("click", () => { const q = QUEUES.find(i => i.id === currentDetailId); renderDetailRouting(q); });
+document.getElementById("routing-save-btn").addEventListener("click", () => {
+  const selected = document.querySelector("#detail-routing-cards .routing-card.selected");
+  const q = QUEUES.find(i => i.id === currentDetailId);
+  if (selected && q) { q.routing = selected.dataset.routing; document.getElementById("detail-meta-line1").textContent = `${q.numberLink ? q.number : "No number"} · Ext: ${q.ext} · ${ROUTING_META[q.routing].label}`; }
+  document.getElementById("routing-unsaved-bar").classList.remove("show");
+  showToast("success", "Routing settings saved.");
+});
+
+/* Business hours tab */
+let detailDays = null;
+function renderDetailHours() {
+  detailDays = { mon:{open:true,from:"09:00",to:"17:00"}, tue:{open:true,from:"09:00",to:"17:00"}, wed:{open:true,from:"09:00",to:"17:00"},
+                 thu:{open:true,from:"09:00",to:"17:00"}, fri:{open:true,from:"09:00",to:"17:00"}, sat:{open:false,from:"09:00",to:"17:00"}, sun:{open:false,from:"09:00",to:"17:00"} };
+  document.getElementById("detail-hours-body").innerHTML = `
+    <table class="hours-table"><thead><tr><th>Day</th><th>Open</th><th>From</th><th>To</th><th>Copy</th></tr></thead><tbody id="d-hours-body"></tbody></table>
+    <button class="btn-primary-lg" style="margin-top:14px;" id="d-hours-save">Save Changes</button>`;
+  renderHoursTable("d-hours-body", detailDays);
+  document.getElementById("d-hours-save").addEventListener("click", () => showToast("success", "Business hours saved."));
+}
+document.getElementById("add-holiday-btn").addEventListener("click", () => { document.getElementById("holiday-form-row").hidden = false; });
+document.getElementById("holiday-save-btn").addEventListener("click", () => {
+  const name = document.getElementById("holiday-name").value.trim();
+  const date = document.getElementById("holiday-date").value;
+  if (!name || !date) { showToast("error", "Enter a holiday name and date."); return; }
+  const tr = document.createElement("tr");
+  tr.innerHTML = `<td>${name}</td><td>${date}</td><td>${document.getElementById("holiday-action").value}</td><td></td>`;
+  document.getElementById("holidays-body").appendChild(tr);
+  document.getElementById("holiday-form-row").hidden = true;
+  document.getElementById("holiday-name").value = ""; document.getElementById("holiday-date").value = "";
+  showToast("success", "Holiday added.");
+});
+
+/* Hold queue tab */
+document.getElementById("hq-max-wait").addEventListener("input", e => { document.getElementById("hq-max-wait-val").textContent = e.target.value + " min"; });
+document.querySelectorAll('input[name="hq-greeting"]').forEach(r => r.addEventListener("change", e => {
+  document.getElementById("hq-greeting-tts").hidden = e.target.value !== "tts";
+  document.getElementById("hq-greeting-upload").hidden = e.target.value !== "upload";
+}));
+document.getElementById("hq-ewt").addEventListener("change", e => document.getElementById("hq-ewt-fields").classList.toggle("show", e.target.checked));
+document.getElementById("hq-callback").addEventListener("change", e => document.getElementById("hq-callback-fields").classList.toggle("show", e.target.checked));
+document.getElementById("hq-save-btn").addEventListener("click", () => showToast("success", "Hold queue settings saved."));
+
+/* Overflow tab */
+let detailOverflowRules = null;
+function renderDetailOverflow() {
+  detailOverflowRules = [
+    { type: "rule-warning", label: "If caller waits more than", value: 30, unit: "minutes", action: "Voicemail" },
+    { type: "rule-danger", label: "If queue has more than", value: 50, unit: "callers", action: "Transfer to queue" },
+    { type: "rule-info", label: "If no agents available", value: 0, unit: "", action: "Play message and disconnect" },
+  ];
+  document.getElementById("detail-overflow-body").innerHTML = `<div id="d-overflow-rules"></div><span class="add-rule-link" id="d-add-rule">${ic("up").replace("up","")}+ Add Rule</span><br><button class="btn-primary-lg" style="margin-top:14px;" id="d-overflow-save">Save Changes</button>`;
+  document.getElementById("d-add-rule").innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Add Rule`;
+  renderOverflowRules("d-overflow-rules", detailOverflowRules);
+  document.getElementById("d-add-rule").addEventListener("click", () => {
+    detailOverflowRules.push({ type: "rule-info", label: "New condition", value: 0, unit: "", action: "Voicemail" });
+    renderOverflowRules("d-overflow-rules", detailOverflowRules);
+  });
+  document.getElementById("d-overflow-save").addEventListener("click", () => showToast("success", "Overflow rules saved."));
+}
+
+/* IVR tab */
+function resetIvrTab() {
+  document.getElementById("ivr-empty-state").hidden = false;
+  document.getElementById("ivr-flow-state").hidden = true;
+  document.getElementById("ivr-template-grid").hidden = true;
+}
+document.getElementById("ivr-use-template-btn").addEventListener("click", () => { document.getElementById("ivr-template-grid").hidden = false; });
+document.querySelectorAll("[data-preview]").forEach(b => b.addEventListener("click", () => showToast("info", `Previewing "${b.dataset.preview}" template…`)));
+document.querySelectorAll("[data-use]").forEach(b => b.addEventListener("click", () => useIvrTemplate(b.dataset.use)));
+document.getElementById("ivr-build-scratch-btn").addEventListener("click", () => useIvrTemplate("Blank"));
+
+function useIvrTemplate(name) {
+  document.getElementById("ivr-empty-state").hidden = true;
+  document.getElementById("ivr-flow-state").hidden = false;
+  drawIvrFlow();
+  showToast("success", `"${name}" IVR flow is ready.`);
+}
+function drawIvrFlow() {
+  const svg = document.getElementById("ivr-flow-svg");
+  const nodes = [
+    { label: "Start", y: 20 }, { label: "Play Greeting", y: 100 },
+    { label: "Menu: 1 Sales · 2 Support · 3 Billing", y: 200 }, { label: "Transfer to Queue", y: 320 },
+  ];
+  let s = "";
+  nodes.forEach((n, i) => {
+    if (i > 0) s += `<line x1="160" y1="${nodes[i-1].y+30}" x2="160" y2="${n.y}" stroke="var(--border)" stroke-width="2" marker-end="url(#arrow)"/>`;
+    s += `<g class="ivr-node" data-label="${n.label}" style="cursor:pointer">
+      <rect x="30" y="${n.y}" width="260" height="46" rx="8" fill="#fff" stroke="var(--border)" stroke-width="2"/>
+      <text x="160" y="${n.y+28}" text-anchor="middle" font-size="12" fill="var(--navy)" font-family="inherit">${n.label}</text>
+    </g>`;
+  });
+  svg.innerHTML = `<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="var(--border)"/></marker></defs>` + s;
+  svg.querySelectorAll(".ivr-node").forEach(node => node.addEventListener("click", () => {
+    document.getElementById("ivr-flow-props").innerHTML = `<b>${node.dataset.label}</b><br>Click "Edit in IVR Builder" to change routing for this node.`;
+  }));
+}
+document.getElementById("ivr-edit-builder-btn").addEventListener("click", openIvrCanvas);
+
+let canvasNodes = [];
+function openIvrCanvas() {
+  canvasNodes = [{ label: "Start" }, { label: "Play Greeting" }];
+  renderCanvasFlow();
+  document.getElementById("ivr-canvas-overlay").classList.add("open");
+}
+document.getElementById("ivr-canvas-close-btn").addEventListener("click", () => document.getElementById("ivr-canvas-overlay").classList.remove("open"));
+document.getElementById("ivr-save-draft-btn").addEventListener("click", () => showToast("info", "Draft saved."));
+document.getElementById("ivr-publish-btn").addEventListener("click", () => { showToast("success", "IVR flow published."); document.getElementById("ivr-canvas-overlay").classList.remove("open"); drawIvrFlow(); });
+document.querySelectorAll(".node-card").forEach(card => card.addEventListener("click", () => {
+  canvasNodes.push({ label: card.dataset.node });
+  renderCanvasFlow();
+}));
+function renderCanvasFlow() {
+  const wrap = document.getElementById("canvas-flow");
+  wrap.innerHTML = "";
+  canvasNodes.forEach((n, i) => {
+    if (i > 0) { const conn = document.createElement("div"); conn.className = "canvas-connector"; wrap.appendChild(conn); }
+    const node = document.createElement("div");
+    node.className = "canvas-node";
+    node.textContent = n.label;
+    node.addEventListener("click", () => {
+      wrap.querySelectorAll(".canvas-node").forEach(el => el.classList.remove("selected"));
+      node.classList.add("selected");
+      document.getElementById("canvas-node-props").innerHTML = `<div class="field"><label class="field-label">Label</label><input type="text" class="field-input" id="canvas-node-label" value="${n.label}"></div>`;
+      document.getElementById("canvas-node-label").addEventListener("input", e => { n.label = e.target.value; node.textContent = e.target.value; });
+    });
+    wrap.appendChild(node);
+  });
+}
+
+/* Analytics tab */
+document.querySelectorAll("#analytics-presets .preset-btn").forEach(btn => btn.addEventListener("click", () => {
+  document.querySelectorAll("#analytics-presets .preset-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+}));
+function svgPath(points) { return points.map((p, i) => (i === 0 ? "M" : "L") + p[0] + "," + p[1]).join(" "); }
+function renderAnalyticsCharts() {
+  const volume = document.getElementById("chart-volume");
+  const hours = ["8a","9a","10a","11a","12p","1p","2p","3p","4p","5p"];
+  const offered = [18,24,31,28,35,40,33,29,22,15];
+  const answered = [16,22,29,25,32,37,30,27,20,14];
+  const maxV = 45, chartW = 320, chartH = 150, barW = chartW / hours.length;
+  let bars = "";
+  hours.forEach((h, i) => {
+    const x = 10 + i * barW;
+    const hOff = (offered[i] / maxV) * chartH, hAns = (answered[i] / maxV) * chartH;
+    bars += `<rect x="${x}" y="${chartH+10-hOff}" width="${barW*0.35}" height="${hOff}" fill="var(--primary)" rx="2"/>`;
+    bars += `<rect x="${x+barW*0.4}" y="${chartH+10-hAns}" width="${barW*0.35}" height="${hAns}" fill="var(--success)" rx="2"/>`;
+    bars += `<text x="${x+barW*0.35}" y="${chartH+26}" font-size="9" fill="var(--text-muted)" text-anchor="middle" font-family="inherit">${h}</text>`;
+  });
+  volume.innerHTML = `<line x1="10" y1="${chartH+10}" x2="330" y2="${chartH+10}" stroke="var(--border)"/>` + bars;
+
+  const sla = document.getElementById("chart-sla");
+  const days = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+  const slaVals = [82,88,91,76,85,93,89];
+  const stepX = 300 / (days.length - 1);
+  const pts = slaVals.map((v, i) => [20 + i * stepX, 170 - (v / 100) * 150]);
+  const targetY = 170 - (80 / 100) * 150;
+  const area = "M" + pts.map(p => p.join(",")).join(" L") + ` L${pts[pts.length-1][0]},170 L${pts[0][0]},170 Z`;
+  let dots = "", labels = "";
+  pts.forEach((p, i) => { dots += `<circle cx="${p[0]}" cy="${p[1]}" r="3" fill="var(--primary)"/>`; labels += `<text x="${p[0]}" y="188" font-size="9" fill="var(--text-muted)" text-anchor="middle" font-family="inherit">${days[i]}</text>`; });
+  sla.innerHTML = `<path d="${area}" fill="var(--primary-light)" opacity="0.6"/>
+    <line x1="20" y1="${targetY}" x2="320" y2="${targetY}" stroke="var(--text-faint)" stroke-width="1.5" stroke-dasharray="4,4"/>
+    <path d="${svgPath(pts)}" fill="none" stroke="var(--primary)" stroke-width="2.5"/>
+    ${dots}${labels}`;
+}
+const PERF_DATA = [
+  { name: "Sarah K.", calls: 62, handle: "4:12", hold: "0:38", acw: "0:21", sla: 94 },
+  { name: "Michael T.", calls: 55, handle: "5:02", hold: "0:44", acw: "0:29", sla: 87 },
+  { name: "Emma R.", calls: 71, handle: "3:51", hold: "0:30", acw: "0:18", sla: 96 },
+  { name: "David L.", calls: 12, handle: "6:10", hold: "1:02", acw: "0:40", sla: 68 },
+  { name: "Priya M.", calls: 48, handle: "4:33", hold: "0:36", acw: "0:24", sla: 90 },
+];
+let perfSort = null, perfDir = 1;
+function renderAgentPerf() {
+  let rows = PERF_DATA.slice();
+  if (perfSort) rows.sort((a, b) => (typeof a[perfSort] === "string" ? a[perfSort].localeCompare(b[perfSort]) : a[perfSort] - b[perfSort]) * perfDir);
+  document.getElementById("agent-perf-body").innerHTML = rows.map(r => `
+    <tr><td>${r.name}</td><td>${r.calls}</td><td>${r.handle}</td><td>${r.hold}</td><td>${r.acw}</td>
+    <td><div class="sla-wrap"><div class="sla-bar-track"><div class="sla-bar-fill ${slaClass(r.sla)}" style="width:${r.sla}%"></div></div><span class="sla-label">${r.sla}%</span></div></td></tr>
+  `).join("");
+}
+document.querySelectorAll("[data-perf-sort]").forEach(th => th.addEventListener("click", () => {
+  const key = th.dataset.perfSort;
+  if (perfSort === key) perfDir *= -1; else { perfSort = key; perfDir = 1; }
+  renderAgentPerf();
+}));
+document.getElementById("analytics-export-btn").addEventListener("click", () => showToast("info", "Exporting agent performance report…"));
+
+/* ALL SETTINGS SCREENS BUTTON */
+document.getElementById("all-settings-btn").addEventListener("click", () => {
+  alert("All settings screens grid would open here.");
+});
+
+/* HEADER SEARCH (mock) */
+document.getElementById("header-search").addEventListener("keydown", e => {
+  if (e.key === "Enter") {
+    alert(`Searching for: "${e.target.value}"`);
+  }
+});
+
+/* Ctrl/Cmd + K focuses header search */
+document.addEventListener("keydown", e => {
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
+    e.preventDefault();
+    document.getElementById("header-search").focus();
+  }
+});
+</script>
+</body>
+</html>
