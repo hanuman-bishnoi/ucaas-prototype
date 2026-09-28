@@ -29,9 +29,6 @@
 }
 *{box-sizing:border-box}
 html,body{height:100%}
-html{overflow-x:hidden;width:100%}
-body{overflow-x:hidden;width:100%;max-width:100%}
-.app,.work,.main,.nav,.demo{min-width:0}
 body{margin:0;display:flex;flex-direction:column;height:var(--vh);background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.45;-webkit-font-smoothing:antialiased}
 button{font:inherit;color:inherit;cursor:pointer}
 button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
@@ -608,13 +605,6 @@ code{font-family:var(--mono);font-size:11.5px}
 /* whole UI drawn at 80% so it matches the browser's 80% zoom while the browser stays at 100% */
 :root{--ui-zoom:0.8;--vh:calc(100vh / 0.8)}
 html{zoom:0.8}
-/* the 80% desktop density doesn't apply on phones/tablets — and CSS zoom silently
-   scales every max-width breakpoint below by 1/0.8, so responsive layouts never
-   triggered at their real, intended widths while it stayed active here */
-@media (max-width:1024px){
- :root{--ui-zoom:1;--vh:100vh}
- html{zoom:1}
-}
 .ed.one{grid-template-columns:minmax(0,1fr)}
 .stepcard{max-width:920px;margin:8px auto 0;overflow:visible}
 .stepcard-h{padding:22px 24px 4px}
@@ -753,15 +743,6 @@ html{zoom:0.8}
 .tabseg .n{font-family:var(--mono);font-size:11px;font-weight:700;background:var(--surface);border:1px solid var(--line);border-radius:999px;min-width:19px;text-align:center;padding:1px 6px;color:var(--ink-3);line-height:15px}
 .tabseg button[aria-pressed="true"] .n{color:var(--accent-2);border-color:var(--accent-edge)}
 .selsm{min-height:34px;width:auto;padding:0 10px}
-.mgrgrp{border-bottom:1px solid var(--line)}
-.mgrgrp:last-child{border-bottom:0}
-.mgrhead{display:flex;align-items:center;gap:10px;padding:10px 16px;background:var(--surface-2);font-size:13px}
-.mgrhead b{font-weight:700}
-.mgrhead .n{font-family:var(--mono);font-size:11px;font-weight:700;background:var(--surface);border:1px solid var(--line);border-radius:999px;min-width:19px;text-align:center;padding:1px 6px;color:var(--ink-3);line-height:15px}
-.mgrrow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 16px;border-top:1px solid var(--line)}
-.mgrrow b{display:block;font-size:13.5px;font-weight:600;color:var(--ink)}
-.mgrrow span{display:block;font-size:12px;color:var(--ink-3);margin-top:2px}
-.mgrrow .ib{flex:none}
 /* ===== Add people ===== */
 .modal.addppl{width:min(860px,100%)}
 .awsteps{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding-bottom:16px;margin-bottom:16px;border-bottom:1px solid var(--line)}
@@ -829,21 +810,6 @@ html{zoom:0.8}
 .dfw .df{border-top:0;background:none}
 .awfoothint{margin:0;padding:0 20px 12px;font-size:12px;color:var(--ink-3)}
 @media (max-width:760px){.awgrid2{grid-template-columns:1fr}.pwrow{grid-template-columns:1fr}.pwrow.pwhead{display:none}}
-
-/* mobile: force action rows onto their own guaranteed-width line, so primary
-   buttons (Save, Continue, Add People…) can never end up clipped off-screen —
-   flex-wrap alone doesn't reliably wrap a nested, unsized button group */
-@media (max-width:640px){
- .df{flex-direction:column;align-items:stretch;gap:10px}
- .df .ff{text-align:center}
- .df>div[style*='display:flex']{width:100%;justify-content:flex-end;flex-wrap:wrap}
- .edhead .edact{width:100%;margin-left:0;justify-content:flex-end}
- .awsteps{gap:10px}
- .awbadges{width:100%;margin-left:0}
-}
-@media (max-width:540px){
- .df .btn,.df>div[style*='display:flex']>.btn,.edhead .edact .btn{flex:1 1 100%;justify-content:center}
-}
 </style>
 </head>
 <body>
@@ -1986,25 +1952,8 @@ function scrPeople(){
   '<select id="pplRoleSel" class="inp selsm" aria-label="Role">'+[['all','All'],['admins','Admins'],['cc','Contact centre'],['staff','Staff']].map(o=>'<option value="'+o[0]+'" '+(S.pplRole===o[0]?'selected':'')+'>Role: '+o[1]+'</option>').join('')+'</select>'+
   '<select id="pplSeenSel" class="inp selsm" aria-label="Last signed in">'+[['any','Any'],['today','Today'],['week','This week'],['never','Never']].map(o=>'<option value="'+o[0]+'" '+(S.pplSeen===o[0]?'selected':'')+'>Last signed in: '+o[1]+'</option>').join('')+'</select>'+
   '<span class="sp"></span><div class="seg"><button data-pv="flat" aria-pressed="'+(S.pplView==='flat')+'">Flat list</button><button data-pv="manager" aria-pressed="'+(S.pplView==='manager')+'">By manager</button></div>'+
-  '<button class="btn" data-act="exportppl">'+I('copy')+'Export CSV</button></div>'+
-  (S.pplView==='manager'?'':bulkBar);
-
- if(S.pplView==='manager'){
-  const groups={};rows.forEach(p=>{const k=p.mgr||'__none';(groups[k]=groups[k]||[]).push(p)});
-  const mgrName=id=>{const mg=PEOPLE.find(x=>x.id===id);return mg?mg.n:'Unassigned'};
-  const keys=Object.keys(groups).filter(k=>k!=='__none').sort((a,b)=>mgrName(a).localeCompare(mgrName(b)));
-  if(groups.__none)keys.push('__none');
-  h+='<p class="hint" style="margin:0 0 14px">Grouped by who each person reports to. Everybody with no manager is listed under “Unassigned”.</p>';
-  h+='<div class="card">'+(keys.length?keys.map(k=>{const list=groups[k];const nm=k==='__none'?'Unassigned':mgrName(k);
-    return '<div class="mgrgrp"><div class="mgrhead"><b>'+esc(nm)+'</b><span class="n">'+list.length+'</span></div>'+
-     list.map(p=>'<div class="mgrrow"><div><b>'+esc(p.n)+(p.id===v.id?' <span class="tag acc">You</span>':'')+(p.status==='pending'?' <span class="tag warn">Pending</span>':'')+'</b><span>'+(p.email?esc(p.email)+' · ext '+p.ext:'Ext '+p.ext+' · '+esc(p.loc))+'</span></div>'+
-      '<button class="ib" data-act="setmgr" data-id="'+p.id+'" title="Set manager for '+esc(p.n)+'" aria-label="Set manager for '+esc(p.n)+'">'+I('edit')+'</button></div>').join('')+
-     '</div>'}).join(''):'<div class="empty">'+I('users')+'<b>Nobody matches</b><span>Try a different search or filter.</span></div>')+
-   '</div><div class="foot">'+rows.length+' of '+vis.length+' people'+(S.persona==='owner'?'':' in your reach')+'</div>';
-  return h;
- }
-
- h+='<div class="card"><div class="tblwrap"><table class="tbl"><thead><tr><th style="width:34px"><input type="checkbox" id="selall" '+(allSel?'checked':'')+' '+(selectable.length?'':'disabled')+' aria-label="Select everyone listed"></th><th>Person</th><th>Role</th><th>Reach</th><th>Contact centres / groups</th><th>Last seen</th><th style="text-align:right">Actions</th></tr></thead><tbody>'+
+  '<button class="btn" data-act="exportppl">'+I('copy')+'Export CSV</button></div>'+bulkBar+
+  '<div class="card"><div class="tblwrap"><table class="tbl"><thead><tr><th style="width:34px"><input type="checkbox" id="selall" '+(allSel?'checked':'')+' '+(selectable.length?'':'disabled')+' aria-label="Select everyone listed"></th><th>Person</th><th>Role</th><th>Reach</th><th>Contact centres / groups</th><th>Last seen</th><th style="text-align:right">Actions</th></tr></thead><tbody>'+
   rows.map(p=>{const r=personRole(p);const blk=ro?'Supervisors don\'t give roles.':p.id===v.id?'Nobody can change their own role.':(p.role==='owner'&&!isOwnerP())?'Only an Account owner can change an Account owner.':'';
    return '<tr><td><input type="checkbox" data-sel="'+p.id+'" '+(S.sel.has(p.id)?'checked':'')+' '+(blk?'disabled':'')+' aria-label="Select '+esc(p.n)+'"></td>'+
     '<td><div class="who"><span class="av2">'+p.id+'</span><div><b>'+esc(p.n)+(p.id===v.id?' <span class="tag acc">You</span>':'')+(p.status==='pending'?' <span class="tag warn">Pending</span>':'')+'</b><span>Ext '+p.ext+' · '+p.loc+'</span></div></div></td>'+
@@ -2180,9 +2129,6 @@ function modal(){
  if(m.type==='transfer'){const cands=PEOPLE.filter(p=>p.role==='locadmin');
   return wrap('Transfer ownership','<p style="margin:0 0 10px;font-size:13.5px">The new owner must already be an admin. You become a Location admin with whole-company reach. Billing, plan and closing the account move with the ownership.</p><label class="fl" for="to">New Account owner</label><select id="to" class="inp">'+cands.map(p=>'<option value="'+p.id+'">'+esc(p.n)+' — Location admin, '+esc(reachText(p))+'</option>').join('')+'</select><p class="hint">Sent to both of you by email, and needs the new owner\'s one-time code before it happens. (New — not in the product today.)</p>',
    '<button class="btn" data-act="close">Cancel</button><button class="btn dangerfill" data-act="transferok">'+I('key')+'Transfer</button>')}
- if(m.type==='setmgr'){const p=PEOPLE.find(x=>x.id===m.id);const cands=PEOPLE.filter(x=>x.id!==p.id);
-  return wrap('Set manager','<p style="margin:0 0 12px;font-size:13.5px">Who does <b>'+esc(p.n)+'</b> report to? This only changes how People is grouped here — nothing else.</p><label class="fl" for="mgrsel">Manager</label><select id="mgrsel" class="inp"><option value="">Unassigned</option>'+cands.map(x=>'<option value="'+x.id+'" '+((p.mgr||'')===x.id?'selected':'')+'>'+esc(x.n)+' — '+esc(personRole(x).n)+'</option>').join('')+'</select>',
-   '<button class="btn" data-act="close">Cancel</button><button class="btn primary" data-act="setmgrok" data-id="'+p.id+'">'+I('check')+'Save</button>',480)}
  if(m.type==='restore'){const a=AUDIT.find(x=>x.id===m.id);return wrap('Put the role back?','<p style="margin:0;font-size:13.5px">“'+esc(roleById(a.role).n)+'” goes back to how it was before '+esc(a.who)+'\'s change on '+esc(a.t)+': '+a.add.length+' switched off, '+a.rem.length+' switched on. This is a new entry in the history — nothing is erased.</p>','<button class="btn" data-act="close">Cancel</button><button class="btn primary" data-act="restoreok" data-id="'+a.id+'">'+I('undo')+'Put it back</button>')}
  return '';
 }
@@ -2304,7 +2250,7 @@ document.addEventListener('click',e=>{
  if(t.closest('#tagsbtn')){S.tags=!S.tags;render();return}
  const sic=t.closest('[data-signin]');if(sic){S.modal.signin=sic.dataset.signin;S.modal.pwErrs=null;render();return}
  const pt=t.closest('[data-pt]');if(pt){S.pplTab=pt.dataset.pt;S.sel=new Set();S.pplQ='';render();return}
- const pv=t.closest('[data-pv]');if(pv){S.pplView=pv.dataset.pv;render();return}
+ const pv=t.closest('[data-pv]');if(pv){if(pv.dataset.pv==='manager'){toast('info','Not part of this prototype','Grouping by manager needs a reporting-line field this prototype does not model.');return}S.pplView=pv.dataset.pv;render();return}
  if(t.closest('#whybtn')){S.why=!S.why;render();return}
  if(t.closest('#rulesbtn')||t.closest('[data-act="rules"]')){S.modal={type:'rules'};render();return}
  const rt=t.closest('[data-rtab]');if(rt){S.rulesTab=rt.dataset.rtab;render();return}
@@ -2336,7 +2282,7 @@ document.addEventListener('click',e=>{
     if(Object.keys(errs).length){m.pwErrs=errs;render();toast('bad','Fix the passwords','Every person needs a password that matches its confirmation.');return}}
    m.pwErrs=null;const added=[];
    m.people.forEach(p=>{const rc=roleChoice(p.role);const role=roleById(rc[2]);
-    const person={id:'NP'+(NEXT_PID++),n:(p.first+' '+p.last).trim(),ext:p.ext||genExt(),loc:m.loc,teams:[],role:rc[2],reach:{lvl:role.reach,ids:[]},seen:'Never signed in',status:'pending',email:p.email,phone:p.phone,mgr:null};
+    const person={id:'NP'+(NEXT_PID++),n:(p.first+' '+p.last).trim(),ext:p.ext||genExt(),loc:m.loc,teams:[],role:rc[2],reach:{lvl:role.reach,ids:[]},seen:'Never signed in',status:'pending',email:p.email,phone:p.phone};
     PEOPLE.push(person);added.push(person)});
    AUDIT.unshift({id:Date.now(),t:'Just now',who:me().n,kind:'invite',title:'Invited '+added.length+' '+(added.length===1?'person':'people')+' to '+esc(m.loc),detail:added.map(p=>p.n).join(', '),people:added.length});
    m.done=true;m.addedCount=added.length;render();return}
@@ -2394,8 +2340,6 @@ document.addEventListener('click',e=>{
   if(a==='presetok'){applyPreset(act.dataset.p);S.modal=null;render();return}
   if(a==='checkrole'){const u=roleUsers(S.edit.id);if(u.length){S.check=u[0].id}S.edit=null;S.screen='people';S.pplQ='';render();return}
   if(a==='chrole'){S.modal={type:'chrole',ids:[id]};render();return}
-  if(a==='setmgr'){S.modal={type:'setmgr',id:id};render();return}
-  if(a==='setmgrok'){const p=PEOPLE.find(x=>x.id===id);const mv=document.getElementById('mgrsel').value;p.mgr=mv||null;S.modal=null;render();toast('ok','Manager set',esc(p.n)+(mv?' now reports to '+esc(PEOPLE.find(x=>x.id===mv).n)+'.':' has no manager, and is grouped under “Unassigned”.'));return}
   if(a==='bulk'){S.modal={type:'chrole',ids:[...S.sel]};render();return}
   if(a==='chroleok'){const m=S.modal;const r=roleById(m.role||PEOPLE.find(p=>p.id===m.ids[0]).role);
    m.ids.forEach(id=>{const p=PEOPLE.find(x=>x.id===id);const old=personRole(p).n;const oldR=reachText(p);p.role=r.id;p.reach={lvl:r.reach,ids:['location','group','cc'].includes(r.reach)?[...m.reach]:[]};
