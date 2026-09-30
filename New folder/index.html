@@ -187,7 +187,7 @@ svg.i{width:17px;height:17px;flex:none;stroke:currentColor;fill:none;stroke-widt
 .fl .cc{float:right;font-weight:500;color:var(--ink-3);font-family:var(--mono);font-size:11px}
 .inp{width:100%;border:1px solid var(--line-strong);border-radius:9px;padding:8px 10px;font:inherit;color:var(--ink);background:var(--surface)}
 textarea.inp{resize:vertical;min-height:60px}
-.inp:disabled{background:var(--surface-2);color:var(--ink-3)}
+.inp:disabled{background:var(--surface-2);color:var(--ink-3);cursor:not-allowed}
 .hint{font-size:12px;color:var(--ink-3);margin-top:5px}
 .presets{display:flex;flex-wrap:wrap;gap:6px}
 .presets button{border:1px solid var(--line);background:var(--surface-2);border-radius:999px;padding:5px 12px;font-size:12.5px;font-weight:700;color:var(--ink-2)}
@@ -522,7 +522,7 @@ code{font-family:var(--mono);font-size:11.5px}
 
 /* page frame */
 .main{padding:24px 32px 48px}
-.main:not(.editing)>*{max-width:1320px}
+.main:not(.editing)>*{max-width:100%}
 .ph{align-items:flex-start;margin-bottom:12px}
 .ph .eyebrow{font-size:12px;letter-spacing:0;text-transform:none;font-weight:600;color:var(--ink-3);margin-bottom:6px}
 .ph h1{font-size:24px}
@@ -810,6 +810,97 @@ html{zoom:0.8}
 .req{color:var(--bad)}
 .opt{color:var(--ink-3);font-weight:500}
 @media (max-width:760px){.awgrid{grid-template-columns:1fr}.awctrl .imp{margin-left:0;width:100%}}
+/* ===== Edit person (full-height side panel, not a popup) ===== */
+.main.panelopen{padding:0;overflow:hidden}
+.eppanel{position:absolute;inset:0;background:var(--surface);z-index:5;display:flex;flex-direction:column;box-shadow:-6px 0 24px rgba(13,21,38,.10);min-width:0}
+.eppanel .dh,.eppanel .epbody,.eppanel .epsec,.eppanel .epfoot{min-width:0}
+.eppanel .dh{padding:16px 24px}
+.eppro{display:flex;align-items:center;gap:14px;background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:14px 18px;margin:0 24px 16px}
+.eppro b{font-size:15px}
+.eppro .badges{display:flex;align-items:center;gap:8px;margin-top:6px;flex-wrap:wrap}
+.eppro .badges .em{font-size:13px;color:var(--ink-3)}
+.eptabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin:0 24px 16px;overflow-x:auto;scrollbar-width:none}
+.eptab{display:inline-flex;align-items:center;gap:8px;border:0;border-bottom:2px solid transparent;background:none;padding:10px 12px;margin-bottom:-1px;font-size:13px;font-weight:600;color:var(--ink-3);white-space:nowrap;cursor:pointer}
+.eptab .n{width:18px;height:18px;border-radius:50%;background:var(--sunken);color:var(--ink-3);font-size:11px;font-weight:700;display:inline-grid;place-items:center;flex:none}
+.eptab.on{color:var(--accent);border-bottom-color:var(--accent)}
+.eptab.on .n{background:var(--accent);color:#fff}
+.epbody{flex:1;overflow:auto;padding:0 24px 20px}
+.epsec{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:18px 20px;margin-bottom:14px}
+.epsec h3{margin:0;font-size:14px}
+.epsec>p{margin:4px 0 16px;font-size:13px;color:var(--ink-3)}
+.epsec .hint{font-size:12px}
+.eplbl{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:5px}
+.eplbl .ii{color:var(--bad);display:inline-flex;flex:none}
+.eperr{margin:4px 0 0;font-size:12px;color:var(--bad)}
+.ro{font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-3);background:var(--sunken);padding:1px 5px;border-radius:3px;margin-left:6px}
+.epinfo{background:var(--warn-bg);border:1px solid var(--warn);border-radius:6px;padding:10px 14px;font-size:13px;color:var(--warn);margin-top:14px}
+.eptplcard{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:14px}
+.eptplcard>b{display:block;font-size:14px;font-weight:600;color:var(--ink-2);margin-bottom:10px}
+.epradios{display:flex;gap:16px}
+.epradio{display:flex;align-items:center;gap:7px;font-size:14px;cursor:pointer;color:var(--ink)}
+.epfoot{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 24px;border-top:1px solid var(--line);background:var(--surface);flex-wrap:wrap}
+.epfoot>span{font-size:13px;color:var(--ink-3)}
+.eptab.err{color:var(--bad)}
+.eptab .n.ok{background:var(--ok-bg);color:var(--ok)}
+.eptab .n.err{background:var(--bad-bg);color:var(--bad)}
+.eptab .n svg.i,.eplbl .ii svg.i{width:11px;height:11px}
+.eplbl{display:flex;align-items:center;justify-content:space-between;gap:6px}
+.req{color:var(--bad)}
+.ro.soon{background:var(--warn-bg);color:var(--warn)}
+.eprow{display:flex;align-items:center;gap:14px;padding:12px 0;border-top:1px solid var(--line)}
+.eprows .eprow:first-child{border-top:0}
+.eprow:first-child{border-top:0}
+.eprow>div:first-child{flex:1;min-width:0}
+.eprow b{display:block;font-size:13.5px;font-weight:600;color:var(--ink-2)}
+.eprow span{display:block;font-size:12.5px;color:var(--ink-3);margin-top:2px}
+.eprow .epval{font-size:13.5px;color:var(--ink-2)}
+.eprow .mi{color:var(--ink-3);display:inline-flex;flex:none}
+.epmrow{border-top:1px solid var(--line);padding:12px 0}
+.epmrow:first-of-type{border-top:0}
+.epmhead{gap:10px}
+.epmhead b{flex:none}
+.epmsel{display:flex;gap:8px;align-items:center;margin-top:10px;padding-left:32px;max-width:520px}
+.epselwrap{position:relative;flex:1;display:flex;min-width:0}
+.epsel-native{appearance:none;-webkit-appearance:none;width:100%;padding-right:52px}
+.epsel-x{position:absolute;right:26px;top:50%;transform:translateY(-50%);width:22px;height:22px;border:0;background:none;color:var(--ink-3)}
+.epsel-x svg.i{width:13px;height:13px}
+.epsel-chev{position:absolute;right:9px;top:50%;transform:translateY(-50%) rotate(90deg);pointer-events:none;color:var(--ink-3);display:inline-flex}
+.epsel-chev svg.i{width:13px;height:13px}
+.epplay{border-color:var(--accent);color:var(--accent);flex:none}
+.epplayer{display:flex;align-items:center;gap:10px;flex:1;background:var(--sunken);border-radius:9px;padding:6px 12px;min-width:0}
+.epplayer button.ib{border:0;background:none;color:var(--ink-2);flex:none;width:22px;height:22px}
+.epplayer button.ib svg.i{width:15px;height:15px}
+.eptime{font-family:var(--mono);font-size:11.5px;color:var(--ink-2);flex:none;white-space:nowrap}
+.epseek{flex:1;height:4px;border-radius:2px;background:var(--line-strong);position:relative;min-width:40px}
+.epseek i{position:absolute;left:0;top:0;bottom:0;border-radius:2px;background:var(--ink-3)}
+.epvol,.epmore{color:var(--ink-3);display:inline-flex;flex:none}
+.epvol svg.i,.epmore svg.i{width:15px;height:15px}
+.epclose{border-color:var(--bad);color:var(--bad);flex:none}
+.eskhead2{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:16px}
+.eskhead2 h3{margin:0}
+.eskhead2 p{margin:4px 0 0}
+.eskhead2 .btn{flex:none}
+.esktbl{border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.eskrow{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 16px;border-top:1px solid var(--line)}
+.esktbl>.eskrow:first-child{border-top:0}
+.eskrow.eskcol{background:var(--surface-2);font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-3);padding:9px 16px}
+.eskgrp{display:flex;justify-content:space-between;background:var(--surface-2);padding:9px 16px;border-top:1px solid var(--line);font-size:12.5px}
+.esktbl>.eskgrp:first-of-type{border-top:0}
+.eskgrp b{font-weight:700;color:var(--ink-2)}
+.eskgrp span{color:var(--ink-3)}
+.eskrow>div:first-child b{display:block;font-size:13.5px;font-weight:600;color:var(--ink)}
+.eskrow>div:first-child span{display:block;font-size:12px;color:var(--ink-3);margin-top:2px}
+.eskstars{display:flex;align-items:center;gap:3px;flex:none}
+.eskstar{border:0;background:none;padding:2px;cursor:pointer;color:var(--ink-4);display:inline-flex}
+.eskstar svg.i{width:16px;height:16px;fill:none;stroke:currentColor}
+.eskstar.on{color:var(--warn)}
+.eskstar.on svg.i{fill:currentColor}
+.eskn{font-size:12px;color:var(--ink-3);margin-left:8px;white-space:nowrap}
+.eskfoot{padding:10px 16px;background:var(--surface-2);border-top:1px solid var(--line);font-size:12.5px;color:var(--ink-3)}
+@media (max-width:640px){.eskhead2{flex-direction:column}.eskrow{flex-direction:column;align-items:flex-start;gap:8px}.eskrow.eskcol{display:none}}
+@media (max-width:880px){.eppanel{position:fixed}}
+@media (max-width:640px){.epfoot{flex-direction:column;align-items:stretch}.epfoot>div{width:100%;justify-content:flex-end;flex-wrap:wrap}.eppro,.eptabs,.epbody{margin-left:14px;margin-right:14px}.eppanel .dh{padding:14px}}
+@media (max-width:480px){.epfoot>div .btn{flex:1 1 calc(50% - 4px);justify-content:center}}
 /* ===== Add people: how they sign in ===== */
 .awlead{margin:0 0 14px;font-size:12.5px;color:var(--ink-3)}
 .awsign button.expanded{border-radius:10px 10px 0 0;border-bottom-color:transparent}
@@ -1373,6 +1464,182 @@ function addPeopleModal(){
   '<div class="db">'+body+'</div>'+foot+'</div></div>';
 }
 
+/* ---------- Edit person ---------- */
+const EP_TABS=[['basic','Basic Information'],['perm','Settings & Permissions'],['media','Media'],['skills','Skills'],['fields','Profile fields'],['rules','Call Rules']];
+const EP_STUB={
+ rules:'Personal call-handling rules are not modeled in this prototype — role-level rules are covered by the Role rules drawer.'
+};
+function extTaken(ext,exceptId){return PEOPLE.some(x=>x.id!==exceptId&&String(x.ext)===String(ext))}
+let epTimer=null;
+function fmtTime(s){s=Math.max(0,Math.round(s||0));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}
+function stopEpAudio(){if(window.speechSynthesis)speechSynthesis.cancel();if(epTimer){clearInterval(epTimer);epTimer=null}if(S.modal){S.modal.playing=null;S.modal.playPaused=false}}
+function epTick(){
+ if(!S.modal||S.modal.type!=='editppl'||!S.modal.playing){if(epTimer){clearInterval(epTimer);epTimer=null}return}
+ if(S.modal.playPaused)return;
+ const elapsed=(S.modal.playElapsedMs+(Date.now()-S.modal.playStartTs))/1000;
+ if(elapsed>=S.modal.playDur){stopEpAudio();render();return}
+ render();
+}
+const LOC_ALL=['Unified Testing Team','Mumbai','Pune'];
+const EP_PICKS={
+ tz:['Regional Settings',['Asia/Kolkata, India','America/New_York, US','Europe/London, UK','Asia/Dubai, UAE']],
+ hours:['Business Hours',['24 Hours, all times','Business hours only (9am–6pm)','Custom schedule']],
+ rec:['Automatic & On Demand Call Recording',['Automatic & on demand call recording is disabled.','Automatic call recording is enabled for every call.','Recording starts only when someone presses record.']],
+ disp:['Display Number',['Masking is replace with Masking','Shows the real caller ID','Shows the company main number']],
+ intl:['International calling',['Follow the company setting','Allow calls to any country','Block all international calls']]
+};
+const EP_MEDIA=[['welcome','Welcome message','chat',['Jenny (Female - American)','Mike (Male - American)','None (silent)']],
+ ['hold','On hold music message','music',['Hold music - Bach Prelude','Hold music - Jazz','Hold music - Lo-fi']],
+ ['voicemail','Voicemail message','mail',['Default voicemail','Holiday voicemail','After-hours voicemail']],
+ ['ring','Ring tone message','bell',['Classic ring','Digital chime','test ad','testing']]];
+const EPD={tz:'Asia/Kolkata, India',hours:'24 Hours, all times',rec:'Automatic & on demand call recording is disabled.',disp:'Masking is replace with Masking',intl:'Follow the company setting'};
+function epv(p,k){return p[k]===undefined?EPD[k]:p[k]}
+function epMedia(p,k){return (p.media&&p.media[k])||{on:false,val:''}}
+const SKILLS_CATALOG=[
+ ['Language','english','English','Skill for english in india'],
+ ['General','sales','Sales','This is for sales team'],
+ ['General','test_skill','test_skill','this is best skill section']
+];
+function epSkill(p,k){return (p.skills&&p.skills[k])||0}
+function epTabStatus(m,p){
+ const st={};
+ EP_TABS.forEach(([k])=>{
+  if(!m.visited.has(k)){st[k]='num';return}
+  if(k==='basic'){st[k]=(m.first.trim().length>=2&&m.last.trim().length>=2)?'ok':'err';return}
+  if(k==='fields'){st[k]=p.mgr?'ok':'err';return}
+  if(k==='media'){const bad=EP_MEDIA.some(([mk])=>{const mv=epMedia(p,mk);return mv.on&&!mv.val});st[k]=bad?'err':'ok';return}
+  st[k]='ok';
+ });
+ return st;
+}
+function editPersonModal(){
+ const m=S.modal,p=PEOPLE.find(x=>x.id===m.id);
+ if(!p)return '';
+ const r=personRole(p),init=p.n.split(' ').map(x=>x[0]).join('').slice(0,2).toUpperCase();
+ const idx=EP_TABS.findIndex(t=>t[0]===m.tab);
+ const stat=epTabStatus(m,p);
+ const ii='<span class="ii">'+I('info')+'</span>';
+ let body;
+ if(m.tab==='basic'){
+  const eFirst=m.errFirst,eLast=m.errLast;
+  body='<div class="epsec"><h3>Identity</h3><p>The name shown across the console, directory and caller ID.</p>'+
+    '<div class="awgrid">'+
+     '<div><div class="eplbl"><label class="fl" for="epfirst" style="margin:0">First Name</label>'+ii+'</div><input class="inp'+(eFirst?' bad':'')+'" id="epfirst" placeholder="Enter first name" value="'+esc(m.first)+'">'+(eFirst?'<p class="eperr">'+esc(eFirst)+'</p>':'')+'</div>'+
+     '<div><div class="eplbl"><label class="fl" for="eplast" style="margin:0">Last Name</label>'+ii+'</div><input class="inp'+(eLast?' bad':'')+'" id="eplast" placeholder="Enter last name" value="'+esc(m.last)+'">'+(eLast?'<p class="eperr">'+esc(eLast)+'</p>':'')+'</div>'+
+    '</div>'+
+    '<div style="margin-top:14px"><label class="fl" for="eptitle">Job Title</label><input class="inp" id="eptitle" placeholder="e.g. Support Team Lead" value="'+esc(m.title)+'"></div>'+
+   '</div>'+
+   '<div class="epsec"><h3>Workplace</h3><p>Which location this person belongs to. The extension is set when the person is added and cannot be changed here.</p>'+
+    '<div class="awgrid">'+
+     '<div><label class="fl" for="eploc">Location</label><select class="inp" id="eploc">'+LOC_ALL.map(l=>'<option '+(p.loc===l?'selected':'')+'>'+esc(l)+'</option>').join('')+'</select></div>'+
+     '<div><label class="fl">Extension <span class="ro">Read only</span></label><input class="inp" value="'+esc(p.ext)+'" disabled><p class="hint">Set when the person was added.</p></div>'+
+    '</div>'+
+   '</div>'+
+   '<div class="epsec"><h3>Contact</h3><p>How this person is reached. Both are managed on the person\'s own account and are shown here for reference.</p>'+
+    '<div class="awgrid">'+
+     '<div><label class="fl">Phone <span class="ro">Read only</span></label><input class="inp" value="'+(p.phone?esc(p.phone):'—')+'" disabled></div>'+
+     '<div><label class="fl">Email <span class="ro">Read only</span></label><input class="inp" value="'+(p.email?esc(p.email):'—')+'" disabled><p class="hint">Also the sign-in address.</p></div>'+
+    '</div>'+
+   '</div>'+
+   '<div class="epsec"><h3>Provisioning</h3><p>Apply a saved template to fill the remaining steps, or configure them yourself.</p>'+
+    '<div class="eptplcard"><b>Use an existing template?</b><div class="epradios">'+
+     ['yes','no'].map(v=>'<label class="epradio"><input type="radio" name="eptpl" data-tpl="'+v+'" '+((m.useTemplate?'yes':'no')===v?'checked':'')+'>'+(v==='yes'?'Yes':'No')+'</label>').join('')+
+    '</div></div></div>';
+ }else if(m.tab==='perm'){
+  body='<div class="epsec eprows">'+
+    eprow(null,'Role',esc(r.n.toUpperCase()),null)+
+    eprow(null,'Regional Settings',esc(epv(p,'tz')),'tz')+
+    eprow(null,'Business Hours','<span style="color:var(--accent)">'+esc(epv(p,'hours'))+'</span>','hours')+
+    eprow(null,'Automatic & On Demand Call Recording',esc(epv(p,'rec')),'rec')+
+    eptog('autoTranscribe','Automatic Transcription','Automatic transcription is '+(p.autoTranscribe!==false?'enabled':'disabled')+'.',p.autoTranscribe!==false)+
+    eptog('aiMonitor','AI Call Monitoring','When enabled transcripts will be automatically triggered.',p.aiMonitor!==false)+
+    eprow(null,'Display Number',esc(epv(p,'disp')),'disp')+
+   '</div>'+
+   '<div class="epsec">'+
+    '<div class="eprow"><div><b>Calling other countries <span class="ro soon">Coming soon</span></b><span>Whether this person can phone numbers outside your own country. This is the control that decides how much a stolen password could cost you, because calls abroad are billed by the minute at rates the caller chooses.</span></div></div>'+
+    '<div class="eprow" style="border-top:1px solid var(--line);padding-top:12px;margin-top:12px"><div><b>International calling <span class="ro soon">Coming soon</span></b><span>Follows the company setting. Calls can be made to any country. Nothing is restricted.</span></div><button class="btn sm" data-act="eppick" data-f="intl">'+esc(epv(p,'intl'))+'</button></div>'+
+    '<div class="epinfo" style="margin-top:14px">'+I('info')+' Refusing somebody here always works. Allowing them does not reach past the company: they still cannot phone a country your company has not allowed, which is set under Company → Calling. Extensions, calls inside your own country and emergency numbers are never affected by this.</div>'+
+    '<div class="epinfo" style="margin-top:10px">'+I('info')+' Not active yet. This is recorded on this person\'s record, and it is what the call switch will read — but the switch does not check it today, so it does not stop any call yet.</div>'+
+   '</div>';
+ }else if(m.tab==='media'){
+  body='<div class="epsec"><h3>Media</h3><p>The audio callers hear on this extension. Anything left unset falls back to the account default.</p>'+
+   EP_MEDIA.map(([k,label,icon,opts])=>{const mv=epMedia(p,k);const playing=m.playing===k;
+    let ctrl='';
+    if(mv.on&&playing){
+     const elapsed=m.playPaused?m.playElapsedMs/1000:(m.playElapsedMs+(Date.now()-m.playStartTs))/1000;
+     const pct=Math.min(100,m.playDur?elapsed/m.playDur*100:0);
+     ctrl='<div class="epmsel"><div class="epplayer">'+
+      '<button class="ib" data-act="epmpause" data-k="'+k+'" title="'+(m.playPaused?'Resume':'Pause')+'" aria-label="'+(m.playPaused?'Resume':'Pause')+'">'+I(m.playPaused?'play':'pause')+'</button>'+
+      '<span class="eptime">'+fmtTime(elapsed)+' / '+fmtTime(m.playDur)+'</span>'+
+      '<div class="epseek"><i style="width:'+pct+'%"></i></div>'+
+      '<span class="epvol">'+I('vol')+'</span><span class="epmore">'+I('more')+'</span>'+
+      '</div><button class="ib epclose" data-act="epmclear" data-k="'+k+'" title="Remove" aria-label="Remove '+esc(label)+'">'+I('x')+'</button></div>';
+    }else if(mv.on){
+     ctrl='<div class="epmsel"><div class="epselwrap"><select class="inp epsel-native" data-act="epmsel" data-k="'+k+'"><option value="">Select</option>'+opts.map(o=>'<option '+(mv.val===o?'selected':'')+'>'+esc(o)+'</option>').join('')+'</select>'+
+      (mv.val?'<button class="ib epsel-x" data-act="epmclear" data-k="'+k+'" title="Clear" aria-label="Clear">'+I('x')+'</button>':'')+
+      '<span class="epsel-chev">'+I('chev')+'</span></div>'+
+      '<button class="ib epplay" data-act="epmplay" data-k="'+k+'" title="Play" aria-label="Play '+esc(label)+'" '+(mv.val?'':'disabled')+'>'+I('play')+'</button></div>';
+    }
+    return '<div class="epmrow"><div class="eprow epmhead"><span class="mi">'+I(icon)+'</span><b>Do you want to add "'+esc(label)+'"?</b><button class="sw" role="switch" aria-pressed="'+mv.on+'" data-act="epmtoggle" data-k="'+k+'" aria-label="'+esc(label)+'"></button></div>'+ctrl+
+    '</div>'}).join('')+
+   '</div>';
+ }else if(m.tab==='fields'){
+  const needMgr=m.fieldsErr&&!p.mgr;
+  body='<div class="epsec"><h3>Profile fields</h3><p>Extra details kept on '+esc(p.n)+'\'s record. The list is defined in Company › Profile fields. These are visible to administrators here; they do not appear in the company directory.</p>'+
+   '<div class="eplbl"><label class="fl" for="epmgr" style="margin:0">Manager <span class="req">*</span></label></div>'+
+   '<select class="inp'+(needMgr?' bad':'')+'" id="epmgr"><option value="">Select</option>'+PEOPLE.filter(x=>x.id!==p.id).map(x=>'<option value="'+x.id+'" '+((p.mgr||'')===x.id?'selected':'')+'>'+esc(x.n)+' — '+esc(personRole(x).n)+'</option>').join('')+'</select>'+
+   (needMgr?'<p class="eperr">This one is required.</p>':'')+
+   '<button class="btn sm" style="margin-top:14px" data-act="epsavefields">Save profile fields</button>'+
+   '</div>';
+ }else if(m.tab==='skills'){
+  const cats=[...new Set(SKILLS_CATALOG.map(s=>s[0]))];
+  const totalAll=SKILLS_CATALOG.length,ratedAll=SKILLS_CATALOG.filter(([,k])=>epSkill(p,k)).length;
+  body='<div class="epsec"><div class="eskhead2"><div><h3>Skills</h3><p>Rate '+esc(p.n)+' on each skill: 1 star means they can cover it, 5 means they are the best choice. A queue that asks for a skill rings the highest-rated free person first. Leave a skill unrated if they do not handle it.</p></div>'+
+   '<button class="btn sm" data-act="epsaveskills">Save skills</button></div>'+
+   '<div class="esktbl"><div class="eskrow eskcol"><span>Skill</span><span>Rating</span></div>'+
+   cats.map(cat=>{const items=SKILLS_CATALOG.filter(s=>s[0]===cat);const rated=items.filter(([,k])=>epSkill(p,k)).length;
+    return '<div class="eskgrp"><b>'+esc(cat)+'</b><span>'+rated+' of '+items.length+' rated</span></div>'+
+     items.map(([,k,name,desc])=>{const v=epSkill(p,k);
+      return '<div class="eskrow"><div><b>'+esc(name)+'</b><span>'+esc(desc)+'</span></div>'+
+       '<div class="eskstars">'+[1,2,3,4,5].map(i=>'<button class="eskstar'+(i<=v?' on':'')+'" data-act="epstar" data-k="'+k+'" data-v="'+i+'" aria-label="Rate '+esc(name)+' '+i+' of 5" aria-pressed="'+(i<=v)+'">'+I('star')+'</button>').join('')+
+       '<span class="eskn">'+(v?v+' of 5':'Not rated')+'</span></div></div>'}).join('')}).join('')+
+   '<div class="eskfoot">'+ratedAll+' of '+totalAll+' skills rated.</div>'+
+   '</div></div>';
+ }else{
+  body='<div class="epsec"><div class="empty">'+I('info')+'<b>'+EP_TABS[idx][1]+'</b><span>'+EP_STUB[m.tab]+'</span></div></div>';
+ }
+ return '<div class="eppanel" role="dialog" aria-label="Edit '+esc(p.n)+'">'+
+  '<div class="dh"><h2>'+esc(p.n)+'</h2><button class="ib" data-act="close" aria-label="Close">'+I('x')+'</button></div>'+
+  '<div class="eppro"><span class="av2" style="width:44px;height:44px;border-radius:50%;font-size:15px">'+esc(init)+'</span>'+
+   '<div><b>'+esc(p.n)+'</b><div class="badges"><span class="tag">Ext '+esc(p.ext)+'</span><span class="tag acc">'+esc(r.n)+'</span><span class="em">'+(p.email?esc(p.email):'No email on file')+'</span></div></div></div>'+
+  '<div class="eptabs">'+EP_TABS.map((t,i)=>{const s=stat[t[0]],isOn=m.tab===t[0];
+    const icon=isOn?'<span class="n">'+(i+1)+'</span>':s==='ok'?'<span class="n ok">'+I('check')+'</span>':s==='err'?'<span class="n err">'+I('alert')+'</span>':'<span class="n">'+(i+1)+'</span>';
+    return '<button class="eptab'+(isOn?' on':'')+(s==='err'&&!isOn?' err':'')+'" data-act="eptab" data-t="'+t[0]+'">'+icon+t[1]+'</button>';}).join('')+'</div>'+
+  '<div class="epbody">'+body+'</div>'+
+  '<div class="epfoot"><span>Step '+(idx+1)+' of '+EP_TABS.length+' · '+EP_TABS[idx][1]+'</span><div style="display:flex;gap:8px">'+
+   '<button class="btn" data-act="close">Cancel</button>'+
+   '<button class="btn" data-act="epback" '+(idx===0?'disabled':'')+'>'+I('back')+'Back</button>'+
+   '<button class="btn" data-act="epnext" '+(idx===EP_TABS.length-1?'disabled':'')+'>Next</button>'+
+   '<button class="btn primary" data-act="epsave">'+I('check')+'Save changes</button>'+
+  '</div></div>'+
+ '</div>';
+}
+function eprow(icon,label,val,field){
+ return '<div class="eprow"><div><b>'+esc(label)+'</b></div>'+(field?'<button class="btn sm" data-act="eppick" data-f="'+field+'">'+val+'</button>':'<span class="epval">'+val+'</span>')+'</div>';
+}
+function eptog(k,label,desc,on){
+ return '<div class="eprow"><div><b>'+esc(label)+'</b><span>'+esc(desc)+'</span></div><button class="sw" role="switch" aria-pressed="'+on+'" data-act="eptoggle" data-k="'+k+'" aria-label="'+esc(label)+'"></button></div>';
+}
+function pickerModal(){
+ const m=S.modal.pick,def=EP_PICKS[m.field];
+ const b='<div class="presets" style="display:flex;flex-direction:column;gap:8px">'+def[1].map(o=>'<label class="epradio"><input type="radio" name="eppickv" data-eppv="'+esc(o)+'" '+(m.val===o?'checked':'')+'>'+esc(o)+'</label>').join('')+'</div>';
+ return '<div class="scrim center" data-close="1"><div class="modal" role="dialog" aria-label="'+esc(def[0])+'" style="width:min(480px,100%)">'+
+  '<div class="dh"><h2>'+esc(def[0])+'</h2><button class="ib" data-act="close" aria-label="Close">'+I('x')+'</button></div>'+
+  '<div class="db">'+b+'</div>'+
+  '<div class="df"><button class="btn" data-act="eppickcancel">Cancel</button><button class="btn primary" data-act="eppickok">'+I('check')+'Apply</button></div>'+
+ '</div></div>';
+}
+
 
 const PERSONAS={
  owner:{label:'Account owner',person:'SY',role:'owner'},
@@ -1543,7 +1810,14 @@ const P={
  undo:'<path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/>',user:'<circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/>',
  layers:'<path d="m12 2 10 5-10 5L2 7z"/><path d="m2 17 10 5 10-5M2 12l10 5 10-5"/>',
  refresh:'<path d="M21 12a9 9 0 1 1-2.6-6.3"/><path d="M21 4v5h-5"/>',
- mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/>'
+ mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/>',
+ music:'<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>',
+ play:'<path d="M8 5v14l11-7z"/>',
+ stop:'<rect x="6" y="6" width="12" height="12" rx="2"/>',
+ pause:'<rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/>',
+ vol:'<path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/>',
+ more:'<circle cx="12" cy="5" r="1.3" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.3" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.3" fill="currentColor" stroke="none"/>',
+ star:'<path d="M12 2.5l2.9 6.6 7.1.7-5.4 4.6 1.6 7-6.2-3.7-6.2 3.7 1.6-7-5.4-4.6 7.1-.7z"/>'
 };
 const I=n=>'<svg class="i" viewBox="0 0 24 24" aria-hidden="true">'+(P[n]||'')+'</svg>';
 const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]);
@@ -2010,7 +2284,8 @@ function scrPeople(){
     '<td><div class="who"><span class="av2">'+p.id+'</span><div><b>'+esc(p.n)+(p.id===v.id?' <span class="tag acc">You</span>':'')+(p.status==='pending'?' <span class="tag warn">Pending</span>':'')+'</b><span>Ext '+p.ext+' · '+p.loc+'</span></div></div></td>'+
     '<td>'+(r.sys?'<span class="tag'+(r.id==='owner'?' sys':'')+'">'+esc(r.n)+'</span>':'<span class="tag acc">'+esc(r.n)+'</span>')+'</td>'+
     '<td style="font-size:12.5px">'+esc(reachText(p))+'</td><td style="font-size:12.5px;color:var(--ink-3)">'+(p.teams.join(', ')||'—')+'</td><td style="font-size:12.5px;color:var(--ink-3)">'+esc(p.seen)+'</td>'+
-    '<td><div class="acts"><button class="ib" data-act="chrole" data-id="'+p.id+'" title="'+esc(blk||'Change role or reach')+'" aria-label="Change role" '+(blk?'disabled':'')+'>'+I('swap')+'</button>'+
+    '<td><div class="acts"><button class="ib" data-act="editppl" data-id="'+p.id+'" title="Edit '+esc(p.n)+'" aria-label="Edit '+esc(p.n)+'">'+I('edit')+'</button>'+
+    '<button class="ib" data-act="chrole" data-id="'+p.id+'" title="'+esc(blk||'Change role or reach')+'" aria-label="Change role" '+(blk?'disabled':'')+'>'+I('swap')+'</button>'+
     '<button class="ib" data-act="checkp" data-id="'+p.id+'" title="Check what '+esc(p.n.split(' ')[0])+' can do" aria-label="Check access">'+I('eye')+'</button>'+
     (p.role==='owner'&&isOwnerP()?'<button class="ib" data-act="transfer" title="Transfer ownership" aria-label="Transfer ownership">'+I('key')+'</button>':'')+'</div></td></tr>'}).join('')+
   (rows.length?'':'<tr><td colspan="7"><div class="empty">'+I('users')+'<b>Nobody matches</b><span>Try a different search or filter.</span></div></td></tr>')+
@@ -2124,6 +2399,7 @@ function modal(){
  const m=S.modal;if(!m)return '';
  if(m.type==='rules')return rulesDrawer();
  if(m.type==='addppl')return addPeopleModal();
+ if(m.type==='editppl')return m.pick?pickerModal():'';
  const wrap=(t,body,foot,w)=>'<div class="scrim center" data-close="1"><div class="modal" role="dialog" aria-label="'+esc(t)+'"'+(w?' style="width:min('+w+'px,100%)"':'')+'><div class="dh"><h2>'+t+'</h2><button class="ib" data-act="close" aria-label="Close">'+I('x')+'</button></div><div class="db">'+body+'</div><div class="df">'+foot+'</div></div></div>';
  if(m.type==='cascade'){
   const E=S.edit,d=DEF[m.k];const own=d.mod.id+'.'+d.sub.id;
@@ -2283,8 +2559,9 @@ function render(){
  const main=document.getElementById('main');
  const keep=S.screen==='edit'?main.scrollTop:0;
  const f={roles:scrRoles,edit:scrEdit,compare:scrCompare,people:scrPeople,check:scrCheck,history:scrHistory}[S.screen];
- main.className='main'+(S.screen==='edit'?' editing':'');
- main.innerHTML=f();
+ const editing=S.modal&&S.modal.type==='editppl';
+ main.className='main'+(S.screen==='edit'?' editing':'')+(editing?' panelopen':'');
+ main.innerHTML=f()+(editing?editPersonModal():'');
  if(S.screen==='edit'){main.scrollTop=keep;fixSticky()}
  document.querySelectorAll('input[data-part="1"]').forEach(i=>{i.indeterminate=true});
  document.getElementById('overlay').innerHTML=modal();
@@ -2303,6 +2580,7 @@ document.addEventListener('click',e=>{
  const per=t.closest('[data-persona]');if(per){S.persona=per.dataset.persona;S.edit=null;S.sel=new Set();S.modal=null;S.check=PERSONAS[S.persona].person;S.checkKey=null;if(!allowed(S.screen))S.screen=S.persona==='agent'?'check':S.persona==='supervisor'?'people':S.screen;if(S.screen==='edit')openEditor(defaultEditId(),'edit');render();return}
  if(t.closest('#tagsbtn')){S.tags=!S.tags;render();return}
  const sic=t.closest('[data-signin]');if(sic){S.modal.signin=sic.dataset.signin;S.modal.pwErrs=null;render();return}
+ const tpl=t.closest('[data-tpl]');if(tpl){S.modal.useTemplate=tpl.dataset.tpl==='yes';render();return}
  const pt=t.closest('[data-pt]');if(pt){S.pplTab=pt.dataset.pt;S.sel=new Set();S.pplQ='';render();return}
  const pv=t.closest('[data-pv]');if(pv){S.pplView=pv.dataset.pv;render();return}
  if(t.closest('#whybtn')){S.why=!S.why;render();return}
@@ -2314,7 +2592,7 @@ document.addEventListener('click',e=>{
  const hb=t.closest('[data-hub]');if(hb){const s=hb.dataset.hub;S.hubOpen.has(s)?S.hubOpen.delete(s):S.hubOpen.add(s);render();return}
  const or=t.closest('[data-openrole]');const act=t.closest('[data-act]');
  if(act){const a=act.dataset.act,id=act.dataset.id;
-  if(a==='close'){S.modal=null;render();return}
+  if(a==='close'){if(window.speechSynthesis)speechSynthesis.cancel();S.modal=null;render();return}
   if(a==='clearsel'){S.sel=new Set();render();return}
   if(a==='addppl'){S.modal={type:'addppl',step:1,loc:LOC_CHOICES[0],people:[blankPerson()],cur:0,errors:{},signin:'link',pwd:'',pwd2:'',pwds:{},pwShow:{},pwErrs:null,done:false,addedCount:0};render();return}
   if(a==='awminus'){const m=S.modal;if(m.people.length>1){m.people.pop();delete m.errors[m.people.length];if(m.cur>=m.people.length)m.cur=m.people.length-1}render();return}
@@ -2396,6 +2674,49 @@ document.addEventListener('click',e=>{
   if(a==='chrole'){S.modal={type:'chrole',ids:[id]};render();return}
   if(a==='setmgr'){S.modal={type:'setmgr',id:id};render();return}
   if(a==='setmgrok'){const p=PEOPLE.find(x=>x.id===id);const mv=document.getElementById('mgrsel').value;p.mgr=mv||null;S.modal=null;render();toast('ok','Manager set',esc(p.n)+(mv?' now reports to '+esc(PEOPLE.find(x=>x.id===mv).n)+'.':' has no manager, and is grouped under “Unassigned”.'));return}
+  if(a==='editppl'){const p=PEOPLE.find(x=>x.id===id);const parts=p.n.trim().split(/\s+/);
+   S.modal={type:'editppl',id:p.id,tab:'basic',first:parts[0]||'',last:parts.slice(1).join(' ')||'',title:p.title||'',ext:String(p.ext),extErr:null,extOk:false,errFirst:null,errLast:null,useTemplate:false,fieldsErr:false,visited:new Set(['basic']),playing:null};render();return}
+  if(a==='eptab'){if(S.modal.tab==='media'&&act.dataset.t!=='media')stopEpAudio();S.modal.tab=act.dataset.t;S.modal.visited.add(act.dataset.t);render();return}
+  if(a==='eppick'){S.modal.pick={field:act.dataset.f,val:epv(PEOPLE.find(x=>x.id===S.modal.id),act.dataset.f)};render();return}
+  if(a==='eppickcancel'){S.modal.pick=null;render();return}
+  if(a==='eppickok'){const p=PEOPLE.find(x=>x.id===S.modal.id),f=S.modal.pick.field,v=S.modal.pick.val;p[f]=v;S.modal.pick=null;render();toast('ok','Saved',esc(EP_PICKS[f][0])+' set to “'+esc(v)+'”.');return}
+  if(a==='eptoggle'){const p=PEOPLE.find(x=>x.id===S.modal.id),k=act.dataset.k;p[k]=!(p[k]!==false);render();return}
+  if(a==='epmtoggle'){const p=PEOPLE.find(x=>x.id===S.modal.id),k=act.dataset.k;p.media=p.media||{};p.media[k]=p.media[k]||{on:false,val:''};p.media[k].on=!p.media[k].on;if(!p.media[k].on)stopEpAudio();render();return}
+  if(a==='epmclear'){const p=PEOPLE.find(x=>x.id===S.modal.id),k=act.dataset.k;p.media[k].val='';if(S.modal.playing===k)stopEpAudio();render();return}
+  if(a==='epmplay'){const k=act.dataset.k,p=PEOPLE.find(x=>x.id===S.modal.id),mv=epMedia(p,k);
+   if(!mv.val)return;
+   if(!window.speechSynthesis){toast('info','No audio in this prototype','This browser has no speech engine to preview with.');return}
+   stopEpAudio();speechSynthesis.cancel();
+   const u=new SpeechSynthesisUtterance(mv.val);
+   const words=mv.val.trim().split(/\s+/).length,dur=Math.max(2,Math.round(words/2.2));
+   u.onend=u.onerror=()=>{if(S.modal&&S.modal.playing===k){stopEpAudio();render()}};
+   S.modal.playing=k;S.modal.playPaused=false;S.modal.playElapsedMs=0;S.modal.playStartTs=Date.now();S.modal.playDur=dur;
+   speechSynthesis.speak(u);
+   if(!epTimer)epTimer=setInterval(epTick,250);
+   render();return}
+  if(a==='epmpause'){const m=S.modal;if(!m.playing)return;
+   if(m.playPaused){m.playStartTs=Date.now();m.playPaused=false;if(window.speechSynthesis)speechSynthesis.resume()}
+   else{m.playElapsedMs+=Date.now()-m.playStartTs;m.playStartTs=null;m.playPaused=true;if(window.speechSynthesis)speechSynthesis.pause()}
+   render();return}
+  if(a==='epsavefields'){const p=PEOPLE.find(x=>x.id===S.modal.id);
+   if(!p.mgr){S.modal.fieldsErr=true;render();return}
+   S.modal.fieldsErr=false;render();toast('ok','Saved','Profile fields saved for '+esc(p.n)+'.');return}
+  if(a==='epstar'){const p=PEOPLE.find(x=>x.id===S.modal.id),k=act.dataset.k,v=+act.dataset.v;
+   p.skills=p.skills||{};p.skills[k]=p.skills[k]===v?0:v;if(!p.skills[k])delete p.skills[k];render();return}
+  if(a==='epsaveskills'){const p=PEOPLE.find(x=>x.id===S.modal.id);
+   const total=SKILLS_CATALOG.length,rated=SKILLS_CATALOG.filter(([,k])=>epSkill(p,k)).length;
+   toast('ok','Saved',rated+' of '+total+' skills saved for '+esc(p.n)+'.');return}
+  if(a==='epback'){const i=EP_TABS.findIndex(t=>t[0]===S.modal.tab);S.modal.tab=EP_TABS[Math.max(0,i-1)][0];render();return}
+  if(a==='epnext'){const i=EP_TABS.findIndex(t=>t[0]===S.modal.tab);S.modal.tab=EP_TABS[Math.min(EP_TABS.length-1,i+1)][0];render();return}
+  if(a==='epsaveext'){const m=S.modal,p=PEOPLE.find(x=>x.id===m.id);const v=m.ext.trim();
+   if(!/^\d{2,6}$/.test(v)){m.extErr='Enter a 2-6 digit extension.';m.extOk=false;render();return}
+   if(extTaken(v,p.id)){const owner=PEOPLE.find(x=>x.id!==p.id&&String(x.ext)===v);m.extErr='Ext '+v+' is already used by '+esc(owner.n)+'.';m.extOk=false;render();return}
+   p.ext=v;m.extErr=null;m.extOk=true;render();toast('ok','Extension saved','Ext '+v+' now reaches '+esc(p.n)+'.');return}
+  if(a==='epsave'){const m=S.modal,p=PEOPLE.find(x=>x.id===m.id);
+   const eF=m.first.trim().length<2?'First name must be at least 2 characters':null;
+   const eL=m.last.trim().length<2?'Last name must be at least 2 characters':null;
+   if(eF||eL){m.errFirst=eF;m.errLast=eL;render();return}
+   p.n=(m.first.trim()+' '+m.last.trim()).trim();p.title=m.title.trim();S.modal=null;render();toast('ok','Saved',esc(p.n)+'’s details were updated.');return}
   if(a==='bulk'){S.modal={type:'chrole',ids:[...S.sel]};render();return}
   if(a==='chroleok'){const m=S.modal;const r=roleById(m.role||PEOPLE.find(p=>p.id===m.ids[0]).role);
    m.ids.forEach(id=>{const p=PEOPLE.find(x=>x.id===id);const old=personRole(p).n;const oldR=reachText(p);p.role=r.id;p.reach={lvl:r.reach,ids:['location','group','cc'].includes(r.reach)?[...m.reach]:[]};
@@ -2452,6 +2773,10 @@ document.addEventListener('change',e=>{
  if(t.id==='pplLocSel'){S.pplLoc=t.value;render();return}
  if(t.id==='pplRoleSel'){S.pplRole=t.value;render();return}
  if(t.id==='pplSeenSel'){S.pplSeen=t.value;render();return}
+ if(t.id==='epmgr'){const p=PEOPLE.find(x=>x.id===S.modal.id);p.mgr=t.value||null;if(t.value)S.modal.fieldsErr=false;render();return}
+ if(t.id==='eploc'){const p=PEOPLE.find(x=>x.id===S.modal.id);p.loc=t.value;render();return}
+ const eppv=t.closest('[data-eppv]');if(eppv&&S.modal&&S.modal.pick){S.modal.pick.val=eppv.dataset.eppv;render();return}
+ const emsel=t.closest('[data-act="epmsel"]');if(emsel){const p=PEOPLE.find(x=>x.id===S.modal.id);p.media[emsel.dataset.k].val=t.value;render();return}
  if(t.id==='awloc'){S.modal.loc=t.value;render();return}
  if(t.id==='awrole'){S.modal.people[S.modal.cur].role=t.value;render();return}
  if(t.id==='awfile'){const f=t.files[0];if(!f)return;const rd=new FileReader();
@@ -2480,8 +2805,12 @@ document.addEventListener('input',e=>{
  if(t.id==='awpwd1'){S.modal.pwd=t.value;if(S.modal.pwErrs)delete S.modal.pwErrs.pwd;keepFocus(t.id);return}
  if(t.id==='awpwd2'){S.modal.pwd2=t.value;if(S.modal.pwErrs)delete S.modal.pwErrs.pwd2;keepFocus(t.id);return}
  {const mE=t.id.match(/^awpwdE(\d+)([AB])$/);if(mE){const i=+mE[1],f=mE[2]==='A'?'p1':'p2';S.modal.pwds[i]=S.modal.pwds[i]||{};S.modal.pwds[i][f]=t.value;if(S.modal.pwErrs&&S.modal.pwErrs[i])delete S.modal.pwErrs[i][f];keepFocus(t.id);return}}
+ if(t.id==='epfirst'){S.modal.first=t.value;if(S.modal.errFirst&&t.value.trim().length>=2)S.modal.errFirst=null;keepFocus(t.id);return}
+ if(t.id==='eplast'){S.modal.last=t.value;if(S.modal.errLast&&t.value.trim().length>=2)S.modal.errLast=null;keepFocus(t.id);return}
+ if(t.id==='eptitle'){S.modal.title=t.value;keepFocus(t.id);return}
+ if(t.id==='epext'){S.modal.ext=t.value;S.modal.extErr=null;S.modal.extOk=false;keepFocus(t.id);return}
 });
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&S.modal){S.modal=null;render()}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&S.modal){if(window.speechSynthesis)speechSynthesis.cancel();S.modal=null;render()}});
 render();
 
 </script>
