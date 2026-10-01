@@ -126,10 +126,18 @@ svg.i{width:17px;height:17px;flex:none;stroke:currentColor;fill:none;stroke-widt
 
 .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow);overflow:hidden}
 .card-h{display:flex;align-items:center;gap:10px;padding:13px 16px;border-bottom:1px solid var(--line)}
+.card-h>svg.i{color:var(--ink-3);flex:none}
 .card-h h3{margin:0;font-size:15px;font-weight:800}
 .card-h .r{margin-left:auto;font-size:12px;color:var(--ink-3)}
 .tbl{width:100%;border-collapse:collapse}
 .tbl th{text-align:left;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);font-weight:700;padding:10px 14px;background:var(--surface-2);border-bottom:1px solid var(--line);white-space:nowrap}
+.thsort{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:4px;font:inherit;color:inherit;letter-spacing:inherit;text-transform:inherit}
+.thsort:hover{color:var(--ink-2)}
+.thsi{display:inline-flex;color:var(--ink-4)}
+.thsi svg.i{width:12px;height:12px}
+.thsi.on{color:var(--accent)}
+.thsi.on.asc svg.i{transform:rotate(-90deg)}
+.thsi.on.desc svg.i{transform:rotate(90deg)}
 .tbl td{padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:middle}
 .tbl tr:last-child td{border-bottom:0}
 .tbl tbody tr:hover{background:var(--surface-2)}
@@ -144,6 +152,8 @@ svg.i{width:17px;height:17px;flex:none;stroke:currentColor;fill:none;stroke-widt
 .lock b{color:var(--ink)}
 .lock.warn{background:var(--warn-bg);border-color:#f5d9ae;color:#7a4306}
 .lock.info{background:var(--accent-bg);border-color:var(--accent-edge);color:var(--accent-2)}
+.lock.ok{background:var(--ok-bg);border-color:#9fd9d1;color:#0b5f57}
+.lock.ok b{color:#0b5f57}
 .lock.bad{background:var(--bad-bg);border-color:#f3c2c2;color:#8f1d1d}
 .tag{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;border-radius:6px;padding:2px 7px;background:var(--sunken);color:var(--ink-2);white-space:nowrap}
 .tag.ok{background:var(--ok-bg);color:var(--ok)}.tag.warn{background:var(--warn-bg);color:var(--warn)}.tag.bad{background:var(--bad-bg);color:var(--bad)}.tag.acc{background:var(--accent-bg);color:var(--accent-2)}.tag.hold{background:var(--hold-bg);color:var(--hold)}.tag.ai{background:var(--ai-bg);color:var(--ai)}
@@ -260,30 +270,41 @@ textarea.inp{resize:vertical;min-height:60px}
 .legend .pc{cursor:default;padding:2px 7px;font-size:11px}
 
 /* compare matrix */
-.cmp{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px}
-.cmp th,.cmp td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:center;white-space:nowrap}
-.cmp th{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);background:var(--surface-2)}
+.cmp{border-collapse:separate;border-spacing:0;width:auto;min-width:100%;font-size:12.5px}
+.cmp th,.cmp td{padding:10px 16px;border-bottom:1px solid var(--line);text-align:center;white-space:nowrap}
+.cmp th{background:var(--surface-2);vertical-align:top;border-bottom:1px solid var(--line-strong)}
+.cmp th .rname{font-size:12.5px;letter-spacing:0;text-transform:none;font-weight:800;color:var(--ink-2);display:block}
+.cmp th .rkey{display:inline-block;margin-top:4px;font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.02em;color:var(--ink-3);background:var(--sunken);border-radius:999px;padding:1px 8px}
 .cmp td:first-child,.cmp th:first-child{text-align:left;background:var(--surface)}
-.cmp tr.grp td{background:var(--sunken);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);font-weight:800;text-align:left;}
-/* stop rows sitting half-hidden under a sticky header mid-scroll */
-.perm tr.pg td{position:static;left:auto;z-index:auto}
-.cmp tr.sub1 td:first-child{padding-left:28px;color:var(--ink-2);font-weight:500}
+.cmp th:first-child{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
+.cmp tr.grp td{background:var(--sunken);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);font-weight:800;text-align:left;padding-top:9px;padding-bottom:9px;border-left:3px solid var(--accent-edge)}
+.cmp tr.sub1 td:first-child{padding-left:30px;color:var(--ink-2);font-weight:500;font-size:12px}
 .cmp tr.modrow{cursor:pointer}
-.cmp tr.modrow:hover td{background:var(--surface-2)}
+.cmp tr.modrow td:first-child{font-weight:700}
+.cmp tr.modrow:hover td,.cmp tr.sub1:hover td{background:var(--surface-2)}
+.cmp tbody tr:last-child td{border-bottom:0}
 .lv{display:inline-block;min-width:62px;border-radius:999px;padding:2px 9px;font-weight:700;font-size:11.5px}
 .lv.full{background:var(--ok-bg);color:var(--ok)}.lv.most{background:var(--accent-bg);color:var(--accent-2)}.lv.view{background:var(--hold-bg);color:var(--hold)}.lv.some{background:var(--warn-bg);color:var(--warn)}.lv.none{color:var(--ink-4)}
-.cmp td.mycol{background:#eef2ff}
+.cmp .subval{display:inline-block;min-width:50px;border-radius:999px;padding:1px 9px;font-size:11px;font-weight:700;background:var(--ok-bg);color:var(--ok)}
+.cmp .subval.dash{background:none;color:var(--ink-4);font-weight:500;min-width:0}
 
 /* check access */
 .ask{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-.ans{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-radius:14px;margin-top:12px}
+.ans{display:flex;gap:14px;align-items:flex-start;padding:16px 18px;border-radius:14px;margin-top:12px;line-height:1.6}
 .ans.yes{background:var(--ok-bg);color:#0b5f57}.ans.no{background:var(--bad-bg);color:#8f1d1d}.ans.lim{background:var(--warn-bg);color:#7a4306}
-.ans b{display:block;font-size:15px}
-.ans .ai2{width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,.7);display:grid;place-items:center;flex:none}
+.ans b{display:block;font-size:15px;margin-bottom:2px}
+.ans .ai2{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;flex:none;color:#fff;box-shadow:0 2px 6px rgba(13,21,38,.12)}
+.ans.yes .ai2{background:var(--ok)}.ans.no .ai2{background:var(--bad)}.ans.lim .ai2{background:var(--warn)}
 .menuprev{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;padding:14px 16px}
-.menuprev div{border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:12.5px;font-weight:600;display:flex;gap:8px;align-items:center}
-.menuprev div.no{opacity:.45;border-style:dashed;text-decoration:line-through;font-weight:500}
-.sumrow{display:grid;grid-template-columns:200px 90px 1fr;gap:10px;align-items:center;padding:8px 16px;border-bottom:1px solid var(--line);font-size:12.5px}
+.menuprev div{border:1px solid transparent;border-radius:10px;padding:8px 10px;font-size:12.5px;font-weight:600;display:flex;gap:8px;align-items:center;background:var(--ok-bg);color:#0b5f57}
+.menuprev div svg{color:var(--ok)}
+.menuprev div.no{opacity:.55;border:1px dashed var(--line-strong);text-decoration:line-through;font-weight:500;background:none;color:var(--ink-3)}
+.menuprev div.no svg{color:var(--ink-4)}
+.sumrow{display:grid;grid-template-columns:200px 90px 1fr;gap:10px;align-items:center;padding:10px 16px;border-bottom:1px solid var(--line);font-size:12.5px}
+.sumrow:hover{background:var(--surface-2)}
+.sumrow b{font-size:13px;color:var(--ink-2)}
+.sumrow .what{color:var(--ink-3);line-height:1.5}
+.sumrow .what i{color:var(--ink-2);font-style:normal;font-weight:600}
 .sumrow:last-child{border-bottom:0}
 .sumrow .what{color:var(--ink-3)}
 
@@ -1310,12 +1331,12 @@ function presetSet(name,forOwner){
 /* ---------- roles ---------- */
 let ROLES=[
  {id:'owner',key:'ADMIN',n:'Account owner',sys:1,st:'today',reach:'company',d:'Runs the whole account. Everything the company has, including billing. The only role that can make another Account owner.'},
- {id:'locadmin',key:'MANAGER',n:'Location admin',sys:1,st:'today',reach:'location',d:'Runs one or more locations day to day: their people, numbers and call handling. With several locations it is what others call a regional admin.'},
+ {id:'locadmin',key:'MANAGER',n:'Location admin',from:'blank',reach:'location',d:'Runs one or more locations day to day: their people, numbers and call handling. With several locations it is what others call a regional admin.'},
  {id:'groupadmin',key:'SUB-ADMIN',n:'Group admin',sys:1,st:'today',reach:'group',d:'Looks after departments: their members, hours and call handling. Adds nobody to the company.'},
  {id:'ccadmin',key:'CC-ADMIN',n:'Contact centre admin',sys:1,st:'new',reach:'cc',d:'Sets up contact centres: queues, agents, campaigns and live monitoring for the contact centres they run.'},
- {id:'supervisor',key:'SUPERVISOR',n:'Supervisor',sys:1,st:'seed',reach:'cc',d:'Watches and helps the people in their contact centres, and runs their campaigns. Changes no phone-system setup.'},
+ {id:'supervisor',key:'SUPERVISOR',n:'Supervisor',from:'blank',reach:'cc',d:'Watches and helps the people in their contact centres, and runs their campaigns. Changes no phone-system setup.'},
  {id:'agent',key:'AGENT',n:'Agent',sys:1,st:'today',reach:'own',d:'Answers calls from queues and campaigns, and handles their own phone. Joins meetings but does not create them.'},
- {id:'user',key:'USER',n:'User',sys:1,st:'new',reach:'own',d:'Office staff outside the contact centre: phone, chat, SMS and their own meetings.'},
+ {id:'user',key:'USER',n:'User',from:'blank',reach:'own',d:'Office staff outside the contact centre: phone, chat, SMS and their own meetings.'},
  {id:'c1',key:'MANAGER',n:'Regional Ops Lead',from:'locadmin',reach:'location',d:'Runs one regional site — supervises agents and handles reporting locally.',by:'Sushil Yadav',upd:'Today 09:12'},
  {id:'c2',key:'SUPERVISOR',n:'Quality reviewer',from:'t_qa',reach:'cc',d:'Listens to calls and reads transcripts for quality checks. Changes nothing.',by:'Sushil Yadav',upd:'Yesterday'},
  {id:'c3',key:'AGENT',n:'Finance',from:'t_billing',reach:'own',d:'Pays the bills and reads invoices. No phone-system or people access.',by:'Sushil Yadav',upd:'20 Sep'}
@@ -1373,7 +1394,7 @@ const ROLE_CHOICES=[
 function roleChoice(key){return ROLE_CHOICES.find(r=>r[0]===key)||ROLE_CHOICES[0]}
 const LOC_CHOICES=['Unified Testing Team','Mumbai','Pune'];
 function genExt(){return String(3000+Math.floor(Math.random()*1000))}
-function blankPerson(){return {first:'',last:'',email:'',phone:'',role:'agent',ext:genExt()}}
+function blankPerson(){return {first:'',last:'',email:'',phone:'',role:S.defRoleKey||'agent',ext:genExt()}}
 function personErrors(p){const e={};if(!p.first.trim())e.first=1;if(!p.last.trim())e.last=1;const em=p.email.trim();if(!em||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em))e.email=1;return e}
 function parseCSV(text){
  const lines=text.split(/\r?\n/).filter(l=>l.trim().length);
@@ -1434,7 +1455,7 @@ function addPeopleModal(){
    '<div class="awctrl"><div><label class="fl" for="awloc">Location <span class="req">*</span></label><select class="inp" id="awloc">'+LOC_CHOICES.map(l=>'<option '+(m.loc===l?'selected':'')+'>'+esc(l)+'</option>').join('')+'</select></div>'+
    '<div><label class="fl">People</label><div class="ctr"><button data-act="awminus" '+(m.people.length<=1?'disabled':'')+' aria-label="Fewer people">−</button><b>'+m.people.length+'</b><button data-act="awplus" '+(m.people.length>=10?'disabled':'')+' aria-label="More people">+</button><span data-tip="Add up to 10 people at once. Each gets their own card, and their own role and details." style="cursor:help">'+I('info')+'</span></div></div>'+
    '<div class="imp"><input type="file" id="awfile" accept=".csv" style="display:none"><button class="btn" data-act="awimport">Import CSV</button><button class="btn" data-act="awtemplate">Template</button></div></div>'+
-   '<div class="lock info">'+I('info')+'<div>Nobody has set a default role for new people yet, so this starts them on <b>"Agent"</b> — our safest option, with the least access.</div></div>'+
+   '<div class="lock info">'+I('info')+'<div>'+(S.defRoleKey?'New people start on <b>"'+esc(roleChoice(S.defRoleKey)[1])+'"</b> — the default set under People › Default permissions.':'Nobody has set a default role for new people yet, so this starts them on <b>"Agent"</b> — our safest option, with the least access.')+'</div></div>'+
    '<div class="awcard"><div class="awnav"><span>Person '+(m.cur+1)+' of '+m.people.length+'</span><span class="sp"></span>'+
     '<button class="ib" data-act="awprev" '+(m.cur===0?'disabled':'')+' aria-label="Previous person">'+I('back')+'</button><span class="pg">'+(m.cur+1)+'</span>'+
     '<button class="ib" data-act="awnext" '+(m.cur===m.people.length-1?'disabled':'')+' aria-label="Next person">'+I('chev')+'</button></div>'+
@@ -1817,7 +1838,8 @@ const P={
  pause:'<rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/>',
  vol:'<path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/>',
  more:'<circle cx="12" cy="5" r="1.3" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.3" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.3" fill="currentColor" stroke="none"/>',
- star:'<path d="M12 2.5l2.9 6.6 7.1.7-5.4 4.6 1.6 7-6.2-3.7-6.2 3.7 1.6-7-5.4-4.6 7.1-.7z"/>'
+ star:'<path d="M12 2.5l2.9 6.6 7.1.7-5.4 4.6 1.6 7-6.2-3.7-6.2 3.7 1.6-7-5.4-4.6 7.1-.7z"/>',
+ sort:'<path d="M7 10l5-5 5 5"/><path d="M7 14l5 5 5-5"/>'
 };
 const I=n=>'<svg class="i" viewBox="0 0 24 24" aria-hidden="true">'+(P[n]||'')+'</svg>';
 const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]);
@@ -1829,8 +1851,9 @@ document.querySelector('.bell').innerHTML=I('bell')+'<i>2</i>';
 ROLES.forEach(r=>{r.perms=presetSet(r.id,r.id==='owner');r.mreach={}});
 const S={persona:'owner',screen:'roles',tags:false,edit:null,q:'',onlyOn:false,open:new Set(['phone']),flash:new Set(),
  modal:null,roleFilter:'all',roleQ:'',pplQ:'',pplRole:'all',sel:new Set(),check:'KA',checkKey:null,checkQ:'',
- audF:'all',audOpen:new Set([6]),cmpCustom:true,cmpDiff:false,cmpOpen:new Set(),rulesTab:'roles',hubOpen:new Set(['People']),
- pplTab:'active',pplLoc:'all',pplSeen:'any',pplView:'flat'};
+ audF:'all',audOpen:new Set([6]),cmpDiff:false,cmpOpen:new Set(),cmpSel:new Set(ROLES.filter(r=>r.sys).map(r=>r.id)),rulesTab:'roles',hubOpen:new Set(['People']),
+ pplTab:'active',pplLoc:'all',pplSeen:'any',pplView:'flat',sort:{},
+ auth:{sso:false,timeoutOn:true,timeoutMin:30,domains:'mycompany.com',token:null,tokenIssuedOn:null,tokenRevealed:false},defRoleKey:null};
 const me=()=>PEOPLE.find(p=>p.id===PERSONAS[S.persona].person);
 const personRole=p=>roleById(p.role);
 const isOwnerP=()=>S.persona==='owner';
@@ -1859,7 +1882,7 @@ function reachOptions(lvl){const v=me();const vr=v.reach;
 }
 
 /* ---------- chrome ---------- */
-const SCREENS=[['roles','Roles'],['edit','Edit a role'],['compare','Compare roles'],['people','People and reach'],['check','Check access'],['history','Change history']];
+const SCREENS=[['roles','Roles'],['edit','Edit a role'],['compare','Compare roles'],['people','People and reach'],['check','Check access'],['history','Change history'],['howaccess','How access works'],['adminscope','Admin scope'],['rolecap','What each role can do'],['auth','Authentication'],['defperm','Default permissions']];
 function allowed(scr){
  const p=S.persona;
  if(scr==='check')return true;
@@ -1878,7 +1901,7 @@ function menuFor(set){
  };
 }
 const HUB_ITEMS={'Captain':['Playground','Assistants','Documents','FAQs','Scenarios','Settings'],'Company':['Company & Locations','Company Rules','Desk phones'],
- 'My Account':['Profile','Preferences','My Phone','Notifications','Greetings','Security & Privacy','My access'],'People':['People','Roles','Admin scope','Authentication'],
+ 'My Account':['Profile','Preferences','My Phone','Notifications','Greetings','Security & Privacy','My access'],'People':['People','How access works','Roles','Admin scope','Authentication','Default permissions','What each role can do'],
  'Numbers':['All numbers','Identities & addresses','Numbers in use'],'Phone System':['Call Queues','Skills','Groups','IVR Menus','Media Files'],'AI Tools':['AI Receptionists','Chat Agents','Sessions','Settings'],
  'Integration':['CRM','General Settings'],'Social Media Channels':[],'SMS/Calling Rates':['Rate Details','Destinations'],'Billing':['Summary','Usage','Plan','Invoices'],'10DLC Compliance':['Brands','SMS Campaigns']};
 function chrome(){
@@ -1893,8 +1916,8 @@ function chrome(){
  document.getElementById('merole').textContent=r.n+(p.reach.lvl!=='company'&&p.reach.lvl!=='own'?' · '+reachText(p):'');
  const M=menuFor(r.perms);
  document.getElementById('tabs').innerHTML=M.top.filter(t=>t[1]).map(t=>'<a href="#" class="'+(t[0]==='Settings'?'on':'')+'">'+I({Dashboard:'home',Directory:'users',Interactions:'phone',Analytics:'chart',Settings:'gear'}[t[0]])+t[0]+'</a>').join('');
- const cur={roles:'Roles',edit:'Roles',compare:'Roles',history:'Roles',people:'People',check:S.persona==='agent'?'My access':'Roles'}[S.screen];
- const target={Roles:'roles',People:'people','Admin scope':'people','My access':'check'};
+ const cur={roles:'Roles',edit:'Roles',compare:'Roles',history:'Roles',people:'People',howaccess:'How access works',adminscope:'Admin scope',rolecap:'What each role can do',auth:'Authentication',defperm:'Default permissions',check:S.persona==='agent'?'My access':'Roles'}[S.screen];
+ const target={Roles:'roles',People:'people','How access works':'howaccess','Admin scope':'adminscope','What each role can do':'rolecap',Authentication:'auth','Default permissions':'defperm','My access':'check'};
  let h='<div class="hsearch">'+I('search')+'<span>Search admin</span></div><h2><span>'+I('gear')+'</span>Admin Hub</h2>';
  M.hub.filter(x=>x[1]).forEach(([sec])=>{
   const items=HUB_ITEMS[sec]||[];const open=S.hubOpen.has(sec)||(sec==='My Account'&&S.persona==='agent');
@@ -1909,7 +1932,7 @@ function chrome(){
 }
 function steps(){
  if(S.persona==='agent')return '';
- const st=[['roles','Roles'],['compare','Compare roles'],['people','People and reach'],['check','Check access'],['history','Change history']];const TC={roles:ROLES.length};
+ const st=[['roles','Roles'],['check','Check access'],['history','Change history']];const TC={roles:ROLES.length};
  return '<div class="steps">'+st.map((s,i)=>'<button data-go="'+s[0]+'" aria-pressed="'+(S.screen===s[0]||(S.screen==='edit'&&s[0]==='roles'))+'" '+(allowed(s[0])?'':'disabled title="Not available to your role"')+'>'+s[1]+(TC[s[0]]!=null?'<span class="tc">'+TC[s[0]]+'</span>':'')+'</button>').join('')+'</div>';
 }
 function denied(t,p){return '<div class="denied"><div class="big">'+I('lock')+'</div><h1>'+t+'</h1><p>'+p+'</p><p style="font-size:12.5px">This is refused by the server as well, not only hidden from the menu.</p><button class="btn primary" data-go="check">'+I('eye')+(S.persona==='agent'?'See my access':'Check what someone can do')+'</button></div>'}
@@ -1958,8 +1981,8 @@ function scrRoles(){
   '<div class="kpi"><b>Changes logged</b><div class="v">'+week+'</div><div class="s">'+AUDIT.filter(a=>a.kind==='refused').length+' refused attempt · <a href="#" data-go="history">see history</a></div></div></div>'+
   '<div class="toolbar"><div class="sbox">'+I('search')+'<input id="roleQ" placeholder="Search roles" value="'+esc(S.roleQ)+'" aria-label="Search roles"></div>'+
   '<div class="seg">'+[['all','All'],['sys','Built in'],['custom','Custom']].map(f=>'<button data-rf="'+f[0]+'" aria-pressed="'+(S.roleFilter===f[0])+'">'+f[1]+'</button>').join('')+'</div></div>'+
-  '<div class="card"><div class="tblwrap"><table class="tbl"><thead><tr><th>Role</th><th>Reach</th><th>People</th><th>Access</th><th style="text-align:right">Actions</th></tr></thead><tbody>'+
-  rows.map(r=>{const u=roleUsers(r.id),sm=roleSummary(r);
+  '<div class="card"><div class="tblwrap"><table class="tbl"><thead><tr>'+th('roles','name','Role')+th('roles','reach','Reach')+th('roles','people','People')+th('roles','access','Access')+'<th style="text-align:right">Actions</th></tr></thead><tbody>'+
+  applySort('roles',rows).map(r=>{const u=roleUsers(r.id),sm=roleSummary(r);
    return '<tr class="click" data-openrole="'+r.id+'"><td class="cname"><div class="rn"><b>'+esc(r.n)+'</b>'+typeTag(r)+'<span class="key" title="The word the server stores and checks. Never renamed.">'+esc(r.key)+'</span></div><span class="rd">'+esc(r.d)+'</span></td>'+
    '<td><span class="tag">'+REACH[r.reach].n+'</span></td>'+
    '<td><div class="avs">'+u.slice(0,3).map(p=>'<span class="av3" title="'+esc(p.n)+'">'+p.id+'</span>').join('')+(u.length?'<span class="num" style="margin-left:6px">'+u.length+'</span>':'<span style="color:var(--ink-4)">nobody</span>')+'</div></td>'+
@@ -2173,26 +2196,251 @@ function toggleKey(k,on){
 /* ---------- COMPARE ---------- */
 function scrCompare(){
  if(!allowed('compare'))return denied('Comparing roles is for admins','You can still check what you can do.');
- const cols=ROLES.filter(r=>S.cmpCustom||r.sys);
- const mine=PERSONAS[S.persona].role;
- let h='<div class="ph"><div><p class="eyebrow">Admin Hub · People › Roles</p><h1>Compare roles</h1><p>Every role side by side. Click an area to see its sections. The built-in set follows the seven-role model agreed for Section 6, with the stored words kept.</p></div>'+
+ const sysRoles=ROLES.filter(r=>r.sys),customRoles=ROLES.filter(r=>!r.sys);
+ const cols=ROLES.filter(r=>S.cmpSel.has(r.id));
+ let h='<div class="ph"><div><p class="eyebrow">Admin Hub · People › Roles</p><h1>Compare roles</h1><p>Pick two or more roles to line up side by side. Click an area to see its sections.</p></div>'+
   '<div class="act"><button class="btn" data-act="rules">'+I('shield')+'Role rules</button></div></div>'+steps()+
-  '<div class="toolbar"><div class="seg"><button data-cmp="custom" aria-pressed="'+S.cmpCustom+'">Include custom roles</button><button data-cmp="diff" aria-pressed="'+S.cmpDiff+'">Only areas that differ</button></div>'+
-  '<div class="legend">'+['full','most','some','view','none'].map(l=>'<span class="lv '+l+'">'+LVL[l]+'</span>').join('')+'</div></div>'+
-  '<div class="card"><div class="tblwrap"><table class="cmp"><thead><tr><th>Area</th>'+cols.map(r=>'<th class="'+(r.id===mine?'mycol':'')+'" title="'+esc(r.d)+'">'+esc(r.n)+'<div style="font-weight:600;letter-spacing:0;text-transform:none;color:var(--ink-4);font-family:var(--mono);font-size:10.5px">'+esc(r.key)+'</div></th>').join('')+'</tr></thead><tbody>';
- h+='<tr class="grp"><td colspan="'+(cols.length+1)+'">Reach</td></tr><tr><td>Whose records</td>'+cols.map(r=>'<td class="'+(r.id===mine?'mycol':'')+'" style="font-size:11.5px">'+REACH[r.reach].n+'</td>').join('')+'</tr>';
+  '<div class="card" style="padding:14px 16px;margin-bottom:14px">'+
+   '<div class="ruleh" style="margin-top:0">Built in</div><div class="presets">'+sysRoles.map(r=>'<button data-act="cmpsel" data-id="'+r.id+'" aria-pressed="'+S.cmpSel.has(r.id)+'">'+esc(r.n)+'</button>').join('')+'</div>'+
+   (customRoles.length?'<div class="ruleh">Custom</div><div class="presets">'+customRoles.map(r=>'<button data-act="cmpsel" data-id="'+r.id+'" aria-pressed="'+S.cmpSel.has(r.id)+'">'+esc(r.n)+'</button>').join('')+'</div>':'')+
+  '</div>'+
+  '<div class="toolbar"><span style="font-size:12.5px;color:var(--ink-3)">'+cols.length+' role'+(cols.length===1?'':'s')+' selected</span><button class="btn sm" data-act="cmpall">Select all built in</button><button class="btn sm" data-act="cmpclear">Clear</button>'+
+  '<div class="seg" style="margin-left:auto"><button data-cmp="diff" aria-pressed="'+S.cmpDiff+'">Only areas that differ</button></div>'+
+  '<div class="legend">'+['full','most','some','view','none'].map(l=>'<span class="lv '+l+'">'+LVL[l]+'</span>').join('')+'</div></div>';
+ if(cols.length<2)return h+'<div class="card"><div class="empty">'+I('layers')+'<b>Pick at least 2 roles</b><span>Tick roles above to line them up side by side.</span></div></div>';
+ h+='<div class="card"><div class="tblwrap"><table class="cmp"><thead><tr><th>Area</th>'+cols.map(r=>'<th title="'+esc(r.d)+'"><span class="rname">'+esc(r.n)+'</span><span class="rkey">'+esc(r.key)+'</span></th>').join('')+'</tr></thead><tbody>';
+ h+='<tr class="grp"><td colspan="'+(cols.length+1)+'">Reach</td></tr><tr><td>Whose records</td>'+cols.map(r=>'<td style="font-size:11.5px">'+REACH[r.reach].n+'</td>').join('')+'</tr>';
  AREAS.forEach(([a,al])=>{
   const ms=MODS.filter(m=>m.area===a).filter(m=>{if(!S.cmpDiff)return true;const lv=cols.map(r=>modCounts(r.perms,m).on);return new Set(lv).size>1});
   if(!ms.length)return;
   h+='<tr class="grp"><td colspan="'+(cols.length+1)+'">'+al+'</td></tr>';
   ms.forEach(m=>{const op=S.cmpOpen.has(m.id);
-   h+='<tr class="modrow" data-cmpopen="'+m.id+'"><td><span style="display:inline-flex;gap:8px;align-items:center;font-weight:700"><span style="transform:rotate('+(op?90:0)+'deg);display:inline-flex;color:var(--ink-3)">'+I('chev')+'</span>'+esc(m.n)+'</span></td>'+cols.map(r=>{const c=modCounts(r.perms,m);return '<td class="'+(r.id===mine?'mycol':'')+'"><span class="lv '+c.lv+'" title="'+c.on+' of '+c.tot+'">'+(c.lv==='none'?'—':LVL[c.lv])+'</span></td>'}).join('')+'</tr>';
+   h+='<tr class="modrow" data-cmpopen="'+m.id+'"><td><span style="display:inline-flex;gap:8px;align-items:center;font-weight:700"><span style="transform:rotate('+(op?90:0)+'deg);display:inline-flex;color:var(--ink-3)">'+I('chev')+'</span>'+esc(m.n)+'</span></td>'+cols.map(r=>{const c=modCounts(r.perms,m);return '<td><span class="lv '+c.lv+'" title="'+c.on+' of '+c.tot+'">'+(c.lv==='none'?'—':LVL[c.lv])+'</span></td>'}).join('')+'</tr>';
    if(op)m.subs.forEach(s=>{const sk=m.id+'.'+s.id;
-    h+='<tr class="sub1"><td>'+esc(s.n)+'</td>'+cols.map(r=>{if(!r.perms.has(sk))return '<td class="'+(r.id===mine?'mycol':'')+'" style="color:var(--ink-4)">—</td>';const on=s.acts.filter(x=>r.perms.has(sk+'.'+x.id));
-     return '<td class="'+(r.id===mine?'mycol':'')+'" style="font-size:11.5px" title="'+esc(on.map(x=>x.n).join(', '))+'"><span class="yes">'+(on.length===s.acts.length?'All':on.length+' of '+s.acts.length)+'</span></td>'}).join('')+'</tr>'});
+    h+='<tr class="sub1"><td>'+esc(s.n)+'</td>'+cols.map(r=>{if(!r.perms.has(sk))return '<td><span class="subval dash">—</span></td>';const on=s.acts.filter(x=>r.perms.has(sk+'.'+x.id));
+     return '<td title="'+esc(on.map(x=>x.n).join(', '))+'"><span class="subval">'+(on.length===s.acts.length?'All':on.length+' of '+s.acts.length)+'</span></td>'}).join('')+'</tr>'});
   });
  });
  return h+'</tbody></table></div><div class="foot">'+I('info')+'Hover a cell to see exactly which actions are on.</div></div>';
+}
+
+/* ---------- HOW ACCESS WORKS ---------- */
+const HA_TABS=[['howaccess','1. How access works'],['roles','2. Roles'],['defperm','3. Default permissions'],['adminscope','4. Admin scope'],['rolecap','Reference table']];
+const HA_REAL={howaccess:1,roles:1,defperm:1,adminscope:1,rolecap:1};
+function haTabs(){return '<div class="presets">'+HA_TABS.map(t=>HA_REAL[t[0]]?'<button data-go="'+t[0]+'" aria-pressed="'+(S.screen===t[0])+'">'+esc(t[1])+'</button>':'<button data-act="hastub" data-label="'+esc(t[1])+'" aria-pressed="false">'+esc(t[1])+'</button>').join('')+'</div>'}
+function haHeader(title,sub){return '<div class="ph"><div><p class="eyebrow">People</p><h1>'+esc(title)+'</h1><p>'+sub+'</p></div><div class="act">'+haTabs()+'</div></div>'}
+const HA_STEPS=[
+ ['howaccess','Step 1 — How access works','Which of the six kinds of person somebody is.','Everybody ends up an administrator, because that is the widest role and the one that never blocks anybody.'],
+ ['roles','Step 2 — Roles','What a role can do — the tick boxes behind the name.','The roles that ship all grant nearly the same thing, so the name on somebody’s record means very little.'],
+ ['defperm','Step 3 — Default permissions','What a brand-new person starts on, and what the recommended set is for each kind.','Whoever is adding people picks a role from memory, and a wrong pick is invisible afterwards.'],
+ ['adminscope','Step 4 — Admin scope','How far a role reaches — which locations or groups an administrator covers.','A location admin reaches their own location and a group admin the groups they run. Nothing wider until the owner says so.']
+];
+const HA_KINDS=[
+ ['Company Admin','the whole company','The whole company, money included. Buys numbers, changes the plan, pays the bill, adds locations, and can do everything below.','THE WHOLE COMPANY'],
+ ['Location Admin','chosen locations','Runs one or more locations day to day: adds and removes people, sets up call handling, hands out numbers, connects other software, reads the reports.','CHOSEN LOCATIONS'],
+ ['Department Admin','chosen departments','Runs one or more departments: their call handling, their opening hours, who is in them, and watching them work. Reads their reports and hears their recordings.','CHOSEN DEPARTMENTS'],
+ ['Supervisor','chosen departments','Watches and helps the people in their groups: sees their duty and reports, can change their duty when the company allows it. Configures nothing.','CHOSEN DEPARTMENTS'],
+ ['Agent','themselves only','Takes and makes calls with a department’s tools.','THEMSELVES ONLY'],
+ ['User','themselves only','Somebody with a phone: calls, messages, chat, contacts, video, voicemail, and their own settings.','THEMSELVES ONLY']
+];
+function scrHowAccess(){
+ if(!allowed('howaccess'))return denied('How access works is for admins','You can still check what you can do.');
+ let h=haHeader('How access works','Who can do what, in three steps. Start here, then work down: the later steps assume the earlier ones have been answered.');
+ h+='<div class="card" style="padding:16px;margin-bottom:14px"><div class="card-h" style="padding:0 0 10px;border:0">'+I('flow')+'<h3>The three steps, in order</h3></div>'+
+  '<p style="margin:0 0 16px;font-size:13px;color:var(--ink-3)">Access is one decision made in three places. Doing them out of order still works, but each one is easier once the one above it is settled. Only Roles is in the sidebar; the strip at the top of each step leads to the others.</p>'+
+  HA_STEPS.map(([k,title,decides,skipped],i)=>'<div style="display:flex;justify-content:space-between;gap:16px;padding:12px 0;'+(i?'border-top:1px solid var(--line)':'')+'"><div><b style="display:block;font-size:13.5px;margin-bottom:4px">'+esc(title)+'</b><p style="margin:0 0 4px;font-size:12.5px;color:var(--ink-2)"><b style="color:var(--ink)">Decides:</b> '+esc(decides)+'</p><p style="margin:0;font-size:12.5px;color:var(--ink-3)"><b style="color:var(--ink-2)">If it is skipped:</b> '+esc(skipped)+'</p></div>'+
+   (k==='howaccess'?'<span style="flex:none;font-size:12.5px;font-weight:700;color:var(--accent-2)">You are here</span>':HA_REAL[k]?'<button class="btn sm" style="flex:none" data-go="'+k+'">Open '+I('chev')+'</button>':'<button class="btn sm" style="flex:none" data-act="hastub" data-label="'+esc(title)+'">Open '+I('chev')+'</button>')+
+   '</div>').join('')+
+  '</div>';
+ h+='<div class="card" style="padding:16px;margin-bottom:14px"><div style="display:flex;justify-content:space-between;gap:16px;align-items:flex-start">'+
+  '<div><div class="card-h" style="padding:0 0 10px;border:0">'+I('users')+'<h3>Step 1 — the kinds of person<span class="ro soon" style="margin-left:8px">Coming soon</span></h3></div>'+
+  '<p style="margin:0;font-size:13px;color:var(--ink-3);max-width:70ch">Each name says how far that kind of person reaches, not how senior they are. Somebody who runs two groups and somebody who runs the company do the same sorts of thing to different sets of people.</p></div>'+
+  '<button class="btn primary sm" style="flex:none" data-go="rolecap">See the full table</button></div></div>';
+ h+='<div class="card"><div class="tblwrap">'+HA_KINDS.map(([name,reach,desc,badge],i)=>'<div class="eprow" style="padding:14px 16px;'+(i?'':'border-top:0')+'"><div><b style="display:block;font-size:13.5px;font-weight:700;color:var(--ink)">'+esc(name)+'</b><p style="margin:4px 0 0;font-size:12.5px;color:var(--ink-3)"><b style="color:var(--ink-2);font-weight:600">Reaches: '+esc(reach)+'.</b> '+esc(desc)+'</p></div><span class="tag" style="flex:none">'+esc(badge)+'</span></div>').join('')+'</div></div>';
+ h+='<div class="lock warn" style="margin-top:14px">'+I('alert')+'<div><b>Reach is worked out but not yet enforced.</b> The server derives it from the role on every request that acts on a person — a Location admin reaches their locations, a Group admin the groups they manage, a Supervisor the groups they belong to — and then, today, lets the request through anyway and only writes down what it would have refused. Measured on the live API server on 21 September 2026. The Admin scope screen shows each administrator’s reach and lets the owner narrow or widen it to every office. The permissions themselves decide what a person sees inside this app, and there the server does check.</div></div>';
+ h+='<div class="card" style="margin-top:14px;padding:16px"><div class="card-h" style="padding:0 0 10px;border:0">'+I('layers')+'<h3>Where a person’s access actually comes from</h3></div>'+
+  '<p style="margin:0 0 16px;font-size:13px;color:var(--ink-3)">Three things stack up. Knowing which one to change saves opening all four screens to find out why somebody cannot see a button.</p>'+
+  '<div style="padding:12px 0;border-top:1px solid var(--line)"><b style="display:block;font-size:13.5px;margin-bottom:4px">1. The company’s plan</b><p style="margin:0;font-size:12.5px;color:var(--ink-3)">The ceiling. Nothing can be granted that the company has not bought, so a tick box missing here is missing for everybody, administrators included.</p></div>'+
+  '<div style="padding:12px 0;border-top:1px solid var(--line)"><b style="display:block;font-size:13.5px;margin-bottom:4px">2. The role on the person’s record</b><p style="margin:0;font-size:12.5px;color:var(--ink-3)">What that person may do, within the ceiling. Set on the Roles screen, chosen when somebody is added, and changeable afterwards from the People list.</p></div>'+
+  '<div style="padding:12px 0;border-top:1px solid var(--line)"><b style="display:block;font-size:13.5px;margin-bottom:4px">3. How far the role reaches <span class="ro soon">Coming soon</span></b><p style="margin:0;font-size:12.5px;color:var(--ink-3)">Which locations or groups it applies to. Written down on the Admin scope screen, and nothing acts on it yet, so today every role reaches the whole company.</p></div>'+
+  '</div>';
+ return h;
+}
+function scrAdminScope(){
+ if(!allowed('adminscope'))return denied('Admin scope is for admins','You can still check what you can do.');
+ let h=haHeader('Admin scope','A role says what an administrator may do. This says who they may do it to: a location, the whole company, or chosen groups.');
+ const admins=PEOPLE.filter(p=>p.role!=='owner'&&roleById(p.role).reach!=='own');
+ h+='<div class="card" style="overflow:hidden;padding:0">'+
+   '<div style="padding:16px"><div class="card-h" style="padding:0 0 10px;border:0">'+I('shield')+'<h3>Who administers what<span class="ro soon" style="margin-left:8px">Coming soon</span></h3></div>'+
+   (admins.length?admins.map((p,i)=>'<div class="eprow" style="padding:10px 0;'+(i?'border-top:1px solid var(--line)':'')+'"><div><b style="display:block;font-size:13.5px">'+esc(p.n)+'</b><span style="font-size:12.5px;color:var(--ink-3)">'+esc(personRole(p).n)+' · covers '+esc(reachText(p))+'</span></div></div>').join('')
+    :'<p style="margin:0;font-size:13px;color:var(--ink-3)">Nobody holds an admin or supervisor role yet, apart from the account owner. Give somebody one under Roles first.</p>')+
+   '</div>'+
+   '<div style="padding:14px 16px;background:var(--warn-bg);color:#7a4306;font-size:12.5px;line-height:1.6;border-top:1px solid #f5d9ae">A scope is read by the server on every request that removes, edits, re-roles, restores or suspends a person, and an out-of-scope request is written down. It is not refused yet: on 21 September 2026 the refusal switch was set to record only, so an administrator is not stopped by their scope today. Lists and reports do not filter by scope at all, so they still see everybody. Turning refusal on is a server setting and takes effect without a website release. The account owner always covers the whole company.</div>'+
+  '</div>';
+ h+='<div class="card" style="overflow:hidden;padding:0;margin-top:14px">'+
+   '<div style="padding:16px"><div class="card-h" style="padding:0 0 10px;border:0">'+I('building')+'<h3>Which offices each administrator covers<span class="ro soon" style="margin-left:8px">Coming soon</span></h3></div>'+
+   '<p style="margin:0 0 4px;font-size:13px;color:var(--ink-3)">Which offices an administrator covers. An empty list covers nobody, and “All offices” is a choice somebody makes rather than something that happens by leaving the list blank.</p>'+
+   (admins.length?admins.map((p,i)=>'<div class="eprow" style="padding:10px 0;'+(i?'border-top:1px solid var(--line)':'margin-top:8px;border-top:1px solid var(--line)')+'"><div><b style="display:block;font-size:13.5px">'+esc(p.n)+'</b><span style="font-size:12.5px;color:var(--ink-3)">'+esc(reachText(p))+'</span></div></div>').join('')
+    :'<div style="margin-top:8px;padding-top:12px;border-top:1px solid var(--line)"><b style="display:block;font-size:13.5px;margin-bottom:4px">Nobody administers anybody yet</b><p style="margin:0;font-size:12.5px;color:var(--ink-3)">Give somebody an admin role under Roles, and they will appear here with an office list to set.</p></div>')+
+   '</div>'+
+   '<div style="padding:14px 16px;background:var(--warn-bg);color:#7a4306;font-size:12.5px;line-height:1.6;border-top:1px solid #f5d9ae"><b>Available after the next release.</b> This is the office list the role model moves to, and the live server does not store or read it yet, so it is shown here and cannot be changed. The card above it edits the scope the live server does store. Nothing on this card will pretend to save until the server can obey it.</div>'+
+  '</div>';
+ return h;
+}
+const RC_PRINCIPLES=[
+ ['Money and the shape of the account sit above ordinary administration','Buying a number, changing the plan, paying the bill, adding a location. Somebody who can quietly treble the monthly bill is not an administrator, they are a signatory. This is why the person who runs a location day to day still cannot buy.'],
+ ['Changing a person is different from changing their place in a department','Creating somebody, deleting them or changing their email address changes who they are, and belongs with whoever owns the staff list. Adding an existing person to a queue only changes their place in that queue, and belongs with whoever runs the queue. This one line separates a Location Admin from a Department Admin more clearly than any list of screens.'],
+ ['Supervision reaches further down than configuration','Listening to a live call or whispering to the person on it lasts one shift and is done by somebody standing with the department. Changing where calls go lasts until somebody changes it back and affects every caller. So a Supervisor gets the whole of the first and none of the second.'],
+ ['Data defaults to your own calls only','Your own calls, your own recordings, your own numbers. Anybody else’s is granted on purpose, to the few people whose job needs it. An agent who can search the whole company’s recordings on their first day is a data-protection incident waiting for a reason.'],
+ ['Nobody needs permission for the job they were hired to do','Making calls, sending messages, keeping contacts, recording a greeting, changing their own settings. A person’s own settings are theirs — withholding them produces a support ticket on the first morning.']
+];
+const RC_KINDS=[
+ ['Company Admin','the whole company','The whole company, money included. Buys numbers, changes the plan, pays the bill, adds locations, and can do everything below. Nothing is held back. Give this to as few people as the company can manage with.','THE WHOLE COMPANY'],
+ ['Location Admin','chosen locations','Runs one or more locations day to day: adds and removes people, sets up call handling, hands out numbers, connects other software, reads the reports. No spending and no changing the shape of the account — no buying numbers, no plan changes, no billing, no new locations. Which locations is not stored yet, so today this reaches all of them.','CHOSEN LOCATIONS'],
+ ['Department Admin','chosen departments','Runs one or more departments: their call handling, their opening hours, who is in them, and watching them work. Reads their reports and hears their recordings. Cannot create, delete or edit a person, cannot buy anything, and cannot connect other software. Which groups is not stored yet, so today this reaches all of them.','CHOSEN DEPARTMENTS'],
+ ['Supervisor','chosen departments','Watches and helps the people in their groups: sees their duty and reports, can change their duty when the company allows it. Configures nothing. Changes no settings at all. No call handling, no hours, no adding people. Watching, not configuring. Which groups is not stored yet, so today this reaches all of them.','CHOSEN DEPARTMENTS'],
+ ['Agent','themselves only','Takes and makes calls with a department’s tools. Sees only their own calls. No supervision, recordings or settings.','THEMSELVES ONLY'],
+ ['User','themselves only','Somebody with a phone: calls, messages, chat, contacts, video, voicemail, and their own settings. Their own line and their own data. Nothing about anybody else, and nothing administrative.','THEMSELVES ONLY']
+];
+const RC_TABLE=[
+ ['People and identity','Who exists, what they are called, and which locations the company has.',[
+   ['Locations','Adding or changing a location changes the shape of the account and usually the contract. It sits with the account holder.',[1,0,0,0,0,0]],
+   ['Creating and removing people','Creating somebody, removing them or changing their details changes who they are, not what one department does. It belongs with whoever owns the staff list.',[1,1,0,0,0,0]],
+   ['Seeing the list of people','A department admin or supervisor has to be able to find their own people. Looking at the staff list changes nothing.',[1,1,1,1,0,0]],
+   ['Company settings','Everything else on the company record is a company-wide decision, so it stays with the account holder.',[1,0,0,0,0,0]]
+ ]],
+ ['Numbers','Buying numbers, giving them out, and deciding where they ring.',[
+   ['Buying and giving up numbers','Every number bought is on the next bill, and a number given up cannot always be got back. Same reason as the bill itself.',[1,0,0,0,0,0]],
+   ['Giving out numbers and forwarding','Deciding whose phone a number rings is part of running a location. It costs nothing, so it does not need the account holder.',[1,1,0,0,0,0]],
+   ['Seeing the company’s numbers','Somebody setting up a queue needs to know which numbers exist. Looking at the list buys nothing.',[1,1,1,0,0,0]]
+ ]],
+ ['Call handling','Menus, queues, departments, opening hours, campaigns, and the tools of the job.',[
+   ['Call handling, menus, queues and hours','These last until somebody changes them back and affect every caller. Changing them is a department admin’s job; a supervisor watches the department without reshaping it.',[1,1,1,0,0,0]],
+   ['Seeing how calls are handled','An agent should be able to see which queue they are in and when it is open, without being able to change it.',[1,1,1,1,1,0]],
+   ['Connecting other software','A connection sends the company’s call data to somebody else’s system. That is an account-wide decision even though it costs nothing here.',[1,1,0,0,0,0]],
+   ['Setting up the AI assistants','An assistant answers the company’s calls in the company’s words, and reads whatever it is trained on. Setting one up is an account-wide decision.',[1,1,0,0,0,0]],
+   ['Using the AI assistants','Help on your own call is part of doing the job, so everybody gets it if the plan includes it.',[1,1,1,1,1,1]],
+   ['Setting up campaigns and diallers','A campaign decides who the company rings and how often. Building one is a department admin’s job; working one is an agent’s.',[1,1,1,0,0,0]],
+   ['Working a campaign','The dialler is the tool of the job for an agent, so they get it without asking.',[1,1,1,1,0,0]],
+   ['The shared inbox','Answering the company’s social and messaging channels is the job of the department that answers them.',[1,1,1,1,0,0]],
+   ['The phone, and the tools that go with it','Calling, messaging, chat, contacts, video, voicemail and your own settings. Nobody needs permission for the thing they were hired to do.',[1,1,1,1,1,1]]
+ ]],
+ ['Reporting and recordings','What happened on the calls, and who may listen back to them.',[
+   ['Other people’s recordings and transcripts','A recording is a conversation somebody else had. Hearing it is granted on purpose, to the few people whose job needs it, and never handed out with the phone.',[1,1,1,1,0,0]],
+   ['Reports on the whole company','Everybody’s calls and messages in one place. That is a company-wide view and belongs with the people who run the company.',[1,1,0,0,0,0]],
+   ['Reports on a department','A department admin and a supervisor need their own department’s figures to do the job. They do not need the sales department’s.',[1,1,1,1,0,0]],
+   ['Your own reports','Seeing how your own day went is not a privilege, and withholding it is the fastest way to be asked for it.',[1,1,1,1,1,1]]
+ ]],
+ ['Live supervision','Watching calls while they are happening, and stepping into them.',[
+   ['Watching calls as they happen','Listening in, whispering, taking a call over and seeing who is busy last shift. This is the job of whoever is standing with the department, so it goes further down than any setting does.',[1,1,1,1,0,0]]
+ ]],
+ ['Agent workday','Shifts, breaks and their reasons, the campaign timers, and the agent reports.',[
+   ['Their own shift and breaks','Starting and ending the shift and taking a break are the day itself. Everybody who works a queue gets them, unless the company lock says the supervisor sets them.',[1,1,1,1,1,0]],
+   ['Other people’s duty, and the agent reports','Ending somebody’s shift, putting them on a break, reading and exporting how their day went. This is done by the person standing with the team, so it reaches the supervisor.',[1,1,1,1,0,0]],
+   ['Break reasons, allowances, campaign timers, the lock and scheduled reports','Each of these lasts until somebody changes it back and applies to every agent. They stay with the account holder.',[1,0,0,0,0,0]]
+ ]],
+ ['Billing and the account','What the company pays, and the plan it pays for.',[
+   ['Spending and the plan','Billing, plan changes and call rates. Anybody who can change these can change what the company pays, so it stays with the account holder.',[1,0,0,0,0,0]]
+ ]]
+];
+function scrRoleCapabilities(){
+ if(!allowed('adminscope'))return denied('This reference table is for admins','You can still check what you can do.');
+ let h=haHeader('What each role can do','Every capability in the product, and which kind of person gets it. Read the five principles above the table and the rest follows from them.');
+ h+='<div class="card" style="padding:16px;margin-bottom:14px"><div class="card-h" style="padding:0 0 10px;border:0">'+I('flow')+'<h3>The five things that decide the split</h3></div>'+
+  '<p style="margin:0 0 16px;font-size:13px;color:var(--ink-3)">Run these five questions over any capability, in this order, and the answer is the row in the table below. They matter more than the table: a capability added next year can be placed with them.</p>'+
+  RC_PRINCIPLES.map(([t,d],i)=>'<div style="padding:12px 0;'+(i?'border-top:1px solid var(--line)':'')+'"><b style="display:block;font-size:13.5px;margin-bottom:4px">'+(i+1)+'. '+esc(t)+'</b><p style="margin:0;font-size:12.5px;color:var(--ink-3)">'+esc(d)+'</p></div>').join('')+
+  '</div>';
+ h+='<div class="card" style="padding:16px;margin-bottom:14px"><div class="card-h" style="padding:0 0 10px;border:0">'+I('users')+'<h3>The six kinds of person</h3></div>'+
+  '<p style="margin:0 0 16px;font-size:13px;color:var(--ink-3)">Each one is named after how far it reaches, not after how senior anybody is. A Group admin is not a junior administrator — they are an administrator of one group.</p>'+
+  RC_KINDS.map(([name,reach,desc],i)=>'<div style="padding:12px 0;'+(i?'border-top:1px solid var(--line)':'')+'"><b style="display:block;font-size:13.5px;font-weight:700">'+esc(name)+'</b><p style="margin:4px 0 0;font-size:12.5px;color:var(--ink-3)"><b style="color:var(--ink-2);font-weight:600">Reaches: '+esc(reach)+'.</b> '+esc(desc)+'</p></div>').join('')+
+  '<p style="margin:14px -16px -16px;padding:12px 16px;background:var(--surface-2);border-top:1px solid var(--line);font-size:12px;color:var(--ink-3)">This table is the model rather than a report on your company. What your own roles hold is on the Roles screen.</p>'+
+  '</div>';
+ h+='<div class="card"><div class="card-h">'+I('grid')+'<h3>Capability by role</h3><span class="tag ok" style="margin-left:4px">Active</span></div>'+
+  '<p style="margin:0;padding:12px 16px 0;font-size:13px;color:var(--ink-3)">A tick means this kind of person gets it by default. A dash means it is held back on purpose — hover any row heading for the reason.</p>'+
+  '<div class="tblwrap"><table class="cmp" style="margin-top:10px"><thead><tr><th>Capability</th>'+RC_KINDS.map(k=>'<th><span class="rname">'+esc(k[0])+'</span><span class="rkey">'+esc(k[3])+'</span></th>').join('')+'</tr></thead><tbody>'+
+  RC_TABLE.map(([cat,catd,rows])=>'<tr class="grp"><td colspan="7" title="'+esc(catd)+'">'+esc(cat.toUpperCase())+'</td></tr>'+
+   rows.map(([name,desc,ticks])=>'<tr class="sub1"><td title="'+esc(desc)+'">'+esc(name)+'</td>'+ticks.map(t=>t?'<td><span class="subval">✓</span></td>':'<td><span class="subval dash">—</span></td>').join('')+'</tr>').join('')
+  ).join('')+
+  '</tbody></table></div></div>';
+ h+='<div class="lock ok" style="margin-top:14px">'+I('info')+'<div>These permissions decide what the app puts on screen. The server reads the same tree when it answers a request, but on 21 September 2026 most of it was set to <b>write down</b> a refusal rather than make one: of 117 guarded routes on the platform, 90 record and 27 refuse.<br><br>Refused by the server today: <b>Call recordings</b>.<br>Refused on some routes and only recorded on others: <b>People and Phone system</b>.<br>Recorded but not yet refused — a permission you remove here still shapes what is shown, but the server will not stop a request: <b>Sites and offices, Numbers, Campaigns, Messaging and fax, Video, Billing, Contacts, Greetings and Integrations</b>.<br>Not guarded at all on the routes that return the data — a signed-in person can ask for it directly whatever this page says: <b>Call reports</b>.<br><br>This is a server setting your provider can change without a website release, so treat this as a reading taken on the date above rather than a permanent state. This table is the model rather than a report on your company. What your own roles hold is on the Roles screen, and Default permissions shows how far each one has drifted from this.</div></div>';
+ return h;
+}
+function scrAuth(){
+ if(!allowed('auth'))return denied('Authentication is for admins','You can still check what you can do.');
+ const a=S.auth;
+ let h='<div class="ph"><div><p class="eyebrow">People</p><h1>Authentication</h1><p>How people sign in and how they are provisioned. Every rule here applies to the whole company.</p></div></div>';
+ h+='<div class="card" style="padding:0;margin-bottom:14px;overflow:hidden">'+
+  '<div style="padding:16px"><div class="card-h" style="padding:0 0 10px;border:0">'+I('shield')+'<h3>Single sign-on</h3></div>'+
+  '<p style="margin:0;font-size:13px;color:var(--ink-3)">Sign in through your identity provider. The provider details (entity id, sign-in URL, certificate) are on Company › Security; the sign-in code reads them from there.</p></div>'+
+  '<div class="eprow" style="padding:14px 16px;border-top:1px solid var(--line)"><div><b>Status</b><span>'+(a.sso?'On. People sign in through your identity provider.':'Off. People sign in with a password and a code.')+'</span></div><button class="sw" role="switch" aria-pressed="'+a.sso+'" data-act="authtoggle" data-k="sso" aria-label="Single sign-on"></button></div>'+
+  '<div class="eprow" style="padding:14px 16px;border-top:1px solid var(--line)"><div><b>Metadata for your provider</b><span>Give this to the identity provider when you set the application up.</span></div><span class="epval mono" style="font-size:11px;text-align:right;max-width:420px;word-break:break-all">https://api2.mycountrymobile.com/api/auth/sso/saml/6c055b6c-b060-4708-9f48-b3a3a464b995/metadata</span></div>'+
+ '</div>';
+ h+='<div class="card" style="padding:0;margin-bottom:14px;overflow:hidden">'+
+  '<div style="padding:16px"><div class="card-h" style="padding:0 0 10px;border:0">'+I('clock')+'<h3>Sessions</h3></div>'+
+  '<p style="margin:0;font-size:13px;color:var(--ink-3)">How long a signed-in session may sit idle. The gateway now enforces this on every request (a tab left open elsewhere is signed out too); the browser also warns before it happens.</p></div>'+
+  '<div class="eprow" style="padding:14px 16px;border-top:1px solid var(--line)"><div><b>Inactivity timeout</b><span>Between 5 minutes and 24 hours. Background requests count as activity, the way established platforms count them.</span></div>'+
+   '<div style="display:flex;align-items:center;gap:8px;flex:none"><button class="sw" role="switch" aria-pressed="'+a.timeoutOn+'" data-act="authtoggle" data-k="timeoutOn" aria-label="Inactivity timeout"></button>'+
+    '<input class="inp" id="authTimeout" style="width:70px;text-align:center" value="'+esc(a.timeoutMin)+'" '+(a.timeoutOn?'':'disabled')+'><span style="font-size:12.5px;color:var(--ink-3);white-space:nowrap">minutes</span></div></div>'+
+  '<div class="eprow" style="padding:14px 16px;border-top:1px solid var(--line)"><div><b>Sign out everywhere</b><span>An administrator can end every session of one person from Admin › People (row menu). Suspending or removing a person does the same automatically.</span></div></div>'+
+ '</div>';
+ h+='<div class="card" style="padding:0;margin-bottom:14px;overflow:hidden">'+
+  '<div style="padding:16px"><div class="card-h" style="padding:0 0 10px;border:0">'+I('mail')+'<h3>Allowed e-mail domains</h3></div>'+
+  '<p style="margin:0;font-size:13px;color:var(--ink-3)">A person created by your identity provider must have an e-mail address on one of these domains. Leave empty to allow any address. It does not yet stop an administrator adding somebody by hand or by CSV with an address outside the list.</p></div>'+
+  '<div style="padding:14px 16px;border-top:1px solid var(--line)"><label class="fl" for="authDomains">Domains</label><input class="inp" id="authDomains" placeholder="mycompany.com, mycompany.co.uk" value="'+esc(a.domains)+'"><p class="hint" style="margin:4px 0 0">Comma or space separated, e.g. mycompany.com, mycompany.co.uk</p>'+
+   '<div style="display:flex;justify-content:flex-end;margin-top:12px"><button class="btn primary sm" data-act="authsave">Save sessions and domains</button></div></div>'+
+ '</div>';
+ h+='<div class="card" style="padding:0;overflow:hidden">'+
+  '<div style="padding:16px"><div class="card-h" style="padding:0 0 10px;border:0">'+I('plug')+'<h3>Provisioning (SCIM 2.0)</h3></div>'+
+  '<p style="margin:0;font-size:13px;color:var(--ink-3)">Let your identity provider create, update and deactivate people automatically. Works with any provider that speaks SCIM 2.0 (Okta, Entra ID, JumpCloud, OneLogin). A person created this way gets an invite and the Agent role unless the provider sends another; the owner role can never be provisioned.</p></div>'+
+  '<div class="eprow" style="padding:14px 16px;border-top:1px solid var(--line)"><div><b>Base URL</b><span>Enter this in the provider’s provisioning settings.</span></div><span class="epval mono" style="font-size:11.5px">https://api2.mycountrymobile.com/scim/v2</span></div>'+
+  '<div class="eprow" style="padding:14px 16px;border-top:1px solid var(--line)"><div><b>Token</b><span>'+(a.token?'Issued '+esc(a.tokenIssuedOn)+' — ends in …'+esc(a.token.slice(-4))+'. Issuing a new one replaces it.':'No token issued. Provisioning is off until one is.')+'</span></div>'+
+   (a.token?'<div style="display:flex;gap:8px;flex:none"><button class="btn sm" data-act="authtoken">Issue a new token</button><button class="btn sm danger" data-act="authrevoke">Switch off</button></div>'
+    :'<button class="btn sm" data-act="authtoken">Issue a token</button>')+
+   '</div>'+
+  (a.token&&a.tokenRevealed?'<div class="lock warn" style="margin:0 16px 14px;border-radius:10px"><b style="display:block;margin-bottom:4px">Copy this token now. It is shown once and stored only as a hash.</b><span class="mono" style="font-size:11.5px;word-break:break-all;display:block">'+esc(a.token)+'</span></div>':'')+
+  '<div class="eprow" style="padding:14px 16px;border-top:1px solid var(--line)"><div><b>What the provider may do</b><span>Create a person (invite sent, next free extension picked), change name or e-mail, deactivate (suspend: sessions ended, queues left) and reactivate, remove (72-hour restore applies). Everything goes through the same checks as Admin › People.</span></div></div>'+
+ '</div>';
+ return h;
+}
+const DP_KINDS=[
+ ['owner','Company Admin','The whole company, money included. Buys numbers, changes the plan, pays the bill, adds locations, and can do everything below. Nothing is held back. Give this to as few people as the company can manage with.'],
+ ['locadmin','Location Admin','Runs one or more locations day to day: adds and removes people, sets up call handling, hands out numbers, connects other software, reads the reports. No spending and no changing the shape of the account — no buying numbers, no plan changes, no billing, no new locations.'],
+ ['groupadmin','Department Admin','Runs one or more departments: their call handling, their opening hours, who is in them, and watching them work. Reads their reports and hears their recordings. Cannot create, delete or edit a person, cannot buy anything, and cannot connect other software.'],
+ ['supervisor','Supervisor','Watches and helps the people in their groups: sees their duty and reports, can change their duty when the company allows it. Configures nothing. Changes no settings at all. No call handling, no hours, no adding people. Watching, not configuring.'],
+ ['agent','Agent','Takes and makes calls with a department’s tools. Sees only their own calls. No supervision, recordings or settings.'],
+ ['user','User','Somebody with a phone: calls, messages, chat, contacts, video, voicemail, and their own settings. Their own line and their own data. Nothing about anybody else, and nothing administrative.']
+];
+function scrDefPerm(){
+ if(!allowed('defperm'))return denied('Default permissions is for admins','You can still check what you can do.');
+ let h=haHeader('Default permissions','Step 3 of three. What each kind of person should be able to do on their first day, and why. Write a recommendation down as a role, then pick it when adding people.');
+ h+='<div class="card" style="padding:16px;margin-bottom:14px"><div class="card-h" style="padding:0 0 10px;border:0">'+I('user')+'<h3>Which role a new person starts on</h3></div>'+
+  '<p style="margin:0 0 4px;font-size:13px;color:var(--ink-3)">Choose one here and it is filled in on the Add person form, with your reason shown beside it. Leave it empty and the form falls back to the narrowest role on the account rather than nothing, but a fallback is a guess, and this is the answer.</p>'+
+  '<div style="padding-top:10px;margin-top:10px;border-top:1px solid var(--line)"><b style="display:block;font-size:13.5px;margin-bottom:4px">Role for a new person</b>'+
+   '<p style="margin:0 0 10px;font-size:12.5px;color:var(--ink-3)">Filled in on the Add person form, along with a line saying what that role allows and a caution when it reaches past the person holding it. Whoever is adding somebody can still change it before saving, so this is a starting point rather than a restriction. An administrator is never filled in automatically — that is always a decision somebody makes on purpose.</p>'+
+   '<select class="inp" id="defRoleSel" style="max-width:460px"><option value="">Not chosen — the form falls back to the narrowest role</option>'+
+    ROLE_CHOICES.map(r=>'<option value="'+r[0]+'" '+(S.defRoleKey===r[0]?'selected':'')+'>'+esc(r[1])+'</option>').join('')+
+   '</select>'+
+   (S.defRoleKey?'<p class="hint" style="margin-top:6px">'+esc(roleChoice(S.defRoleKey)[3])+'</p>':'')+
+  '</div></div>';
+ h+='<div class="card" style="padding:16px;margin-bottom:14px"><div class="card-h" style="padding:0 0 10px;border:0">'+I('grid')+'<h3>Which settings template a role starts with</h3></div>'+
+  '<p style="margin:0 0 10px;font-size:13px;color:var(--ink-3)">Pick a template for a role and every person added on that role starts with its settings — call recording, hours, display number and the rest — instead of the platform defaults. Templates are made under People › User settings templates. A person’s own settings can still be changed afterwards.</p>'+
+  '<div class="lock warn" style="margin:0">'+I('alert')+'<div>No templates yet. Make one under People › User settings templates and it can be chosen here.</div></div>'+
+  '</div>';
+ h+='<div class="card" style="padding:16px;margin-bottom:14px"><div class="card-h" style="padding:0 0 10px;border:0">'+I('shield')+'<h3>What each kind of person should get</h3><span class="tag ok" style="margin-left:4px">Active</span></div>'+
+  '<p style="margin:0 0 16px;font-size:13px;color:var(--ink-3)">Six kinds of person, worked out from your plan. Each one lists what it is given and what is deliberately held back, with the reason.</p>'+
+  DP_KINDS.map(([id,name,desc],i)=>{
+   const role=roleById(id),rec=presetSet(id,id==='owner'),real=role.perms;
+   const extra=[...real].filter(k=>!rec.has(k)).length,missing=[...rec].filter(k=>!real.has(k)).length;
+   const stat=(extra===0&&missing===0)
+     ?rec.size+' of '+ALL_KEYS.length+' things your plan offers. Your “'+role.key+'” role matches this exactly.'
+     :rec.size+' of '+ALL_KEYS.length+' things your plan offers. Your “'+role.key+'” role grants '+extra+' things this would take away and is missing '+missing+'.';
+   return '<div style="padding:12px 0;'+(i?'border-top:1px solid var(--line)':'')+'"><b style="display:block;font-size:13.5px">'+esc(name)+'</b><p style="margin:4px 0 0;font-size:12.5px;color:var(--ink-3)">'+esc(desc)+'</p><p style="margin:4px 0 0;font-size:12px;color:var(--ink-3)">'+esc(stat)+(role.sys?' It is a system role, so it is left as it is.':'')+'</p></div>';
+  }).join('')+
+  '</div>';
+ h+='<div class="lock ok" style="margin-bottom:14px">'+I('info')+'<div>These permissions decide what the app puts on screen. The server reads the same tree when it answers a request, but on 21 September 2026 most of it was set to <b>write down</b> a refusal rather than make one: of 117 guarded routes on the platform, 90 record and 27 refuse.<br><br>Refused by the server today: <b>Call recordings</b>.<br>Refused on some routes and only recorded on others: <b>People and Phone system</b>.<br>Recorded but not yet refused — a permission you remove here still applies to the whole company: there is no column here for which office or team somebody looks after, so a Location Admin’s default list is the same whether they will run one site or ten — Admin scope narrows that afterwards.<br><br>This is a server setting your provider can change without a website release, so treat this as a reading taken on the date above rather than a permanent state. These are defaults, not a report on your company — what each role actually holds is on the Roles screen.</div></div>';
+ h+='<div class="card" style="padding:16px"><div class="card-h" style="padding:0 0 10px;border:0">'+I('key')+'<h3>What a role cannot say here<span class="ro soon" style="margin-left:8px">Coming soon</span></h3></div>'+
+  '<p style="margin:0;font-size:13px;color:var(--ink-3)">Some things belong to one named person rather than to their role, because one person needs them and the rest of the team does not. A person record here has nowhere to keep them.</p></div>';
+ return h;
 }
 
 /* ---------- PEOPLE ---------- */
@@ -2211,6 +2459,26 @@ function assignBlock(role,target){
  return '';
 }
 const SEEN_BUCKET=s=>s==='Never signed in'?'never':(s==='Online'||/ ago$/.test(s)||s==='On break')?'today':'week';
+function seenRank(p){const order={today:0,week:1,never:2};return order[SEEN_BUCKET(p.seen)]*1000+(p.seen==='Online'?0:1)}
+const SORT_KEYS={
+ people:{name:p=>p.n.toLowerCase(),role:p=>personRole(p).n.toLowerCase(),reach:p=>reachText(p).toLowerCase(),teams:p=>p.teams.join(', ').toLowerCase(),seen:p=>seenRank(p)},
+ roles:{name:r=>r.n.toLowerCase(),reach:r=>REACH[r.reach].n.toLowerCase(),people:r=>roleUsers(r.id).length,access:r=>roleSummary(r).areas},
+ pending:{name:p=>p.n.toLowerCase(),role:p=>roleById(p.role).n.toLowerCase(),invited:p=>p.invited.toLowerCase()},
+ removed:{name:p=>p.n.toLowerCase(),role:p=>roleById(p.role).n.toLowerCase(),removed:p=>p.removedOn.toLowerCase()},
+ reserved:{number:p=>p.number,note:p=>p.note.toLowerCase(),reserved:p=>p.reservedOn.toLowerCase()}
+};
+function applySort(key,rows){
+ const st=S.sort[key];
+ if(!st||!st.col)return rows;
+ const acc=SORT_KEYS[key][st.col];
+ if(!acc)return rows;
+ return rows.slice().sort((a,b)=>{const va=acc(a),vb=acc(b);return va<vb?-st.dir:va>vb?st.dir:0});
+}
+function th(key,col,label,extra){
+ const st=S.sort[key]||{};const active=st.col===col;
+ const ic=!active?'<span class="thsi">'+I('sort')+'</span>':'<span class="thsi on '+(st.dir===1?'asc':'desc')+'">'+I('chev')+'</span>';
+ return '<th'+(extra?' '+extra:'')+'><button class="thsort" data-act="sortcol" data-sk="'+key+'" data-col="'+col+'">'+esc(label)+ic+'</button></th>';
+}
 function toCSV(rows,cols){
  const esc2=v=>{v=String(v==null?'':v);return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};
  return [cols.map(c=>c[0]).join(',')].concat(rows.map(r=>cols.map(c=>esc2(c[1](r))).join(','))).join('\r\n');
@@ -2232,7 +2500,7 @@ function scrPeople(){
  const tab=S.pplTab;
 
  let h='<div class="ph"><div><p class="eyebrow">Admin Hub · People › Admin scope</p><h1>People</h1><p>Everyone in the company. Add, invite, edit, suspend, remove and restore people here; the role screens below only look them up.</p></div>'+
-  '<div class="act"><button class="btn primary" data-act="addppl">'+I('plus')+'Add people</button></div></div>'+steps();
+  '<div class="act"><button class="btn primary" data-act="addppl">'+I('plus')+'Add people</button></div></div>';
 
  h+='<div class="kpis"><div class="kpi"><b>People</b><div class="v">'+vis.length+'</div><div class="s">0 suspended</div></div>'+
   '<div class="kpi"><b>Pending invites</b><div class="v">'+PENDING.length+'</div><div class="s">'+(expiredCount?expiredCount+' expired':'none expired')+'</div></div>'+
@@ -2278,8 +2546,10 @@ function scrPeople(){
   return h;
  }
 
- h+='<div class="card"><div class="tblwrap"><table class="tbl"><thead><tr><th style="width:34px"><input type="checkbox" id="selall" '+(allSel?'checked':'')+' '+(selectable.length?'':'disabled')+' aria-label="Select everyone listed"></th><th>Person</th><th>Role</th><th>Reach</th><th>Contact centres / groups</th><th>Last seen</th><th style="text-align:right">Actions</th></tr></thead><tbody>'+
-  rows.map(p=>{const r=personRole(p);const blk=ro?'Supervisors don\'t give roles.':p.id===v.id?'Nobody can change their own role.':(p.role==='owner'&&!isOwnerP())?'Only an Account owner can change an Account owner.':'';
+ h+='<div class="card"><div class="tblwrap"><table class="tbl"><thead><tr><th style="width:34px"><input type="checkbox" id="selall" '+(allSel?'checked':'')+' '+(selectable.length?'':'disabled')+' aria-label="Select everyone listed"></th>'+
+  th('people','name','Person')+th('people','role','Role')+th('people','reach','Reach')+th('people','teams','Contact centres / groups')+th('people','seen','Last seen')+
+  '<th style="text-align:right">Actions</th></tr></thead><tbody>'+
+  applySort('people',rows).map(p=>{const r=personRole(p);const blk=ro?'Supervisors don\'t give roles.':p.id===v.id?'Nobody can change their own role.':(p.role==='owner'&&!isOwnerP())?'Only an Account owner can change an Account owner.':'';
    return '<tr><td><input type="checkbox" data-sel="'+p.id+'" '+(S.sel.has(p.id)?'checked':'')+' '+(blk?'disabled':'')+' aria-label="Select '+esc(p.n)+'"></td>'+
     '<td><div class="who"><span class="av2">'+p.id+'</span><div><b>'+esc(p.n)+(p.id===v.id?' <span class="tag acc">You</span>':'')+(p.status==='pending'?' <span class="tag warn">Pending</span>':'')+'</b><span>Ext '+p.ext+' · '+p.loc+'</span></div></div></td>'+
     '<td>'+(r.sys?'<span class="tag'+(r.id==='owner'?' sys':'')+'">'+esc(r.n)+'</span>':'<span class="tag acc">'+esc(r.n)+'</span>')+'</td>'+
@@ -2295,8 +2565,8 @@ function scrPeople(){
 function scrPeopleAux(tab,ro){
  if(tab==='pending'){
   let rows=PENDING.slice();if(S.pplQ)rows=rows.filter(p=>(p.n+' '+p.email).toLowerCase().includes(S.pplQ.toLowerCase()));
-  return '<div class="card"><div class="tblwrap"><table class="tbl"><thead><tr><th>Person</th><th>Role offered</th><th>Invited</th><th style="text-align:right">Actions</th></tr></thead><tbody>'+
-   rows.map(p=>'<tr><td><div class="who"><span class="av2">'+p.n.split(' ').map(x=>x[0]).join('').slice(0,2)+'</span><div><b>'+esc(p.n)+'</b><span>'+esc(p.email)+'</span></div></div></td>'+
+  return '<div class="card"><div class="tblwrap"><table class="tbl"><thead><tr>'+th('pending','name','Person')+th('pending','role','Role offered')+th('pending','invited','Invited')+'<th style="text-align:right">Actions</th></tr></thead><tbody>'+
+   applySort('pending',rows).map(p=>'<tr><td><div class="who"><span class="av2">'+p.n.split(' ').map(x=>x[0]).join('').slice(0,2)+'</span><div><b>'+esc(p.n)+'</b><span>'+esc(p.email)+'</span></div></div></td>'+
     '<td><span class="tag acc">'+esc(roleById(p.role).n)+'</span></td>'+
     '<td style="font-size:12.5px;color:var(--ink-3)">'+esc(p.invited)+' by '+esc(p.invitedBy)+(p.expired?' <span class="tag warn">Expired</span>':'')+'</td>'+
     '<td><div class="acts" style="justify-content:flex-end">'+(ro?'':'<button class="btn sm" data-act="resend" data-id="'+p.id+'">Resend</button><button class="ib" data-act="cancelinv" data-id="'+p.id+'" title="Cancel invite" aria-label="Cancel invite">'+I('x')+'</button>')+'</div></td></tr>').join('')+
@@ -2305,8 +2575,8 @@ function scrPeopleAux(tab,ro){
  }
  if(tab==='removed'){
   let rows=REMOVED.slice();if(S.pplQ)rows=rows.filter(p=>p.n.toLowerCase().includes(S.pplQ.toLowerCase()));
-  return '<div class="card"><div class="tblwrap"><table class="tbl"><thead><tr><th>Person</th><th>Had role</th><th>Removed</th><th style="text-align:right">Actions</th></tr></thead><tbody>'+
-   rows.map(p=>'<tr><td><div class="who"><span class="av2">'+p.n.split(' ').map(x=>x[0]).join('').slice(0,2)+'</span><div><b>'+esc(p.n)+'</b><span>Ext '+p.ext+' · '+p.loc+'</span></div></div></td>'+
+  return '<div class="card"><div class="tblwrap"><table class="tbl"><thead><tr>'+th('removed','name','Person')+th('removed','role','Had role')+th('removed','removed','Removed')+'<th style="text-align:right">Actions</th></tr></thead><tbody>'+
+   applySort('removed',rows).map(p=>'<tr><td><div class="who"><span class="av2">'+p.n.split(' ').map(x=>x[0]).join('').slice(0,2)+'</span><div><b>'+esc(p.n)+'</b><span>Ext '+p.ext+' · '+p.loc+'</span></div></div></td>'+
     '<td><span class="tag">'+esc(roleById(p.role).n)+'</span></td>'+
     '<td style="font-size:12.5px;color:var(--ink-3)">'+esc(p.removedOn)+' by '+esc(p.removedBy)+'</td>'+
     '<td><div class="acts" style="justify-content:flex-end">'+(ro?'':'<button class="btn sm" data-act="restore" data-id="'+p.id+'">'+I('undo')+'Restore</button>')+'</div></td></tr>').join('')+
@@ -2314,10 +2584,11 @@ function scrPeopleAux(tab,ro){
    '</tbody></table></div><div class="foot">'+rows.length+' removed</div></div>';
  }
  let rows=RESERVED_NUMBERS.slice();if(S.pplQ)rows=rows.filter(p=>(p.number+' '+p.note).toLowerCase().includes(S.pplQ.toLowerCase()));
- return '<div class="card"><div class="tblwrap"><table class="tbl"><thead><tr><th>Number</th><th>Note</th><th>Reserved</th><th style="text-align:right">Actions</th></tr></thead><tbody>'+
-  rows.map((p,i)=>'<tr><td class="mono">'+esc(p.number)+'</td><td style="font-size:12.5px">'+esc(p.note)+'</td>'+
+ const sortedReserved=applySort('reserved',rows.map((p,i)=>({...p,_i:i})));
+ return '<div class="card"><div class="tblwrap"><table class="tbl"><thead><tr>'+th('reserved','number','Number')+th('reserved','note','Note')+th('reserved','reserved','Reserved')+'<th style="text-align:right">Actions</th></tr></thead><tbody>'+
+  sortedReserved.map(p=>'<tr><td class="mono">'+esc(p.number)+'</td><td style="font-size:12.5px">'+esc(p.note)+'</td>'+
    '<td style="font-size:12.5px;color:var(--ink-3)">'+esc(p.reservedOn)+' by '+esc(p.reservedBy)+'</td>'+
-   '<td><div class="acts" style="justify-content:flex-end">'+(ro?'':'<button class="btn sm" data-na="1">Assign</button><button class="ib" data-act="release" data-idx="'+i+'" title="Release" aria-label="Release">'+I('trash')+'</button>')+'</div></td></tr>').join('')+
+   '<td><div class="acts" style="justify-content:flex-end">'+(ro?'':'<button class="btn sm" data-na="1">Assign</button><button class="ib" data-act="release" data-idx="'+p._i+'" title="Release" aria-label="Release">'+I('trash')+'</button>')+'</div></td></tr>').join('')+
   (rows.length?'':'<tr><td colspan="4"><div class="empty">'+I('hash')+'<b>No numbers reserved</b><span>Numbers held back before they are assigned appear here.</span></div></td></tr>')+
   '</tbody></table></div><div class="foot">'+rows.length+' reserved</div></div>';
 }
@@ -2361,17 +2632,18 @@ function scrCheck(){
   '<div class="sbox" style="margin-top:10px;max-width:520px">'+I('search')+'<input id="cq" placeholder="…or type anything: whisper, invoice, delete a queue" value="'+esc(S.checkQ)+'" aria-label="Search a permission"></div>'+
   (matches.length?'<div class="presets" style="margin-top:8px">'+matches.map(k=>'<button data-ask="'+k+'">'+esc(label(k))+'</button>').join('')+'</div>':q?'<div class="hint">Nothing matches "'+esc(S.checkQ)+'".</div>':'')+
   (S.checkKey?answer(p,S.checkKey):'')+'</div>';
- h+='<div class="grid2"><div class="card"><div class="card-h"><h3>What '+esc(S.persona==='agent'?'you':p.n.split(' ')[0])+' can do</h3><span class="r">'+esc(r.n)+'</span></div>'+
+ h+='<div class="grid2"><div class="card"><div class="card-h">'+I('check')+'<h3>What '+esc(S.persona==='agent'?'you':p.n.split(' ')[0])+' can do</h3><span class="r">'+esc(r.n)+'</span></div>'+
   MODS.map(m=>{const c=modCounts(r.perms,m);if(!c.on)return '';const subs=m.subs.filter(s=>r.perms.has(m.id+'.'+s.id)).map(s=>s.n);
    return '<div class="sumrow"><b>'+esc(m.n)+'</b><span class="lv '+c.lv+'">'+LVL[c.lv]+'</span><span class="what">'+esc(subs.join(' · '))+(m.scoped?' — <i>'+esc(reachPhrase(p))+'</i>':'')+'</span></div>'}).join('')+
   '<div class="foot">'+MODS.filter(m=>!modCounts(r.perms,m).on).length+' areas not included: '+esc(MODS.filter(m=>!modCounts(r.perms,m).on).map(m=>m.n).join(', ')||'none')+'</div></div>';
- h+='<div><div class="card" style="margin-bottom:14px"><div class="card-h"><h3>What '+esc(S.persona==='agent'?'you see':'they see')+' in the menu</h3><span class="r">worked out from the role</span></div>'+
+ h+='<div><div class="card" style="margin-bottom:14px"><div class="card-h">'+I('grid')+'<h3>What '+esc(S.persona==='agent'?'you see':'they see')+' in the menu</h3><span class="r">worked out from the role</span></div>'+
   '<div class="ruleh" style="margin:12px 16px 0">Top bar</div><div class="menuprev">'+M.top.map(t=>'<div class="'+(t[1]?'':'no')+'">'+I(t[1]?'check':'x')+esc(t[0])+'</div>').join('')+'</div>'+
   '<div class="ruleh" style="margin:0 16px">Interactions and analytics</div><div class="menuprev">'+M.rail.map(t=>'<div class="'+(t[1]?'':'no')+'">'+I(t[1]?'check':'x')+esc(t[0])+'</div>').join('')+'</div>'+
   '<div class="ruleh" style="margin:0 16px">Admin Hub</div><div class="menuprev">'+M.hub.map(t=>'<div class="'+(t[1]?'':'no')+'">'+I(t[1]?'check':'x')+esc(t[0])+'</div>').join('')+'</div></div>';
  const hp=helpers(p);
- h+='<div class="card"><div class="card-h"><h3>Need more?</h3></div><div style="padding:12px 16px;font-size:13px;color:var(--ink-2)">'+(hp.length?'Who can change '+esc(S.persona==='agent'?'your':p.n.split(' ')[0]+'\'s')+' role: <b>'+esc(hp.map(x=>x.n+' ('+personRole(x).n+')').join(', '))+'</b>.':'Only the account owner.')+
-  '<br><span style="color:var(--ink-3)">Your own profile, greeting, hours and forwarding are always yours — no role takes them away, and no admin changes them for you.</span></div></div></div></div>';
+ h+='<div class="card"><div class="card-h">'+I('users')+'<h3>Need more?</h3></div><div style="padding:12px 16px 16px">'+
+  '<div class="lock info" style="margin-bottom:10px">'+I('key')+'<div>Who can change '+esc(S.persona==='agent'?'your':p.n.split(' ')[0]+'\'s')+' role: '+(hp.length?'<b>'+esc(hp.map(x=>x.n+' ('+personRole(x).n+')').join(', '))+'</b>':'<b>Only the account owner.</b>')+'</div></div>'+
+  '<p style="margin:0;font-size:12.5px;color:var(--ink-3)">Your own profile, greeting, hours and forwarding are always yours — no role takes them away, and no admin changes them for you.</p></div></div></div></div>';
  return h;
 }
 
@@ -2558,11 +2830,12 @@ function render(){
  chrome();
  const main=document.getElementById('main');
  const keep=S.screen==='edit'?main.scrollTop:0;
- const f={roles:scrRoles,edit:scrEdit,compare:scrCompare,people:scrPeople,check:scrCheck,history:scrHistory}[S.screen];
+ const f={roles:scrRoles,edit:scrEdit,compare:scrCompare,people:scrPeople,check:scrCheck,history:scrHistory,howaccess:scrHowAccess,adminscope:scrAdminScope,rolecap:scrRoleCapabilities,auth:scrAuth,defperm:scrDefPerm}[S.screen];
  const editing=S.modal&&S.modal.type==='editppl';
  main.className='main'+(S.screen==='edit'?' editing':'')+(editing?' panelopen':'');
  main.innerHTML=f()+(editing?editPersonModal():'');
  if(S.screen==='edit'){main.scrollTop=keep;fixSticky()}
+ if(editing)main.scrollTop=0;
  document.querySelectorAll('input[data-part="1"]').forEach(i=>{i.indeterminate=true});
  document.getElementById('overlay').innerHTML=modal();
  pop.style.display='none';
@@ -2571,6 +2844,7 @@ function go(scr){
  if(S.screen==='edit'&&scr!=='edit'&&S.edit&&!S.edit.ro&&changes().n){S.modal={type:'discard',to:scr};render();return}
  if(scr==='edit'&&!S.edit)openEditor(defaultEditId(),'edit');
  if(scr!=='edit')S.edit=null;
+ if(S.screen==='auth'&&scr!=='auth')S.auth.tokenRevealed=false;
  S.screen=scr;S.modal=null;render();document.getElementById('main').scrollTop=0;
 }
 
@@ -2589,10 +2863,17 @@ document.addEventListener('click',e=>{
  if(t.dataset&&t.dataset.close&&t===t.closest('[data-close]')){S.modal=null;render();return}
  const g=t.closest('[data-go]');if(g){e.preventDefault();if(g.dataset.go==='edit'){if(S.screen==='edit')return;openEditor(defaultEditId(),'edit');S.modal=null;render();return}go(g.dataset.go);return}
  const na=t.closest('[data-na]');if(na){toast('info','Not part of this prototype','Only the role screens are built here.');return}
+ const hs=t.closest('[data-act="hastub"]');if(hs){toast('info','Not part of this prototype yet',esc(hs.dataset.label)+' is not built in this demo — Roles and Check access are.');return}
  const hb=t.closest('[data-hub]');if(hb){const s=hb.dataset.hub;S.hubOpen.has(s)?S.hubOpen.delete(s):S.hubOpen.add(s);render();return}
  const or=t.closest('[data-openrole]');const act=t.closest('[data-act]');
  if(act){const a=act.dataset.act,id=act.dataset.id;
   if(a==='close'){if(window.speechSynthesis)speechSynthesis.cancel();S.modal=null;render();return}
+  if(a==='sortcol'){const sk=act.dataset.sk,col=act.dataset.col;const st=S.sort[sk]||(S.sort[sk]={col:null,dir:1});
+   if(st.col===col)st.dir=-st.dir;else{st.col=col;st.dir=1}
+   render();return}
+  if(a==='cmpsel'){const rid=act.dataset.id;S.cmpSel.has(rid)?S.cmpSel.delete(rid):S.cmpSel.add(rid);render();return}
+  if(a==='cmpall'){S.cmpSel=new Set(ROLES.filter(r=>r.sys).map(r=>r.id));render();return}
+  if(a==='cmpclear'){S.cmpSel=new Set();render();return}
   if(a==='clearsel'){S.sel=new Set();render();return}
   if(a==='addppl'){S.modal={type:'addppl',step:1,loc:LOC_CHOICES[0],people:[blankPerson()],cur:0,errors:{},signin:'link',pwd:'',pwd2:'',pwds:{},pwShow:{},pwErrs:null,done:false,addedCount:0};render();return}
   if(a==='awminus'){const m=S.modal;if(m.people.length>1){m.people.pop();delete m.errors[m.people.length];if(m.cur>=m.people.length)m.cur=m.people.length-1}render();return}
@@ -2706,6 +2987,16 @@ document.addEventListener('click',e=>{
   if(a==='epsaveskills'){const p=PEOPLE.find(x=>x.id===S.modal.id);
    const total=SKILLS_CATALOG.length,rated=SKILLS_CATALOG.filter(([,k])=>epSkill(p,k)).length;
    toast('ok','Saved',rated+' of '+total+' skills saved for '+esc(p.n)+'.');return}
+  if(a==='authtoggle'){S.auth[act.dataset.k]=!S.auth[act.dataset.k];render();return}
+  if(a==='authsave'){const n=+document.getElementById('authTimeout').value.trim();
+   if(S.auth.timeoutOn&&(!n||n<5||n>1440)){toast('bad','Check the timeout','Enter minutes between 5 and 1440 (24 hours).');return}
+   if(S.auth.timeoutOn)S.auth.timeoutMin=n;
+   S.auth.domains=document.getElementById('authDomains').value.trim();
+   render();toast('ok','Saved','Session timeout and allowed domains were updated.');return}
+  if(a==='authtoken'){const chars='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';let secret='';for(let i=0;i<32;i++)secret+=chars[Math.floor(Math.random()*chars.length)];
+   S.auth.token='6c055b6c-b060-4708-9f48-b3a3a464b995.'+secret;S.auth.tokenIssuedOn=new Date().toISOString().slice(0,10);S.auth.tokenRevealed=true;
+   render();toast('ok','Token issued','Copy it now — it will not be shown again in full.');return}
+  if(a==='authrevoke'){S.auth.token=null;S.auth.tokenIssuedOn=null;S.auth.tokenRevealed=false;render();toast('info','Switched off','Provisioning is off until a new token is issued.');return}
   if(a==='epback'){const i=EP_TABS.findIndex(t=>t[0]===S.modal.tab);S.modal.tab=EP_TABS[Math.max(0,i-1)][0];render();return}
   if(a==='epnext'){const i=EP_TABS.findIndex(t=>t[0]===S.modal.tab);S.modal.tab=EP_TABS[Math.min(EP_TABS.length-1,i+1)][0];render();return}
   if(a==='epsaveext'){const m=S.modal,p=PEOPLE.find(x=>x.id===m.id);const v=m.ext.trim();
@@ -2739,7 +3030,7 @@ document.addEventListener('click',e=>{
  const pf=t.closest('[data-pr]');if(pf){S.pplRole=pf.dataset.pr;render();return}
  const af=t.closest('[data-af]');if(af){S.audF=af.dataset.af;render();return}
  const au=t.closest('[data-aud]');if(au){const id=+au.dataset.aud;S.audOpen.has(id)?S.audOpen.delete(id):S.audOpen.add(id);render();return}
- const cm=t.closest('[data-cmp]');if(cm){cm.dataset.cmp==='custom'?S.cmpCustom=!S.cmpCustom:S.cmpDiff=!S.cmpDiff;render();return}
+ const cm=t.closest('[data-cmp]');if(cm){S.cmpDiff=!S.cmpDiff;render();return}
  const co=t.closest('[data-cmpopen]');if(co){const id=co.dataset.cmpopen;S.cmpOpen.has(id)?S.cmpOpen.delete(id):S.cmpOpen.add(id);render();return}
  const ak=t.closest('[data-ask]');if(ak){S.checkKey=ak.dataset.ask;render();return}
  const rp=t.closest('[data-rp]');if(rp&&!rp.disabled){S.modal.role=rp.dataset.rp;S.modal.reach=null;render();return}
@@ -2773,6 +3064,7 @@ document.addEventListener('change',e=>{
  if(t.id==='pplLocSel'){S.pplLoc=t.value;render();return}
  if(t.id==='pplRoleSel'){S.pplRole=t.value;render();return}
  if(t.id==='pplSeenSel'){S.pplSeen=t.value;render();return}
+ if(t.id==='defRoleSel'){S.defRoleKey=t.value||null;render();toast('ok','Saved',S.defRoleKey?'New people will start on "'+esc(roleChoice(S.defRoleKey)[1])+'".':'Cleared — the Add person form falls back to the narrowest role.');return}
  if(t.id==='epmgr'){const p=PEOPLE.find(x=>x.id===S.modal.id);p.mgr=t.value||null;if(t.value)S.modal.fieldsErr=false;render();return}
  if(t.id==='eploc'){const p=PEOPLE.find(x=>x.id===S.modal.id);p.loc=t.value;render();return}
  const eppv=t.closest('[data-eppv]');if(eppv&&S.modal&&S.modal.pick){S.modal.pick.val=eppv.dataset.eppv;render();return}
