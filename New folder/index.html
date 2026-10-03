@@ -154,8 +154,14 @@ svg.i{width:17px;height:17px;flex:none;stroke:currentColor;fill:none;stroke-widt
 .lock.info{background:var(--accent-bg);border-color:var(--accent-edge);color:var(--accent-2)}
 .lock.ok{background:var(--ok-bg);border-color:#9fd9d1;color:#0b5f57}
 .lock.ok b{color:#0b5f57}
+.menurow{display:block;width:100%;text-align:left;padding:10px 8px;border:0;background:none;font-size:13.5px;font-weight:500;color:var(--ink-2);border-radius:8px;cursor:pointer}
+.menurow:hover{background:var(--surface-2)}
+.menurow.danger{color:var(--bad)}
 .lock.bad{background:var(--bad-bg);border-color:#f3c2c2;color:#8f1d1d}
 .tag{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;border-radius:6px;padding:2px 7px;background:var(--sunken);color:var(--ink-2);white-space:nowrap}
+button.tag{border:0;font:inherit;cursor:pointer}
+button.tag:hover{filter:brightness(0.95)}
+button.tag:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 .tag.ok{background:var(--ok-bg);color:var(--ok)}.tag.warn{background:var(--warn-bg);color:var(--warn)}.tag.bad{background:var(--bad-bg);color:var(--bad)}.tag.acc{background:var(--accent-bg);color:var(--accent-2)}.tag.hold{background:var(--hold-bg);color:var(--hold)}.tag.ai{background:var(--ai-bg);color:var(--ai)}
 .tag.sys{background:var(--ink);color:#fff}
 .tag svg.i{width:12px;height:12px}
@@ -966,7 +972,7 @@ html{zoom:0.8}
   <span class="sep"></span>
   <b>Screen</b><select class="ssel" id="screensel" aria-label="Screen"></select>
   <span class="grow"></span>
-  <a class="v1" href="roles-permissions-prototype-v2.html" title="This is v1, kept for reference. The owner chose v2 to take forward on 25 Sep 2026.">v1 · open v2</a>
+  <a class="v1" href="roles-permissions-prototype-master-detail.html" title="This is v1, kept for reference. The owner chose v2 (master-detail) to take forward on 25 Sep 2026.">v1 · open v2</a>
   <button class="tst" id="tagsbtn" type="button" aria-pressed="false" title="Show which switches are new, which split a key shared today, and which features the testers found failing">Status tags</button>
   <button class="rules" id="rulesbtn" type="button">Role rules</button>
   <div class="why" id="why"></div>
@@ -1013,9 +1019,9 @@ const MODS=[
    ['merge','Add and merge',{k:'advance_call_management.access.MERGE',kn:'Add and merge fails from the Interactions tab (works from the pop-up). A 4th caller hears ringing instead of busy. '+T}],
    ['conference','Conference',{k:'advance_call_management.access.CONFERENCE'}],
    ['park','Park a call',{kn:'After entering the Park ID the caller goes to wrap-up while the two agents stay connected. '+T}],
-   ['pickup','Pick up a colleague\'s ringing call']]),
+   ['pickup','Extension to extension call']]),
   SB('vm','Voicemail','Their own voicemail box',{},[
-   ['view','Listen to own voicemail'],['download','Download'],['delete','Delete'],['forward','Forward to a colleague']]),
+   ['view','Listen to own voicemail'],['markread','Mark as read'],['transcript','Voicemail transcript'],['download','Download'],['delete','Delete'],['forward','Forward to a colleague']]),
   SB('hist','Call history','Their own calls',{},[
    ['view','See own calls'],['delete','Remove from own history'],['export','Export own history',{sen:1}]]),
   SB('rec','Recording on a call','Record while they are on a call',{k:'advance_call_management.access.RECORDING'},[
@@ -1371,9 +1377,9 @@ let PEOPLE=[
 ];
 PEOPLE.forEach(p=>p.status='active');
 let PENDING=[
- {id:'PI1',n:'Farhan Sheikh',email:'farhan.sheikh@company.com',loc:'Mumbai',role:'agent',invitedBy:'Umar Ansari',invited:'2 days ago',expired:false},
- {id:'PI2',n:'Lakshmi Rao',email:'lakshmi.rao@company.com',loc:'Pune',role:'user',invitedBy:'Sushil Yadav',invited:'9 days ago',expired:true},
- {id:'PI3',n:'Devraj Singh',email:'devraj.singh@company.com',loc:'Mumbai',role:'agent',invitedBy:'Vivek Gupta',invited:'11 days ago',expired:true}
+ {id:'PI1',n:'Farhan Sheikh',email:'farhan.sheikh@company.com',loc:'Mumbai',teams:['Sales A'],role:'agent',ext:'3041',invitedBy:'Umar Ansari',sentOn:'25 Sep',expiresOn:'in 5 days',expired:false,suspended:false,number:null},
+ {id:'PI2',n:'Lakshmi Rao',email:'lakshmi.rao@company.com',loc:'Pune',teams:[],role:'user',ext:'3052',invitedBy:'Sushil Yadav',sentOn:'18 Sep',expiresOn:'Expired 25 Sep',expired:true,suspended:false,number:null},
+ {id:'PI3',n:'Devraj Singh',email:'devraj.singh@company.com',loc:'Mumbai',teams:[],role:'agent',ext:'3077',invitedBy:'Vivek Gupta',sentOn:'16 Sep',expiresOn:'Expired 23 Sep',expired:true,suspended:false,number:null}
 ];
 let REMOVED=[
  {id:'RM1',n:'Tanya Bhatt',ext:1013,loc:'Mumbai',teams:['Front desk'],role:'user',reach:{lvl:'own',ids:[]},removedOn:'14 Sep',removedBy:'Umar Ansari'},
@@ -1853,7 +1859,7 @@ const S={persona:'owner',screen:'roles',tags:false,edit:null,q:'',onlyOn:false,o
  modal:null,roleFilter:'all',roleQ:'',pplQ:'',pplRole:'all',sel:new Set(),check:'KA',checkKey:null,checkQ:'',
  audF:'all',audOpen:new Set([6]),cmpDiff:false,cmpOpen:new Set(),cmpSel:new Set(ROLES.filter(r=>r.sys).map(r=>r.id)),rulesTab:'roles',hubOpen:new Set(['People']),
  pplTab:'active',pplLoc:'all',pplSeen:'any',pplView:'flat',sort:{},
- auth:{sso:false,timeoutOn:true,timeoutMin:30,domains:'mycompany.com',token:null,tokenIssuedOn:null,tokenRevealed:false},defRoleKey:null};
+ auth:{sso:false,timeoutOn:true,timeoutMin:30,domains:'mycompany.com',token:null,tokenIssuedOn:null,tokenRevealed:false},defRoleKey:null,pendSel:new Set()};
 const me=()=>PEOPLE.find(p=>p.id===PERSONAS[S.persona].person);
 const personRole=p=>roleById(p.role);
 const isOwnerP=()=>S.persona==='owner';
@@ -2463,7 +2469,7 @@ function seenRank(p){const order={today:0,week:1,never:2};return order[SEEN_BUCK
 const SORT_KEYS={
  people:{name:p=>p.n.toLowerCase(),role:p=>personRole(p).n.toLowerCase(),reach:p=>reachText(p).toLowerCase(),teams:p=>p.teams.join(', ').toLowerCase(),seen:p=>seenRank(p)},
  roles:{name:r=>r.n.toLowerCase(),reach:r=>REACH[r.reach].n.toLowerCase(),people:r=>roleUsers(r.id).length,access:r=>roleSummary(r).areas},
- pending:{name:p=>p.n.toLowerCase(),role:p=>roleById(p.role).n.toLowerCase(),invited:p=>p.invited.toLowerCase()},
+ pending:{name:p=>p.n.toLowerCase(),role:p=>roleById(p.role).n.toLowerCase(),loc:p=>p.loc.toLowerCase(),ext:p=>p.ext,expires:p=>p.expiresOn.toLowerCase(),status:p=>(p.suspended?'0':p.expired?'1':'2')},
  removed:{name:p=>p.n.toLowerCase(),role:p=>roleById(p.role).n.toLowerCase(),removed:p=>p.removedOn.toLowerCase()},
  reserved:{number:p=>p.number,note:p=>p.note.toLowerCase(),reserved:p=>p.reservedOn.toLowerCase()}
 };
@@ -2552,10 +2558,9 @@ function scrPeople(){
   applySort('people',rows).map(p=>{const r=personRole(p);const blk=ro?'Supervisors don\'t give roles.':p.id===v.id?'Nobody can change their own role.':(p.role==='owner'&&!isOwnerP())?'Only an Account owner can change an Account owner.':'';
    return '<tr><td><input type="checkbox" data-sel="'+p.id+'" '+(S.sel.has(p.id)?'checked':'')+' '+(blk?'disabled':'')+' aria-label="Select '+esc(p.n)+'"></td>'+
     '<td><div class="who"><span class="av2">'+p.id+'</span><div><b>'+esc(p.n)+(p.id===v.id?' <span class="tag acc">You</span>':'')+(p.status==='pending'?' <span class="tag warn">Pending</span>':'')+'</b><span>Ext '+p.ext+' · '+p.loc+'</span></div></div></td>'+
-    '<td>'+(r.sys?'<span class="tag'+(r.id==='owner'?' sys':'')+'">'+esc(r.n)+'</span>':'<span class="tag acc">'+esc(r.n)+'</span>')+'</td>'+
+    '<td>'+(blk?(r.sys?'<span class="tag'+(r.id==='owner'?' sys':'')+'">'+esc(r.n)+'</span>':'<span class="tag acc">'+esc(r.n)+'</span>'):'<button class="tag'+(r.sys?(r.id==='owner'?' sys':''):' acc')+'" data-act="chrole" data-id="'+p.id+'" title="Change role or reach for '+esc(p.n)+'">'+esc(r.n)+'</button>')+'</td>'+
     '<td style="font-size:12.5px">'+esc(reachText(p))+'</td><td style="font-size:12.5px;color:var(--ink-3)">'+(p.teams.join(', ')||'—')+'</td><td style="font-size:12.5px;color:var(--ink-3)">'+esc(p.seen)+'</td>'+
     '<td><div class="acts"><button class="ib" data-act="editppl" data-id="'+p.id+'" title="Edit '+esc(p.n)+'" aria-label="Edit '+esc(p.n)+'">'+I('edit')+'</button>'+
-    '<button class="ib" data-act="chrole" data-id="'+p.id+'" title="'+esc(blk||'Change role or reach')+'" aria-label="Change role" '+(blk?'disabled':'')+'>'+I('swap')+'</button>'+
     '<button class="ib" data-act="checkp" data-id="'+p.id+'" title="Check what '+esc(p.n.split(' ')[0])+' can do" aria-label="Check access">'+I('eye')+'</button>'+
     (p.role==='owner'&&isOwnerP()?'<button class="ib" data-act="transfer" title="Transfer ownership" aria-label="Transfer ownership">'+I('key')+'</button>':'')+'</div></td></tr>'}).join('')+
   (rows.length?'':'<tr><td colspan="7"><div class="empty">'+I('users')+'<b>Nobody matches</b><span>Try a different search or filter.</span></div></td></tr>')+
@@ -2565,12 +2570,21 @@ function scrPeople(){
 function scrPeopleAux(tab,ro){
  if(tab==='pending'){
   let rows=PENDING.slice();if(S.pplQ)rows=rows.filter(p=>(p.n+' '+p.email).toLowerCase().includes(S.pplQ.toLowerCase()));
-  return '<div class="card"><div class="tblwrap"><table class="tbl"><thead><tr>'+th('pending','name','Person')+th('pending','role','Role offered')+th('pending','invited','Invited')+'<th style="text-align:right">Actions</th></tr></thead><tbody>'+
-   applySort('pending',rows).map(p=>'<tr><td><div class="who"><span class="av2">'+p.n.split(' ').map(x=>x[0]).join('').slice(0,2)+'</span><div><b>'+esc(p.n)+'</b><span>'+esc(p.email)+'</span></div></div></td>'+
+  rows=applySort('pending',rows);
+  const selN=[...S.pendSel].filter(id=>rows.some(p=>p.id===id)).length;
+  const bulkBar=selN?'<div class="bulk"><b>'+selN+' selected</b><button class="btn sm danger" data-act="pendbulkrevoke">'+I('x')+'Revoke</button><button class="btn sm" data-act="pendclearsel">Clear</button></div>':'';
+  return bulkBar+'<div class="card"><div class="tblwrap"><table class="tbl"><thead><tr><th style="width:34px"><input type="checkbox" id="pendselall" '+(rows.length&&rows.every(p=>S.pendSel.has(p.id))?'checked':'')+' '+(rows.length?'':'disabled')+' aria-label="Select everyone pending"></th>'+
+   th('pending','name','Person')+th('pending','role','Role')+th('pending','loc','Location')+th('pending','ext','Ext')+th('pending','expires','Invite expires')+th('pending','status','Status')+'<th style="text-align:right">Actions</th></tr></thead><tbody>'+
+   rows.map(p=>{const statusTxt=p.suspended?'Suspended':(p.expired?'Invite expired':'Invite sent')+' · sent '+p.sentOn;
+    return '<tr><td><input type="checkbox" data-pendsel="'+p.id+'" '+(S.pendSel.has(p.id)?'checked':'')+' aria-label="Select '+esc(p.n)+'"></td>'+
+    '<td><div class="who"><span class="av2">'+p.n.split(' ').map(x=>x[0]).join('').slice(0,2)+'</span><div><b>'+esc(p.n)+'</b><span>'+esc(p.email)+'</span></div></div></td>'+
     '<td><span class="tag acc">'+esc(roleById(p.role).n)+'</span></td>'+
-    '<td style="font-size:12.5px;color:var(--ink-3)">'+esc(p.invited)+' by '+esc(p.invitedBy)+(p.expired?' <span class="tag warn">Expired</span>':'')+'</td>'+
-    '<td><div class="acts" style="justify-content:flex-end">'+(ro?'':'<button class="btn sm" data-act="resend" data-id="'+p.id+'">Resend</button><button class="ib" data-act="cancelinv" data-id="'+p.id+'" title="Cancel invite" aria-label="Cancel invite">'+I('x')+'</button>')+'</div></td></tr>').join('')+
-   (rows.length?'':'<tr><td colspan="4"><div class="empty">'+I('users')+'<b>No pending invites</b><span>Everyone invited has already joined.</span></div></td></tr>')+
+    '<td><div><b style="display:block;font-size:12.5px;font-weight:600">'+esc(p.loc)+'</b><span style="font-size:12px;color:var(--ink-3)">'+(p.teams.join(', ')||'—')+'</span></div></td>'+
+    '<td style="font-size:12.5px">'+esc(p.ext)+'</td>'+
+    '<td><span class="tag '+(p.expired?'bad':'')+'">'+esc(p.expired?p.expiresOn:'Expires '+p.expiresOn)+'</span></td>'+
+    '<td><span class="tag '+(p.suspended?'bad':p.expired?'bad':'')+'">'+esc(statusTxt)+'</span></td>'+
+    '<td><div class="acts" style="justify-content:flex-end">'+(ro?'':'<button class="btn sm" data-act="reinvite" data-id="'+p.id+'">Re-invite</button><button class="btn sm danger" data-act="revoke" data-id="'+p.id+'">Revoke</button><button class="ib" data-act="pendedit" data-id="'+p.id+'" title="Edit invite" aria-label="Edit invite for '+esc(p.n)+'">'+I('edit')+'</button><button class="btn sm" data-act="pendmore" data-id="'+p.id+'">More <span style="display:inline-flex;transform:rotate(90deg)">'+I('chev')+'</span></button>')+'</div></td></tr>'}).join('')+
+   (rows.length?'':'<tr><td colspan="8"><div class="empty">'+I('users')+'<b>No pending invites</b><span>Everyone invited has already joined.</span></div></td></tr>')+
    '</tbody></table></div><div class="foot">'+rows.length+' pending</div></div>';
  }
  if(tab==='removed'){
@@ -2723,7 +2737,19 @@ function modal(){
   else if(sel.reach==='own')b+='<p style="margin:0;font-size:13px">Covers only their own calls and records.</p>';
   else b+='<div class="presets">'+opts.map(o=>'<button data-rch="'+esc(o)+'" aria-pressed="'+m.reach.includes(o)+'">'+esc(o)+'</button>').join('')+'</div>'+(opts.length<({location:LOCS,group:GROUPS,cc:CCS}[sel.reach]).length?'<div class="hint">Only what is inside your own reach is offered.</div>':'')+(err?'<div class="hint" style="color:var(--bad)">'+err+'</div>':'');
   if(diff)b+='<div class="lock" style="margin-top:12px">'+I('info')+'<div>For '+esc(one.n)+': <b class="plus">+'+diff.add+'</b> / <b class="minus">−'+diff.rem+'</b> permissions. They see it the next time they open the app, and it is written to the change history.</div></div>';
-  return wrap(one?'Change role — '+esc(one.n):'Change role for '+targets.length+' people',b,'<button class="btn" data-act="close">Cancel</button><button class="btn primary" data-act="chroleok" '+(err||blk||(sel.reach==='company'&&!isOwnerP())?'disabled':'')+'>'+I('check')+'Change role</button>',640);
+  return wrap(one?'Change role — '+esc(one.n):'Change role for '+targets.length+' people',b,'<button class="btn" data-act="close">Cancel</button><button class="btn primary" data-act="chroleconfirm" '+(err||blk||(sel.reach==='company'&&!isOwnerP())?'disabled':'')+'>'+I('check')+'Change role</button>',640);
+ }
+ if(m.type==='chroleconfirm'){
+  const targets=m.ids.map(id=>PEOPLE.find(p=>p.id===id));const one=targets.length===1?targets[0]:null;
+  const r=roleById(m.role);
+  const b=one?
+   '<p style="margin:0;font-size:14px;line-height:1.6">You are changing the role of <b>'+esc(one.n)+'</b> from <b>'+esc(personRole(one).n)+'</b> to <b>'+esc(r.n)+'</b>.</p>'+
+   '<p class="hint" style="margin-top:10px">They see it the next time they open the app, and it is written to the change history.</p>'
+   :
+   '<p style="margin:0 0 10px;font-size:14px;line-height:1.6">You are changing the role of <b>'+targets.length+' people</b> to <b>'+esc(r.n)+'</b>:</p>'+
+   '<ul style="margin:0;padding-left:18px;font-size:13px;color:var(--ink-2)">'+targets.map(p=>'<li>'+esc(p.n)+' — <span style="color:var(--ink-3)">'+esc(personRole(p).n)+'</span> → <b>'+esc(r.n)+'</b></li>').join('')+'</ul>'+
+   '<p class="hint" style="margin-top:10px">They see it the next time they open the app, and it is written to the change history.</p>';
+  return wrap('Confirm role change',b,'<button class="btn" data-act="chroleback">'+I('back')+'Back</button><button class="btn primary" data-act="chroleok">'+I('check')+'Yes, change role</button>',520);
  }
  if(m.type==='transfer'){const cands=PEOPLE.filter(p=>p.role==='locadmin');
   return wrap('Transfer ownership','<p style="margin:0 0 10px;font-size:13.5px">The new owner must already be an admin. You become a Location admin with whole-company reach. Billing, plan and closing the account move with the ownership.</p><label class="fl" for="to">New Account owner</label><select id="to" class="inp">'+cands.map(p=>'<option value="'+p.id+'">'+esc(p.n)+' — Location admin, '+esc(reachText(p))+'</option>').join('')+'</select><p class="hint">Sent to both of you by email, and needs the new owner\'s one-time code before it happens. (New — not in the product today.)</p>',
@@ -2732,6 +2758,33 @@ function modal(){
   return wrap('Set manager','<p style="margin:0 0 12px;font-size:13.5px">Who does <b>'+esc(p.n)+'</b> report to? This only changes how People is grouped here — nothing else.</p><label class="fl" for="mgrsel">Manager</label><select id="mgrsel" class="inp"><option value="">Unassigned</option>'+cands.map(x=>'<option value="'+x.id+'" '+((p.mgr||'')===x.id?'selected':'')+'>'+esc(x.n)+' — '+esc(personRole(x).n)+'</option>').join('')+'</select>',
    '<button class="btn" data-act="close">Cancel</button><button class="btn primary" data-act="setmgrok" data-id="'+p.id+'">'+I('check')+'Save</button>',480)}
  if(m.type==='restore'){const a=AUDIT.find(x=>x.id===m.id);return wrap('Put the role back?','<p style="margin:0;font-size:13.5px">“'+esc(roleById(a.role).n)+'” goes back to how it was before '+esc(a.who)+'\'s change on '+esc(a.t)+': '+a.add.length+' switched off, '+a.rem.length+' switched on. This is a new entry in the history — nothing is erased.</p>','<button class="btn" data-act="close">Cancel</button><button class="btn primary" data-act="restoreok" data-id="'+a.id+'">'+I('undo')+'Put it back</button>')}
+ if(m.type==='pendmore'){const p=PENDING.find(x=>x.id===m.id);if(!p)return '';
+  const b='<div class="lock" style="margin-bottom:14px">'+I('lock')+'<div><b>Change role</b><p style="margin:4px 0 0;font-size:12.5px;color:var(--ink-3)">This person has not accepted their invite yet, so their role cannot be changed. Their role is written into the account they are about to create. Wait until they have signed in once, or revoke the invite and add them again.</p></div></div>'+
+   '<button class="menurow" data-act="pendassignnum" data-id="'+p.id+'">'+(p.number?'Change the assigned number ('+esc(p.number)+')':'Assign a number')+'</button>'+
+   '<button class="menurow" data-act="pendfax" data-id="'+p.id+'">Add a fax line</button>'+
+   '<div style="border-top:1px solid var(--line);margin:8px 0"></div>'+
+   '<button class="menurow" data-act="pendsignout" data-id="'+p.id+'">Sign out everywhere</button>'+
+   '<button class="menurow" data-act="pendsuspend" data-id="'+p.id+'">'+(p.suspended?'Unsuspend':'Suspend')+'</button>'+
+   '<button class="menurow danger" data-act="pendremove" data-id="'+p.id+'">Remove (restorable 72 h)</button>';
+  return wrap('More — '+esc(p.n),b,'<button class="btn" data-act="close">Close</button>',420)}
+ if(m.type==='pendedit'){const p=PENDING.find(x=>x.id===m.id);if(!p)return '';
+  const b='<div class="awgrid">'+
+    '<div><label class="fl" for="peFirst">First name</label><input class="inp'+(m.err==='name'?' bad':'')+'" id="peFirst" value="'+esc(m.first)+'"></div>'+
+    '<div><label class="fl" for="peLast">Last name</label><input class="inp'+(m.err==='name'?' bad':'')+'" id="peLast" value="'+esc(m.last)+'"></div>'+
+   '</div>'+
+   '<div style="margin-top:12px"><label class="fl" for="peEmail">Email</label><input class="inp'+(m.err==='email'?' bad':'')+'" id="peEmail" value="'+esc(m.email)+'"></div>'+
+   '<div class="awgrid" style="margin-top:12px">'+
+    '<div><label class="fl" for="peRole">Role</label><select class="inp" id="peRole">'+ROLES.map(r=>'<option value="'+r.id+'" '+(m.role===r.id?'selected':'')+'>'+esc(r.n)+'</option>').join('')+'</select></div>'+
+    '<div><label class="fl" for="peLoc">Location</label><select class="inp" id="peLoc">'+LOC_CHOICES.map(l=>'<option '+(m.loc===l?'selected':'')+'>'+esc(l)+'</option>').join('')+'</select></div>'+
+   '</div>'+
+   '<div style="margin-top:12px"><label class="fl" for="peExt">Extension</label><input class="inp" id="peExt" value="'+esc(m.ext)+'"></div>'+
+   (m.err?'<p class="eperr">'+esc(m.err==='email'?'Enter a valid email.':'Enter a first and last name.')+'</p>':'');
+  return wrap('Edit invite — '+esc(p.n),b,'<button class="btn" data-act="close">Cancel</button><button class="btn primary" data-act="pendeditsave">'+I('check')+'Save</button>',560)}
+ if(m.type==='pendassignnum'){const p=PENDING.find(x=>x.id===m.id);if(!p)return '';
+  const b=RESERVED_NUMBERS.length?
+    RESERVED_NUMBERS.map((n,i)=>'<button class="menurow" data-act="pendassignnumpick" data-idx="'+i+'" style="display:flex;justify-content:space-between;border:1px solid var(--line);border-radius:9px;margin-bottom:8px"><span class="mono">'+esc(n.number)+'</span><span style="color:var(--ink-3);font-size:12px">'+esc(n.note)+'</span></button>').join('')
+    :'<p style="margin:0;font-size:13px;color:var(--ink-3)">No reserved numbers available. Reserve one under <b>Reserved numbers</b> first.</p>';
+  return wrap('Assign a number — '+esc(p.n),b,'<button class="btn" data-act="close">Cancel</button>',480)}
  return '';
 }
 const MEET=[
@@ -2902,8 +2955,24 @@ document.addEventListener('click',e=>{
   if(a==='awdone'){S.modal=null;render();return}
   if(a==='awimport'){document.getElementById('awfile').click();return}
   if(a==='awtemplate'){downloadCSV('people-template.csv','First name,Last name,Email,Phone,Role,Extension\r\nJordan,Lee,jordan.lee@company.com,415 555 0134,Agent,\r\n');toast('ok','Downloaded','people-template.csv — fill it in and use Import CSV.');return}
-  if(a==='resend'){const p=PENDING.find(x=>x.id===id);toast('ok','Invite resent','A fresh link was sent to '+esc(p.email)+'.');return}
-  if(a==='cancelinv'){const p=PENDING.find(x=>x.id===id);PENDING=PENDING.filter(x=>x.id!==id);render();toast('info','Invite cancelled',esc(p.n)+' will need a new invite to join.');return}
+  if(a==='reinvite'){const p=PENDING.find(x=>x.id===id);if(p.suspended){toast('bad','Suspended','Unsuspend this invite first, under More.');return}p.expired=false;p.sentOn='Just now';p.expiresOn='in 7 days';render();toast('ok','Invite resent','A fresh link was sent to '+esc(p.email)+'.');return}
+  if(a==='revoke'){const p=PENDING.find(x=>x.id===id);PENDING=PENDING.filter(x=>x.id!==id);S.pendSel.delete(id);render();toast('info','Invite revoked',esc(p.n)+' will need a new invite to join.');return}
+  if(a==='pendclearsel'){S.pendSel=new Set();render();return}
+  if(a==='pendbulkrevoke'){const names=PENDING.filter(p=>S.pendSel.has(p.id)).map(p=>p.n);PENDING=PENDING.filter(p=>!S.pendSel.has(p.id));S.pendSel=new Set();render();toast('info','Invites revoked',names.length+' invite'+(names.length===1?'':'s')+' revoked: '+esc(names.join(', '))+'.');return}
+  if(a==='pendmore'){S.modal={type:'pendmore',id:id};render();return}
+  if(a==='pendedit'){const p=PENDING.find(x=>x.id===id);const parts=p.n.trim().split(/\s+/);S.modal={type:'pendedit',id:p.id,first:parts[0]||'',last:parts.slice(1).join(' ')||'',email:p.email,role:p.role,loc:p.loc,ext:p.ext,err:null};render();return}
+  if(a==='pendeditsave'){const m=S.modal,p=PENDING.find(x=>x.id===m.id);
+   const first=document.getElementById('peFirst').value.trim(),last=document.getElementById('peLast').value.trim(),email=document.getElementById('peEmail').value.trim();
+   const errs=personErrors({first,last,email});
+   if(Object.keys(errs).length){m.err=errs.email?'email':'name';m.first=first;m.last=last;m.email=email;render();return}
+   p.n=(first+' '+last).trim();p.email=email;p.role=document.getElementById('peRole').value;p.loc=document.getElementById('peLoc').value;p.ext=document.getElementById('peExt').value.trim();
+   S.modal=null;render();toast('ok','Saved','Invite details updated for '+esc(p.n)+'.');return}
+  if(a==='pendassignnum'){S.modal={type:'pendassignnum',id};render();return}
+  if(a==='pendassignnumpick'){const p=PENDING.find(x=>x.id===S.modal.id);const idx=+act.dataset.idx;const num=RESERVED_NUMBERS[idx];p.number=num.number;RESERVED_NUMBERS=RESERVED_NUMBERS.filter((x,i)=>i!==idx);S.modal=null;render();toast('ok','Number assigned',esc(num.number)+' assigned to '+esc(p.n)+'.');return}
+  if(a==='pendfax'){S.modal=null;render();toast('info','Not part of this prototype','Fax lines are not modeled here.');return}
+  if(a==='pendsignout'){const p=PENDING.find(x=>x.id===id);S.modal=null;render();toast('info','Nothing to sign out',esc(p.n)+' has never signed in, so there is no session to end.');return}
+  if(a==='pendsuspend'){const p=PENDING.find(x=>x.id===id);p.suspended=!p.suspended;S.modal=null;render();toast(p.suspended?'info':'ok',p.suspended?'Suspended':'Unsuspended',p.suspended?'The invite link will not work until this is reversed.':'The invite link works again.');return}
+  if(a==='pendremove'){const p=PENDING.find(x=>x.id===id);PENDING=PENDING.filter(x=>x.id!==id);REMOVED.push({id:p.id,n:p.n,ext:p.ext,loc:p.loc,teams:p.teams,role:p.role,reach:{lvl:roleById(p.role).reach,ids:[]},removedOn:'Just now',removedBy:me().n});S.modal=null;render();toast('ok','Removed',esc(p.n)+' moved to Removed, restorable for 72 hours.');return}
   if(a==='restore'){const p=REMOVED.find(x=>x.id===id);REMOVED=REMOVED.filter(x=>x.id!==id);
    PEOPLE.push({id:p.id,n:p.n,ext:p.ext,loc:p.loc,teams:p.teams,role:p.role,reach:p.reach,seen:'Just restored',status:'active'});
    AUDIT.unshift({id:Date.now(),t:'Just now',who:me().n,kind:'restore',title:'Restored '+p.n+' as '+roleById(p.role).n,detail:'Reach: '+reachText(p)+'.',people:1});
@@ -3009,6 +3078,8 @@ document.addEventListener('click',e=>{
    if(eF||eL){m.errFirst=eF;m.errLast=eL;render();return}
    p.n=(m.first.trim()+' '+m.last.trim()).trim();p.title=m.title.trim();S.modal=null;render();toast('ok','Saved',esc(p.n)+'’s details were updated.');return}
   if(a==='bulk'){S.modal={type:'chrole',ids:[...S.sel]};render();return}
+  if(a==='chroleconfirm'){const m=S.modal;S.modal={type:'chroleconfirm',ids:m.ids,role:m.role,reach:m.reach};render();return}
+  if(a==='chroleback'){const m=S.modal;S.modal={type:'chrole',ids:m.ids,role:m.role,reach:m.reach};render();return}
   if(a==='chroleok'){const m=S.modal;const r=roleById(m.role||PEOPLE.find(p=>p.id===m.ids[0]).role);
    m.ids.forEach(id=>{const p=PEOPLE.find(x=>x.id===id);const old=personRole(p).n;const oldR=reachText(p);p.role=r.id;p.reach={lvl:r.reach,ids:['location','group','cc'].includes(r.reach)?[...m.reach]:[]};
     AUDIT.unshift({id:Date.now()+Math.random(),t:'Just now',who:me().n,kind:old===r.n?'reach':'assign',title:p.n+': '+(old===r.n?'reach '+oldR+' → '+reachText(p):old+' → '+r.n),detail:'Reach: '+reachText(p)+'.',people:1,loc:p.loc})});
@@ -3056,6 +3127,8 @@ document.addEventListener('change',e=>{
   if(!ext.length){R.forEach(x=>E.set.delete(x));render();return}
   S.modal={type:'cascade',k:[...R].find(x=>x.startsWith(sk+'.')),R:[...R]};render();return}
  if(t.id==='selall'){document.querySelectorAll('input[data-sel]:not(:disabled)').forEach(c=>t.checked?S.sel.add(c.dataset.sel):S.sel.delete(c.dataset.sel));render();return}
+ if(t.id==='pendselall'){document.querySelectorAll('input[data-pendsel]').forEach(c=>t.checked?S.pendSel.add(c.dataset.pendsel):S.pendSel.delete(c.dataset.pendsel));render();return}
+ if(t.dataset.pendsel){t.checked?S.pendSel.add(t.dataset.pendsel):S.pendSel.delete(t.dataset.pendsel);render();return}
  if(t.id==='startsel'){const E=S.edit,v=t.value;if(!E||E.meta.from===v)return;if(E.set.size&&changes().n){S.modal={type:'preset',p:v};render();return}applyPreset(v);render();return}
  if(t.dataset.pk){toggleKey(t.dataset.pk,t.checked);return}
  if(t.dataset.sel){t.checked?S.sel.add(t.dataset.sel):S.sel.delete(t.dataset.sel);render();return}
